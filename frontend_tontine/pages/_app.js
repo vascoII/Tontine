@@ -15,6 +15,8 @@ import DailyStats from "@/components/DailyStats";
 import Footer from "@/components/Footer";
 import { OwnerProvider } from "@/context/OwnerContext";
 import { UserProvider } from "@/context/UserContext";
+import { TineProvider } from "@/context/TineContext";
+import { TontineProvider } from "@/context/TontineContext";
 
 const { chains, publicClient } = configureChains(
   [hardhat, sepolia],
@@ -59,16 +61,20 @@ function MyApp({ Component, pageProps }) {
         <RainbowKitProvider chains={chains}>
           <OwnerProvider>
             <UserProvider>
-              <Head>
-                <title>Tontine</title>
-                <link rel="icon" href="./logo.png" />
-              </Head>
-              <Box minH="100vh">
-                <Header />
-                <Component {...pageProps} />
-                <DailyStats />
-                <Footer />
-              </Box>
+              <TineProvider>
+                <TontineProvider>
+                  <Head>
+                    <title>Tontine</title>
+                    <link rel="icon" href="./logo.png" />
+                  </Head>
+                  <Box minH="100vh">
+                    <Header />
+                    <Component {...pageProps} />
+                    <DailyStats />
+                    <Footer />
+                  </Box>
+                </TontineProvider>
+              </TineProvider>
             </UserProvider>
           </OwnerProvider>
         </RainbowKitProvider>
