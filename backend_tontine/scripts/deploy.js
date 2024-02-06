@@ -11,8 +11,9 @@ async function main() {
   const [deployer] = await hre.ethers.getSigners();
   console.log("Deploying contracts with the account:", deployer.address);
 
-  // Déployez le contrat de Mock de Chainlink ChainlinkPricesOracleMock.sol
-  //console.log("Deploying contract ChainlinkPricesOracleMock with the account:", deployer.address);
+  /*******************************************************/
+  /*****************  CHAINLINK MOCK  ********************/
+  /*******************************************************/
   const ChainlinkPricesOracleMock = await ethers.getContractFactory(
     "ChainlinkPricesOracleMock"
   );
@@ -28,8 +29,9 @@ async function main() {
     chainlinkPricesOracleMockSmartContractAddress
   );
 
-  // Déployez le contrat Tine.sol
-  //console.log("Deploying contract Tine with the account:", deployer.address);
+  /*******************************************************/
+  /**********************  TINE  *************************/
+  /*******************************************************/
   const Tine = await ethers.getContractFactory("Tine");
   let tine = await Tine.connect(deployer).deploy(
     chainlinkPricesOracleMockSmartContractAddress
@@ -39,19 +41,20 @@ async function main() {
 
   console.log("Tine contract deployed to:", tineSmartContractAddress);
 
-  // Envoi de 10 ethers au contrat
+  // Envoi de 50 ethers au contrat
   const transaction = {
     to: tineSmartContractAddress,
-    value: hre.ethers.parseEther("10.0"), // Convertit 10 ethers en wei
+    value: hre.ethers.parseEther("50.0"), // Convertit 50 ethers en wei
   };
 
   const tx = await deployer.sendTransaction(transaction); // Envoie la transaction
   await tx.wait(); // Attend que la transaction soit minée
 
-  console.log(`10 ethers send to ${tineSmartContractAddress}`);
+  console.log(`50 ethers send to ${tineSmartContractAddress}`);
 
-  // Déployez le contrat Tteth.sol
-  //console.log("Deploying contract Tteth with the account:", deployer.address);
+  /*******************************************************/
+  /**********************  TTETH  ************************/
+  /*******************************************************/
   const Tteth = await ethers.getContractFactory("Tteth");
   let tteth = await Tteth.connect(deployer).deploy();
   await tteth.waitForDeployment();
@@ -59,8 +62,9 @@ async function main() {
 
   console.log("Tteth contract deployed to:", ttethSmartContractAddress);
 
-  // Déployez le contrat Tontine.sol
-  //console.log("Deploying contract Tontine with the account:", deployer.address);
+  /*******************************************************/
+  /*********************  TONTINE  ***********************/
+  /*******************************************************/
   const Tontine = await ethers.getContractFactory("Tontine");
   let tontine = await Tontine.connect(deployer).deploy(
     tineSmartContractAddress,
@@ -77,8 +81,6 @@ async function main() {
   console.log("Transferred ownership Tteth to Tontine contract");
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
