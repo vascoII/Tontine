@@ -1,21 +1,48 @@
-import React from "react";
-import { Box, Flex, Image, Text} from "@chakra-ui/react";
+"use client";
+
+import React from 'react';
+import { useState } from "react";
+import { Box, Flex, Image, Text, Button} from "@chakra-ui/react";
 
 import { useUser } from "@/context/UserContext";
 
-import StakingConnected from "@/components/Staking/StakingConnected";
-import StakingUnconnected from "@/components/Staking/StakingUnconnected";
+import StakingEthPublic from "@/components/Staking/StakingEthPublic";
+import StakingEthPrivate from "@/components/Staking/StakingEthPrivate";
 
 const Staking = ({ isConnected, userAddress }) => {
   const { isUser } = useUser(); // Utiliser le hook useUser pour accéder à l'état isUser
+  const [showPublic, setShowPublic] = useState(true); // État local pour gérer l'affichage
+
+  const toggleView = () => {
+    setShowPublic(!showPublic); // Inverser l'état d'affichage lorsqu'on appuie sur le bouton
+  };
 
   return (
     <Flex className="hero-section-container" direction={{ base: "column", md: "row" }} color='#ffff'>
-      <Box className="hero-info-wrapper">
+      <Box className="hero-info-wrapper" width="full">
         <Box className="hero-info-text">
-          <Text fontWeight="bold" fontWeight='500' fontSize='3rem' color='#ffff'>
-            <span className="highlighted">Staking</span>
-          </Text>
+          <Button
+            className="toggle-option"
+            bg={showPublic ? "blue.500" : "transparent"}
+            color={showPublic ? "white" : "blue.500"}
+            onClick={() => setShowPublic(true)}
+          >
+            Public Vaults
+          </Button>
+          <Button
+            className="toggle-option"
+            bg={!showPublic ? "blue.500" : "transparent"}
+            color={!showPublic ? "white" : "blue.500"}
+            onClick={() => setShowPublic(false)}
+          >
+            Your deposits
+          </Button>
+          
+          {showPublic ? (
+            <StakingEthPublic isConnected={isConnected} userAddress={userAddress}/>
+          ) : (
+            <StakingEthPrivate isConnected={isConnected} userAddress={userAddress}/>
+          )}
           
         </Box>
       </Box>

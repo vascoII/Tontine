@@ -1,13 +1,53 @@
-import React from "react";
-import { Box, Text, Flex } from "@chakra-ui/react";
-import CoingeckoServiceMock from "../services/api/CoingeckoServiceMock";
+import React, { useState, useEffect } from 'react';
 
-const tontineCurrentPrice = CoingeckoServiceMock.getTokenCurrentPrice('TINE', 'USD');
-const ethCurrentPrice = CoingeckoServiceMock.getTokenCurrentPrice('ETH', 'USD');
-const currentEthApy = CoingeckoServiceMock.getTokenCurrentAPY('ETH');
-const currentTontineApy = CoingeckoServiceMock.getTokenCurrentAPY('TINE');
+import {
+  Flex, Box, Text, useToast
+} from "@chakra-ui/react";
+
+import { getTokenCurrentPrice } from "@/services/api/EtherscanAPI";
+
+import { useTontine } from "@/context/TontineContext";
+import { useTine } from "@/context/TineContext";
 
 const DailyStats = () => {
+  const { silverVaultData,
+    goldVaultData,
+  } = useTontine();
+
+  const { smartContractEthBalance } = useTine();
+  const smartContractEthBalanceBigInt = BigInt(smartContractEthBalance);
+  const silverLockedBigInt = BigInt(silverVaultData.ethLocked);
+  const goldLockedBigInt = BigInt(goldVaultData.ethLocked);
+  const totalLiquidity = smartContractEthBalanceBigInt + silverLockedBigInt + goldLockedBigInt;
+
+  const [tontineCurrentPrice, setTontineCurrentPrice] = useState(0);
+  const [ethCurrentPrice, setEthCurrentPrice] = useState(0);
+
+  const toast = useToast();
+
+  useEffect(() => {
+    async function fetchPrices() {
+      try {
+        const tontinePrice = await getTokenCurrentPrice('TINE', 'USD');
+        const ethPrice = await getTokenCurrentPrice('ETH', 'USD');
+        
+        setTontineCurrentPrice(Math.round(tontinePrice));
+        setEthCurrentPrice(Math.round(ethPrice));
+      } catch (err) {console.log(err.message)
+        toast({
+          title: "Error!",
+          description: "Error on prices fetching.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    }
+
+    // Appeler la fonction pour obtenir les prix actuels
+    fetchPrices();
+  }, []);
+
   return (
     <Flex
       className="daily-stats-container gradient-border"
@@ -36,15 +76,15 @@ const DailyStats = () => {
       </Box>
       <Box className="metric-container" textAlign="center" m={2}>
         <Text fontSize="lg" fontWeight="bold" className="metric-title">Total Liquidity</Text>
-        <Text fontSize="xl" className="metric-value" color='#ffff'>$100M</Text>
+        <Text fontSize="xl" className="metric-value" color='#ffff'>{ totalLiquidity.toString() / 10 ** 18 }Eth</Text>
       </Box>
       <Box className="metric-container" textAlign="center" m={2}>
-        <Text fontSize="lg" fontWeight="bold" className="metric-title">Current Basic Staking APY</Text>
-        <Text fontSize="xl" className="metric-value" color='#ffff'>{currentEthApy} %</Text>
+        <Text fontSize="lg" fontWeight="bold" className="metric-title">Current Silver Vault APR</Text>
+        <Text fontSize="xl" className="metric-value" color='#ffff'>{silverVaultData.apr }%</Text>
       </Box>
       <Box className="metric-container" textAlign="center" m={2}>
-        <Text fontSize="lg" fontWeight="bold" className="metric-title">Current Tontine Staking APY</Text>
-        <Text fontSize="xl" className="metric-value" color='#ffff'>{currentTontineApy} %</Text>
+        <Text fontSize="lg" fontWeight="bold" className="metric-title">Current Gold Vault APR</Text>
+        <Text fontSize="xl" className="metric-value" color='#ffff'>{goldVaultData.apr }%</Text>
       </Box>
     </Flex>
   );

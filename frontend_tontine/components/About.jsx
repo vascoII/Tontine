@@ -2,34 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Flex, Image, Text, Link} from "@chakra-ui/react";
 
-import {
-  getSmartContractMinLockAmountService
-} from "@/services/contracts/users/tineServices";
+import { useTine } from "@/context/TineContext";
 
 const About = ({ isConnected, userAddress }) => {
-
-  const [smartContractMinLockAmount, setSmartContractMinLockAmount] = useState(0);
-
-  useEffect(() => {
-    handleGetSmartContractMinLockAmount();
-  }, []); 
-
-  /** MIN LOCK AMOUNT */
-  const handleGetSmartContractMinLockAmount = async () => {
-    try {
-      const smartContractMinLockAmountService = await getSmartContractMinLockAmountService(); 
-      setSmartContractMinLockAmount(smartContractMinLockAmountService);
-    } catch (err) {alert(err.message)
-      toast({
-        title: "Error!",
-        description: "An error occured on setting min lock amount.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
+  const { smartContractMinLockAmount,
+    smartContractMinLockTime,
+  } = useTine();
+  
   return (
     <Flex className="hero-section-container" direction={{ base: "column", md: "row" }} color='#ffff'>
       <Box className="hero-info-wrapper">

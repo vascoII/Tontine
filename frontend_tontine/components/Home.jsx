@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Flex, Text, Image, Input, Button, Link, Icon } from "@chakra-ui/react";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import CoingeckoServiceMock from "../services/api/CoingeckoServiceMock"
+import CoingeckoServiceMock from "../services/api/EtherscanAPI"
 // WAGMI
 import { useAccount } from "wagmi";
 

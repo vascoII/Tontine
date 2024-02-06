@@ -6,22 +6,14 @@ import {
 } from "@chakra-ui/react";
 
 import {
-  getSmartContractTokenBalanceService,
-  getSmartContractEthBalanceService, 
-  getSmartContractMaxSupplyService, 
-  getSmartContractCurrentSupplyService, 
-  getSmartContractMaxBalanceService,
-  getSmartContractMinLockTimeService, 
-  getSmartContractMinLockAmountService
-} from "@/services/contracts/users/tineServices";
-
-import {
   mintMonthlyService, 
   setSmartContracMinLockTimeService,
   setSmartContracMinLockAmountService,
   withdrawEthService, 
   setSmartContractMaxBalanceService
 } from "@/services/contracts/admin/tineServices";
+
+import { useTine } from "@/context/TineContext";
 
 import {
   Error_mintMonthly_supply_exceeded,
@@ -38,14 +30,22 @@ const TokenTineAdmin = ({ isConnected, userAddress }) => {
   const handleToggle = () => setShowContent(!showContent);
   const [clientIsConnected, setClientIsConnected] = useState(false);
 
-  const [smartContractTokenBalance, setSmartContractTokenBalance] = useState(0);
-  const [smartContractEthBalance, setSmartContractEthBalance] = useState(0);
-  const [smartContractMaxSupply, setSmartContractMaxSupply] = useState(0);
-  const [smartContractMaxBalance, setSmartContractMaxBalance] = useState(0);
-  const [smartContractCurrentSupply, setSmartContractCurrentSupply] = useState(0);
-  const [smartContractMintMonthly, setSmartContractMintMonthly] = useState(0);
-  const [smartContractMinLockTime, setSmartContractMinLockTime] = useState(0);
-  const [smartContractMinLockAmount, setSmartContractMinLockAmount] = useState(0);
+  const { smartContractTokenBalance,
+        setSmartContractTokenBalance,
+        smartContractEthBalance,
+        setSmartContractEthBalance,
+        smartContractMaxSupply,
+        setSmartContractMaxSupply,
+        smartContractMaxBalance,
+        setSmartContractMaxBalance,
+        smartContractCurrentSupply,
+        setSmartContractCurrentSupply,
+        smartContractMintMonthly,
+        setSmartContractMintMonthly,
+        smartContractMinLockTime,
+        setSmartContractMinLockTime,
+        smartContractMinLockAmount,
+        setSmartContractMinLockAmount, } = useTine();
 
   const [smartContractWithdrawEth, setSmartContractWithdrawEth] = useState(0);
   const [smartContractNewMinLockTime, setSmartContractNewMinLockTime] = useState(0);
@@ -65,134 +65,22 @@ const TokenTineAdmin = ({ isConnected, userAddress }) => {
     // Since isConnected is only true on the client-side after hydration,
     // set clientIsConnected based on isConnected when component mounts.
     setClientIsConnected(isConnected);
-    handleGetSmartContractTokenBalance();
-    handleGetSmartContractEthBalance();
-    handleGetSmartContractCurrentSupply();
-    handleGetSmartContractMaxSupply();
-    handleGetSmartContractMaxBalance();
-    handleGetSmartContractMinLockTime();
-    handleGetSmartContractMinLockAmount();
   }, [isConnected]); 
 
-  /*************** GETTERS *****************************/
-  /** TOKEN BALANCE */
-  const handleGetSmartContractTokenBalance = async () => {
-    try {
-      const smartContractTineBalance = await getSmartContractTokenBalanceService(); 
-      setSmartContractTokenBalance(smartContractTineBalance);
-    } catch (err) {
-      toast({
-        title: "Error!",
-        description: "An error occured on token balance.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  /** ETH BALANCE */
-  const handleGetSmartContractEthBalance = async () => {
-    try {
-      const smartContractEthBalance = await getSmartContractEthBalanceService(); 
-      setSmartContractEthBalance(smartContractEthBalance);
-    } catch (err) {
-      toast({
-        title: "Error!",
-        description: "An error occured on eth balance.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  /** TOTAL SUPPLY */
-  const handleGetSmartContractCurrentSupply = async () => {
-    try {
-      const totalSupply = await getSmartContractCurrentSupplyService(); 
-      setSmartContractCurrentSupply(totalSupply);
-    } catch (err) {
-      toast({
-        title: "Error!",
-        description: "An error occured on total supply.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-   /** MAX SUPPLY */
-  const handleGetSmartContractMaxSupply = async () => {
-    try {
-      const maxSupply = await getSmartContractMaxSupplyService();
-      setSmartContractMaxSupply(Math.round(maxSupply.toString() / 10 ** 18));
-    } catch (err) {
-      toast({
-        title: "Error!",
-        description: "An error occured on max supply.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  /** MAX BALANCE */
-  const handleGetSmartContractMaxBalance = async () => {
-    try {
-      const maxBalance = await getSmartContractMaxBalanceService();
-      setSmartContractMaxBalance(maxBalance);
-    } catch (err) {console.log(err.message)
-      toast({
-        title: "Error!",
-        description: "An error occured on max balance.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  /** MIM LOCK TIME */
-  const handleGetSmartContractMinLockTime = async () => {
-    try {
-      const smartContractMinLockTimeService = await getSmartContractMinLockTimeService(); 
-      setSmartContractMinLockTime(smartContractMinLockTimeService);
-    } catch (err) {
-      toast({
-        title: "Error!",
-        description: "An error occured on setting min lock time.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  /** MIN LOCK AMOUNT */
-  const handleGetSmartContractMinLockAmount = async () => {
-    try {
-      const smartContractMinLockAmountService = await getSmartContractMinLockAmountService(); 
-      setSmartContractMinLockAmount(smartContractMinLockAmountService);
-    } catch (err) {alert(err.message)
-      toast({
-        title: "Error!",
-        description: "An error occured on setting min lock amount.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
+  
   /**************** SETTERS  ****************************/
   /** MINT MONTHLY */
   const handleSmartContractMintMonthly = async () => {
     try {
-      const smartContractTineMintMonthly = await mintMonthly(); 
+      const smartContractTineMintMonthly = await mintMonthlyService(); 
       setSmartContractMintMonthly(smartContractTineMintMonthly);
+      toast({
+          title: "Congratulations!",
+          description: `You have successfully mint new Tine.`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
     } catch (err) {
       if (err.message.includes(Error_mintMonthly_not_allowed)) {
         toast({
@@ -226,7 +114,7 @@ const TokenTineAdmin = ({ isConnected, userAddress }) => {
           duration: 3000,
           isClosable: true,
         });
-    } catch (err) {alert(err.message)
+    } catch (err) {
       toast({
         title: "Error!",
         description: "An error occured on eth withdraw.",
@@ -242,6 +130,13 @@ const TokenTineAdmin = ({ isConnected, userAddress }) => {
     try {
       await setSmartContractMaxBalanceService(smartContractNewMaxBalance);
       setSmartContractMaxBalance(smartContractNewMaxBalance * 10 ** 18);
+      toast({
+          title: "Congratulations!",
+          description: `You have successfully change the Max Balance.`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
     } catch (err) {
       toast({
         title: "Error!",
@@ -258,6 +153,13 @@ const TokenTineAdmin = ({ isConnected, userAddress }) => {
     try {
       await setSmartContracMinLockTimeService(smartContractNewMinLockTime); 
       setSmartContractMinLockTime(smartContractNewMinLockTime);
+      toast({
+          title: "Congratulations!",
+          description: `You have successfully change the min lock time.`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
     } catch (err) {
       toast({
         title: "Error!",
@@ -274,6 +176,13 @@ const TokenTineAdmin = ({ isConnected, userAddress }) => {
     try {
       await setSmartContracMinLockAmountService(smartContractNewMinLockAmount); 
       setSmartContractMinLockAmount(smartContractNewMinLockAmount * 10 ** 18);
+      toast({
+          title: "Congratulations!",
+          description: `You have successfully change the min lock amount.`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
     } catch (err) {
       toast({
         title: "Error!",
