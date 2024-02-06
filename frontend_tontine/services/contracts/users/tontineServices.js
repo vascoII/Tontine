@@ -41,35 +41,3 @@ export const isAlreadyUser = async (userAddress) => {
     throw err; // Relancer l'erreur pour la gestion dans le composant
   }
 };
-
-// getPublicVaultData
-export const getPublicVaultData = async () => {
-  try {
-    /**const ownerAddress = await readContract({
-      address: contractAddress,
-      abi: abi,
-      functionName: "owner",
-    });
-    return ownerAddress === userAddress;*/
-    return [];
-  } catch (err) {
-    console.error(err.message);
-    throw err; // Relancer l'erreur pour la gestion dans le composant
-  }
-};
-
-// getPrivateVaultData
-export const getPrivateVaultData = async (userAddress) => {
-  try {
-    /**const ownerAddress = await readContract({
-      address: contractAddress,
-      abi: abi,
-      functionName: "owner",
-    });
-    return ownerAddress === userAddress;*/
-    return [];
-  } catch (err) {
-    console.error(err.message);
-    throw err; // Relancer l'erreur pour la gestion dans le composant
-  }
-};
