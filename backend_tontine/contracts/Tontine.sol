@@ -4,6 +4,7 @@ pragma solidity ^0.8.22;
 import "./Tine.sol";
 import "./Tteth.sol";
 import "./ChainlinkPricesOracleMock.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 //import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -13,6 +14,7 @@ error FailedToSendEther();
 contract Tontine is Ownable {
     Tine public tine;
     Tteth public tteth;
+
     //AggregatorV3Interface internal dataFeed;
     ChainlinkPricesOracleMock public chainlinkPricesOracleMock;
 
@@ -36,11 +38,11 @@ contract Tontine is Ownable {
 
     Account[] public accounts;
 
-    uint256 public constant GOLD_VAULT_ACCESS_TINE_AMOUNT = 100 * (10 ** 18); // 100 TINE pour accéder au Gold Vault
+    uint256 public constant GOLD_VAULT_ACCESS_TINE_AMOUNT = 1 * (10 ** 18); // 100 TINE pour accéder au Gold Vault
     uint256 public constant GOLD_VAULT_MULTIPLIER = 150; // 150% pour les intérêts du Gold Vault
 
     // Définissez les taux d'intérêt annuels pour la Tontine
-    uint256 private annualInterestRateTontine = 5;
+    uint256 public annualInterestRateTontine = 5;
 
     mapping(address => Deposit[]) public silverVaultDepositsByUser;
     mapping(address => Deposit[]) public goldVaultDepositsByUser;
@@ -125,6 +127,26 @@ contract Tontine is Ownable {
             }
         }
         return -1; // L'utilisateur n'a pas été trouvé
+    }
+
+    function findSilverVaultUserCount() public view returns (uint256) {
+        uint256 count = 0;
+        for (uint256 i = 0; i < accounts.length; i++) {
+            if (accounts[i].amountEthInSilverVault > 0) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    function findGoldVaultUserCount() public view returns (uint256) {
+        uint256 count = 0;
+        for (uint256 i = 0; i < accounts.length; i++) {
+            if (accounts[i].amountEthInGoldVault > 0) {
+                count++;
+            }
+        }
+        return count;
     }
 
     function isAlreadyUser(address _userAddress) public view returns (bool) {
