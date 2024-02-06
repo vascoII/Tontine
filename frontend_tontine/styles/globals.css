@@ -121,6 +121,13 @@ span.highlighted {
   color: #fff;
 }
 
+span.highlighted-right {
+  background: linear-gradient(#30bddc 0%, #5189e1 100%);
+  border-radius: 5px;
+  color: #fff;
+  margin-left: 30%;
+}
+
 .hero-section-container {
   font-weight: 500;
   line-height: 38px;
@@ -395,7 +402,7 @@ p {
   align-items: center;
   color: #fff;
   width: 75%;
-  background: linear-gradient(#24245d 0 0) padding-box, linear-gradient(to top left, transparent, #30bddc) border-box;
+  background: linear-gradient(#30bddc 0%, #5189e1 100%);
   border-radius: 10px;
   font-weight: 500;
   line-height: 43px;
@@ -431,10 +438,9 @@ p {
 
 .card-container {
   padding: 20px;
-  background-color: #24245d;
+  background: linear-gradient(#30bddc 0%, #5189e1 100%);
   color: #fff;
   border-radius: 10px;
-  background: linear-gradient(#24245d 0 0) padding-box, linear-gradient(to top left, transparent, #30bddc) border-box;
   background-origin: border-box;
   background-clip: padding-box, border-box;
   border: double 1px transparent;
@@ -623,7 +629,7 @@ p {
 .footer-container {
   width: 100%;
   display: flex;
-  background-color: #131330;
+  background: linear-gradient(#30bddc 0%, #5189e1 100%);
 }
 
 @media only screen and (max-width: 768px) {
@@ -653,4 +659,19 @@ p {
 
 .hamburger path {
   fill: white;
+}
+
+
+.toggle-container {
+  border: 1px solid #507cbe;
+  border-radius: 20px;
+}
+
+.toggle-option {
+  flex: 1;
+  text-align: center;
+  border-radius: '20px';
+  padding: '8px 16px';
+  cursor: 'pointer';
+  transition: 'background-color 0.3s, color 0.3s';
 }
