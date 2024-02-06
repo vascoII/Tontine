@@ -11,12 +11,21 @@ import {
 
 import {
   buyTineService,
-  lockTineService, unlockTineService,
-  sellTineService, getTineLockedDateService,
-  getUserTineBalanceService
+  lockTineService,
+  unlockTineService,
+  sellTineService
 } from "@/services/contracts/users/tineServices";
 
+import { useUser } from "@/context/UserContext";
+
 const TokenTineStack = ({ isConnected, userAddress }) => {
+  const { isUser,
+    tineUserBalance,
+    setTineUserBalance,
+    userTineLockedDate,
+    setTineLockedDate
+  } = useUser(); 
+  
   const [clientIsConnected, setClientIsConnected] = useState(false);
 
   const router = useRouter();
@@ -29,8 +38,6 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
  
   const [tineAmountToBuy, setTineAmountToBuy] = useState(1);
   const [tineAmountToSell, setTineAmountToSell] = useState(0);
-  const [tineUserBalance, setTineUserBalance] = useState(0);
-  const [userTineLockedDate, setTineLockedDate] = useState('');
 
   const toast = useToast();
 
@@ -122,7 +129,7 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
           duration: 3000,
           isClosable: true,
         });
-      } else {alert(err.message)
+      } else {
         toast({
           title: "Error!",
           description: "An error occured.",
@@ -232,54 +239,6 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
     }
   };
 
-  /** USER BALANCE HANDLER */
-  const handleUserTineBalance = async () => {
-    try {
-      const userBalance = await getUserTineBalanceService(userAddress);
-      setTineUserBalance(userBalance.toString() / (10 ** 18));
-    } catch (err) {
-      console.log(err.message)
-      toast({
-        title: "Error!",
-        description: "An error occured when trying to have your Tine balance.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  /** USER LOCK PERIOD HANDLER */
-  const handleUserLockTime = async () => {
-    try {
-      const tineLockedDate = await getTineLockedDateService(userAddress);
-      if (tineLockedDate > 0) {
-        // Convertir le timestamp Solidity (en secondes) en millisecondes pour JavaScript
-        const date = new Date(Number(tineLockedDate) * 1000);
-        const formattedDate = date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
-        setTineLockedDate(formattedDate);
-      }
-    } catch (err) {
-      console.log(err.message)
-      toast({
-        title: "Error!",
-        description: "An error occured when trying to have your lock time starting date.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  useEffect(() => {
-    if(isConnected) {
-      handleUserTineBalance();
-      handleUserLockTime();
-    }
-  }, [isConnected, userAddress])
-  
-
   return (
     <>
       <Text className="hero-info-description" fontSize='1.5rem' marginTop='50px'>
@@ -297,12 +256,12 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
           <Box className="card-container">
             <img src='./assets/profit1.svg' alt="Balance" />
             <Heading>Your current Tine balance</Heading>
-            <Text fontSize="xl" className="metric-value" color='#ffff' textAlign='right'>{ tineUserBalance } TINE</Text>
+            <Text fontSize="xl" className="metric-value" color='#ffff' textAlign='right'>{ tineUserBalance.toString() } TINE</Text>
           </Box>
           <Box className="card-container">
             <img src='./assets/insurance1.svg' alt="Lock" />
             <Heading>Lock Date started</Heading>
-            <Text fontSize="xl" className="metric-value" color='#ffff' textAlign='right'>{ userTineLockedDate }</Text>
+            <Text fontSize="xl" className="metric-value" color='#ffff' textAlign='right'>{ userTineLockedDate.toString() }</Text>
           </Box>
         </Flex>
       ) : (
