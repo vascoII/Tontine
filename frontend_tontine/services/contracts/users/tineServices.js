@@ -144,7 +144,6 @@ export const unlockTineService = async () => {
     // Gérer la réponse de la transaction ici si nécessaire
     return true;
   } catch (err) {
-    alert(err.message);
     throw err;
   }
 };

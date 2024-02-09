@@ -41,3 +41,67 @@ export const isAlreadyUser = async (userAddress) => {
     throw err; // Relancer l'erreur pour la gestion dans le composant
   }
 };
+
+// Contract SilverVaultDepositsByUser
+export const getSilverVaultDepositsByUser = async (userAddress) => {
+  try {
+    const silverVaultDeposits = await readContract({
+      address: contractAddressTontine,
+      abi: abiTontine,
+      functionName: "getSilverVaultDepositsForUser",
+      args: [userAddress],
+    });
+    return silverVaultDeposits;
+  } catch (err) {
+    console.error(err.message);
+    throw err; // Relancer l'erreur pour la gestion dans le composant
+  }
+};
+
+// Contract SilverVaultWithdrawsByUser
+export const getSilverVaultWithdrawsByUser = async (userAddress) => {
+  try {
+    const silverVaultWithdraws = await readContract({
+      address: contractAddressTontine,
+      abi: abiTontine,
+      functionName: "getSilverVaultWithdrawsForUser",
+      args: [userAddress],
+    });
+    return silverVaultWithdraws;
+  } catch (err) {
+    console.error(err.message);
+    throw err; // Relancer l'erreur pour la gestion dans le composant
+  }
+};
+
+// Contract GoldVaultDepositsByUser
+export const getGoldVaultDepositsByUser = async (userAddress) => {
+  try {
+    const goldVaultDeposits = await readContract({
+      address: contractAddressTontine,
+      abi: abiTontine,
+      functionName: "getGoldVaultDepositsForUser",
+      args: [userAddress],
+    });
+    return goldVaultDeposits;
+  } catch (err) {
+    console.error(err.message);
+    throw err; // Relancer l'erreur pour la gestion dans le composant
+  }
+};
+
+// Contract GoldVaultWithdrawsByUser
+export const getGoldVaultWithdrawsByUser = async (userAddress) => {
+  try {
+    const goldVaultWithdraws = await readContract({
+      address: contractAddressTontine,
+      abi: abiTontine,
+      functionName: "getGoldVaultWithdrawsForUser",
+      args: [userAddress],
+    });
+    return goldVaultWithdraws;
+  } catch (err) {
+    console.error(err.message);
+    throw err; // Relancer l'erreur pour la gestion dans le composant
+  }
+};
