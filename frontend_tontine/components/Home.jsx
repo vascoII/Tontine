@@ -4,7 +4,10 @@ import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Heading
 } from "@chakra-ui/react";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import CoingeckoServiceMock from "../services/api/EtherscanAPI"
+
+//External API
+import etherscanAPI from "@/services/api/EtherscanAPI";
+
 // WAGMI
 import { useAccount } from "wagmi";
 
@@ -12,9 +15,9 @@ const Home = () => {
   // Reprendre les infos du wallet connecté
   const { isConnected } = useAccount();
 
-  const tontineChains = CoingeckoServiceMock.getTontineChains();
-  const tontineTokenStake = CoingeckoServiceMock.getTontineTokenStake();
-  const placeHolder = "Stake " + tontineTokenStake +  "+ tokens on " + tontineChains;
+  const tontineChains = etherscanAPI.getTontineChains();
+  const tontineTokenStake = etherscanAPI.getTontineTokenStake();
+  const placeHolder = "Stake " + tontineTokenStake + "+ tokens on " + tontineChains;
 
   const { isOpen: isDisclaimerOpen, onOpen: onDisclaimerOpen, onClose: onDisclaimerClose } = useDisclosure();
 

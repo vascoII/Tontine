@@ -12,6 +12,8 @@ import { useTine } from "@/context/TineContext";
 const DailyStats = () => {
   const { silverVaultData,
     goldVaultData,
+    rpSimpleAPR,
+    rpNodeAPR
   } = useTontine();
 
   const { smartContractEthBalance } = useTine();
@@ -29,9 +31,9 @@ const DailyStats = () => {
     async function fetchPrices() {
       try {
         const tontinePrice = await getTokenCurrentPrice('TINE', 'USD');
-        const ethPrice = await getTokenCurrentPrice('ETH', 'USD');
-        
         setTontineCurrentPrice(Math.round(tontinePrice));
+
+        const ethPrice = await getTokenCurrentPrice('ETH', 'USD');
         setEthCurrentPrice(Math.round(ethPrice));
       } catch (err) {console.log(err.message)
         toast({
@@ -80,11 +82,11 @@ const DailyStats = () => {
       </Box>
       <Box className="metric-container" textAlign="center" m={2}>
         <Text fontSize="lg" fontWeight="bold" className="metric-title">Current Silver Vault APR</Text>
-        <Text fontSize="xl" className="metric-value" color='#ffff'>{silverVaultData.apr }%</Text>
+        <Text fontSize="xl" className="metric-value" color='#ffff'>{ rpSimpleAPR }%</Text>
       </Box>
       <Box className="metric-container" textAlign="center" m={2}>
         <Text fontSize="lg" fontWeight="bold" className="metric-title">Current Gold Vault APR</Text>
-        <Text fontSize="xl" className="metric-value" color='#ffff'>{goldVaultData.apr }%</Text>
+        <Text fontSize="xl" className="metric-value" color='#ffff'>{ rpNodeAPR }%</Text>
       </Box>
     </Flex>
   );

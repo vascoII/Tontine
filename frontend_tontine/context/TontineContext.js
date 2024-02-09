@@ -11,6 +11,11 @@ import {
   getGoldVaultDataService,
 } from "@/services/contracts/public/tontineServices";
 
+import {
+  getSimpleStakeAPR,
+  getNodeStakeAPR,
+} from "@/services/api/RocketPoolAPI";
+
 export const TontineProvider = ({ children }) => {
   const [silverVaultData, setSilverVaultData] = useState({
     ethLocked: 0,
@@ -23,6 +28,9 @@ export const TontineProvider = ({ children }) => {
     apr: 0,
     activeUsers: 0,
   });
+
+  const [rpSimpleAPR, setRpSimpleAPR] = useState(0);
+  const [rpNodeAPR, setRpNodeAPR] = useState(0);
 
   /** VAULT  *****/
   const fetchVaultData = async () => {
@@ -50,10 +58,30 @@ export const TontineProvider = ({ children }) => {
     }
   };
 
+  /** VAULT  *****/
+  const fetchAprData = async () => {
+    try {
+      const simpleAPR = await getSimpleStakeAPR();
+      setRpSimpleAPR(simpleAPR);
+
+      const nodeAPR = await getNodeStakeAPR();
+      setRpNodeAPR(nodeAPR);
+    } catch (err) {
+      toast({
+        title: "Error!",
+        description: "An error occured when trying to fetch APR.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
   const toast = useToast();
 
   useEffect(() => {
     fetchVaultData();
+    fetchAprData();
   }, []);
 
   return (
@@ -63,6 +91,8 @@ export const TontineProvider = ({ children }) => {
         setSilverVaultData,
         goldVaultData,
         setGoldVaultData,
+        rpSimpleAPR,
+        rpNodeAPR,
       }}
     >
       {children}

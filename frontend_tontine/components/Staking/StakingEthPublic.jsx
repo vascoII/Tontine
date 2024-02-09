@@ -23,6 +23,8 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
   
   const { silverVaultData,
     goldVaultData,
+    rpSimpleAPR,
+    rpNodeAPR
   } = useTontine();
   
   const { smartContractMinLockAmount,
@@ -114,15 +116,15 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
         <Box className="card-container" width="100%">
           <img src='./assets/profit1.svg' alt="Balance" />
           <Heading>Silver Vault</Heading>
-          <Text textAlign='right'>Eth lock: {silverVaultData.ethLocked.toString() }</Text>
-          <Text textAlign='right'>Current APR: {silverVaultData.apr }%</Text>
-          <Text textAlign='right'>Actif Users: {silverVaultData.activeUsers.toString() }</Text>
+          <Text textAlign='right'>Eth lock: { silverVaultData.ethLocked.toString() }</Text>
+          <Text textAlign='right'>Current APR: { rpSimpleAPR }%</Text>
+          <Text textAlign='right'>Actif Users: { silverVaultData.activeUsers.toString() }</Text>
         </Box>
         <Box className="card-container" width="100%">
           <img src='./assets/profit1.svg' alt="Balance" />
           <Heading>Gold Vault</Heading>
           <Text textAlign='right'>Eth lock: { goldVaultData.ethLocked.toString() / 10 ** 18}</Text>
-          <Text textAlign='right'>Current APR: { goldVaultData.apr }%</Text>
+          <Text textAlign='right'>Current APR: { rpNodeAPR }%</Text>
           <Text textAlign='right'>Actif Users: { goldVaultData.activeUsers.toString() }</Text>
         </Box>
       </Flex>
@@ -165,17 +167,32 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
             <ModalCloseButton />
             <ModalBody>
               <FormControl>
-                <FormLabel htmlFor='amount'>Amount</FormLabel>
+                <FormLabel htmlFor='amount'>Stake ETH</FormLabel>
                 <Input
                   id='amount'
                   type='number'
                   value={ethSilverAmount}
                   onChange={(e) => setEthSilverAmount(e.target.value)}
                   style={{
-                    borderColor: 'rgba(255, 255, 255, 0.16)', // Adjust as needed
+                    borderColor: 'rgba(255, 255, 255, 0.16)',
                   }}
                 />
               </FormControl>
+              <FormControl mt={4}>
+                <FormLabel htmlFor='readonly-amount'>Receive ttEth</FormLabel>
+                <Input
+                  id='readonly-amount'
+                  type='number'
+                  value={ethSilverAmount}
+                  isReadOnly
+                  style={{
+                    borderColor: 'rgba(255, 255, 255, 0.16)',
+                  }}
+                />
+              </FormControl>
+              <Text mt={4} fontSize="lg">
+                Current APR: {rpNodeAPR}%
+              </Text>
             </ModalBody>
             <ModalFooter>
               <Button
@@ -207,11 +224,11 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
                 'linear-gradient(#131330 0 0) padding-box, linear-gradient(to top left, transparent, #30bddc) border-box',
             }}
           >
-            <ModalHeader>Stake Eth on Silver Vault</ModalHeader>
+            <ModalHeader>Stake Eth on Gold Vault</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <FormControl>
-                <FormLabel htmlFor='amount'>Amount</FormLabel>
+                <FormLabel htmlFor='amount'>Stake ETH</FormLabel>
                 <Input
                   id='amount'
                   type='number'
@@ -222,6 +239,21 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
                   }}
                 />
               </FormControl>
+              <FormControl mt={4}>
+                <FormLabel htmlFor='readonly-amount'>Receive ttEth</FormLabel>
+                <Input
+                  id='readonly-amount'
+                  type='number'
+                  value={ethGoldAmount}
+                  isReadOnly
+                  style={{
+                    borderColor: 'rgba(255, 255, 255, 0.16)',
+                  }}
+                />
+              </FormControl>
+              <Text mt={4} fontSize="lg">
+                Current APR: {rpNodeAPR}%
+              </Text>
             </ModalBody>
             <ModalFooter>
               <Button
