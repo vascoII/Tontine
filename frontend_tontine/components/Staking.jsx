@@ -29,7 +29,7 @@ const Staking = ({ isConnected, userAddress }) => {
           >
             Public Vaults
           </Button>
-          <Button
+          {isUser && <Button
             className="toggle-option"
             bg={!showPublic ? "blue.500" : "transparent"}
             color={!showPublic ? "white" : "blue.500"}
@@ -37,7 +37,7 @@ const Staking = ({ isConnected, userAddress }) => {
           >
             Your deposits
           </Button>
-          
+          }
           {showPublic ? (
             <StakingEthPublic isConnected={isConnected} userAddress={userAddress}/>
           ) : (

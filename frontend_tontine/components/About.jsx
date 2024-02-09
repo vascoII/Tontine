@@ -22,7 +22,7 @@ const About = ({ isConnected, userAddress }) => {
           <Flex className="search-container" align="center" />
           
           <Text className="hero-info-description" fontSize='1.5rem' marginBottom='10px' marginTop='50px'>
-            The <span className="highlighted" color='#ffff'><Link href='/staking/silver'>SilverVault</Link></span> in Tontine offers the simplest and most straightforward staking option. 
+            The <span className="highlighted" color='#ffff'><Link href='/staking'>SilverVault</Link></span> in Tontine offers the simplest and most straightforward staking option. 
           </Text>
           <Text className="hero-info-description" fontSize='1.5rem' marginBottom='10px'>
             Participants can stake any amount of ETH they choose, with the flexibility to withdraw their assets at any time. 

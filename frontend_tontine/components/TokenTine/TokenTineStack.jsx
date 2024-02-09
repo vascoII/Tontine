@@ -9,6 +9,8 @@ import {
   FormLabel, Input, useToast, Heading
 } from "@chakra-ui/react";
 
+import UnconnectedWallet from "@/components/UnconnectedWallet";
+
 import {
   buyTineService,
   lockTineService,
@@ -17,6 +19,7 @@ import {
 } from "@/services/contracts/users/tineServices";
 
 import { useUser } from "@/context/UserContext";
+import { useTine } from "@/context/TineContext";
 
 const TokenTineStack = ({ isConnected, userAddress }) => {
   const { isUser,
@@ -25,6 +28,10 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
     userTineLockedDate,
     setTineLockedDate
   } = useUser(); 
+
+  const { smartContractMinLockAmount,
+    smartContractMinLockTime,
+  } = useTine();
   
   const [clientIsConnected, setClientIsConnected] = useState(false);
 
@@ -51,8 +58,10 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
   useEffect(() => {
     if (modal === 'buy' && clientIsConnected) {
       onBuyOpen();
+    } else if (modal === 'lock' && clientIsConnected) {
+      onLockOpen();
     }
-  }, [modal, onBuyOpen]);
+  }, [modal, onBuyOpen, onLockOpen]);
   
   /** BUYING TINE HANDLER */
   const handleBuyTine = async (tineAmountToBuy) => {
@@ -60,7 +69,7 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
       const success = await buyTineService(tineAmountToBuy);
       if (success) {
         onBuyClose();
-        handleUserTineBalance();
+        setTineUserBalance(tineUserBalance + tineAmountToBuy);
         toast({
           title: "Congratulations!",
           description: `You have successfully bought Tine`,
@@ -95,7 +104,7 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
       const success = await sellTineService(tineAmountToSell);
       if (success) {
         onSellClose();
-        handleUserTineBalance();
+        setTineUserBalance(tineUserBalance - tineAmountToSell);
         toast({
           title: "Congratulations!",
           description: `You have successfully sell Tine`,
@@ -147,7 +156,15 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
       const success = await lockTineService();
       if (success) {
         onLockClose();
-        handleUserLockTime();
+        const date = new Date();
+        const formattedDate = date.toLocaleDateString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+        setTineLockedDate(formattedDate);
+
         toast({
           title: "Congratulations!",
           description: `You have successfully lock your Tine`,
@@ -165,7 +182,6 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
         });
       }
     } catch (err) {
-      console.log(err.message)
       if (err.message.includes("TINE already locked")) {
         toast({
           title: "Congratulations!",
@@ -210,7 +226,6 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
         });
       }
     } catch (err) {
-      console.log(err.message)
       if (err.message.includes("No TINE locked")) {
         toast({
           title: "Error!",
@@ -219,7 +234,7 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
           duration: 3000,
           isClosable: true,
         });
-      } else if (err.message.includes("TINE still locked")) {
+      } else if (err.message.includes("Error_unlockTine_not_over_yet")) {
         toast({
           title: "Error!",
           description: "Lock time is not over yet.",
@@ -242,7 +257,7 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
   return (
     <>
       <Text className="hero-info-description" fontSize='1.5rem' marginTop='50px'>
-        To access the GoldVault, participants are required to purchase a minimum of one Tine
+        To access the GoldVault, participants are required to purchase a minimum of <span className="highlighted">{smartContractMinLockAmount.toString() / 10 ** 18} Tine</span>
       </Text>
       <Text className="hero-info-description" fontSize='1.5rem' marginTop='10px'>
         By locking in your Tine, you unlock higher yield rates,
@@ -265,13 +280,7 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
           </Box>
         </Flex>
       ) : (
-        <Flex className='features-list-container' width='100%' justifyContent="center" alignItems="center" marginTop='20px'>
-          <Box className="card-container">
-            <img src='./assets/profit1.svg' alt="Balance" />
-            <Heading>Connect your wallet and start your journey with Tontine</Heading>
-            <Text fontSize="xl" className="metric-value" color='#ffff' textAlign='right'></Text>
-          </Box>
-        </Flex>
+        <UnconnectedWallet/>
       )}
       
       {clientIsConnected &&

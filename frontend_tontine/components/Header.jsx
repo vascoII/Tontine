@@ -27,7 +27,7 @@ const Header = () => {
         {isOwner && <Link lineHeight='38px' fontWeight='600' fontSize='1.125rem' color='#ffff' margin='12px' href='/admin'>Admin</Link>}
       </Flex>
       <Box className="wallet-btn">
-        <ConnectButton label="Connect Wallet"/>
+        <ConnectButton/>
       </Box>
     </Flex>
   );

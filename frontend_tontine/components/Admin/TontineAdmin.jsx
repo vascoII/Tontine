@@ -12,7 +12,7 @@ const TontineAdmin = ({ isConnected, userAddress }) => {
         className="card-container"
         p={4}
         w="full" 
-        maxW="90%" 
+        maxW="95%" 
         h="auto" 
         my={5} // Utilisez my pour la marge verticale
         mx="auto" // Utilisez mx pour la marge horizontale

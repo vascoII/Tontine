@@ -11,6 +11,8 @@ import { useUser } from "@/context/UserContext";
 import { useTontine } from "@/context/TontineContext";
 import { useTine } from "@/context/TineContext";
 
+import UnconnectedWallet from "@/components/UnconnectedWallet";
+
 const StakingEthPublic = ({ isConnected, userAddress }) => {
   const { isUser,
     tineUserBalance,
@@ -35,6 +37,7 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
   const { isOpen: isGoldOpen, onOpen: onGoldOpen, onClose: onGoldClose } = useDisclosure();
   
   const [isWarningOpen, setWarningOpen] = useState(false);
+  const [warningMessage, setWarningMessage] = useState();
   const [ethSilverAmount, setEthSilverAmount] = useState();
   const [ethGoldAmount, setEthGoldAmount] = useState(); 
   
@@ -51,7 +54,11 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
   const handleGoldButtonClick = () => {
     if (tineUserBalance > 0 && userTineLockedDate !== '') {
       onGoldOpen(); // Ouvre la modal de staking
+    } else if (tineUserBalance > 0 && userTineLockedDate == '') {
+      setWarningMessage(true);
+      setWarningOpen(true); // Ouvre la modal d'avertissement
     } else {
+      setWarningMessage(false);
       setWarningOpen(true); // Ouvre la modal d'avertissement
     }
   };
@@ -114,13 +121,13 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
         <Box className="card-container" width="100%">
           <img src='./assets/profit1.svg' alt="Balance" />
           <Heading>Gold Vault</Heading>
-          <Text textAlign='right'>Eth lock: { goldVaultData.ethLocked.toString() }</Text>
+          <Text textAlign='right'>Eth lock: { goldVaultData.ethLocked.toString() / 10 ** 18}</Text>
           <Text textAlign='right'>Current APR: { goldVaultData.apr }%</Text>
           <Text textAlign='right'>Actif Users: { goldVaultData.activeUsers.toString() }</Text>
         </Box>
       </Flex>
       
-      {clientIsConnected &&
+      {clientIsConnected ? (
         <Flex className='features-list-container' width='100%' justifyContent="space-between" alignItems="center" marginTop='50px'>
           {/* Exemple de carte pour l'achat */}
           <Box className="card-container" onClick={onSilverOpen} width="100%" textAlign="center">
@@ -133,7 +140,9 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
             <Text>Stake Eth on Gold Vault</Text>
           </Box>
         </Flex>
-      }
+      ): (
+        <UnconnectedWallet/>  
+      )}
 
       <Box>
         {/* Modal pour stake on silver vault */}
@@ -247,10 +256,12 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
             <ModalHeader>You cannot stake on Gold Vault yet.</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <Text>You need to buy at least {smartContractMinLockAmount.toString() / 10 ** 18} Tine and lock {smartContractMinLockAmount.toString() / 10 ** 18 == 1 ? 'it' : 'them'} to stake.</Text>
+              {warningMessage && <Text>Contratulations! You already have {tineUserBalance} Tine but you need to lock {tineUserBalance == 1 ? 'it' : 'them'} to stake.</Text>}
+              {!warningMessage && <Text>You need to buy at least {smartContractMinLockAmount.toString() / 10 ** 18} Tine and lock {smartContractMinLockAmount.toString() / 10 ** 18 == 1 ? 'it' : 'them'} to stake.</Text>}
             </ModalBody>
             <ModalFooter>
-              <Button colorScheme="blue" onClick={() => window.location.href = "/tokentine?modal=buy"}>Go to Tine purchase</Button>
+              {warningMessage && <Button colorScheme="blue" onClick={() => window.location.href = "/tokentine?modal=lock"}>Go to Tine lock</Button>}
+              {!warningMessage && <Button colorScheme="blue" onClick={() => window.location.href = "/tokentine?modal=buy"}>Go to Tine purchase</Button>}
             </ModalFooter>
           </ModalContent>
         </Modal>

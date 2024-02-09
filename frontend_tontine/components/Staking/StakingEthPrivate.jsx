@@ -1,33 +1,33 @@
 import React, { useState, useEffect } from 'react';
 
 import {
-  Flex, Box, Text, useDisclosure, Button,
-  Modal, ModalOverlay, ModalContent, ModalHeader,
-  ModalFooter, ModalBody, ModalCloseButton, FormControl,
-  FormLabel, Input, useToast, Heading
+  Flex, Box, Text, useToast, Heading, Table, Thead, Tbody, Tr, Th, Td
 } from "@chakra-ui/react";
 
-import { useUser } from "@/context/UserContext";
-
 import {
-  buyTineService,
-  lockTineService, unlockTineService,
-  sellTineService, getTineLockedDateService,
-  getUserTineBalanceService
-} from "@/services/contracts/users/tineServices";
+  getSilverVaultDepositsByUser,
+  getSilverVaultWithdrawsByUser,
+  getGoldVaultDepositsByUser,
+  getGoldVaultWithdrawsByUser
+} from "@/services/contracts/users/tontineServices";
 
-const StakingEthPrivate = ({ isConnected, userAddress }) => {
-  const { isUser } = useUser();
-  
+const StakingEthPrivate = ({ isConnected, userAddress }) => {  
   const [clientIsConnected, setClientIsConnected] = useState(false);
+  const [silverVaultOperation, setSilverVaultOperation] = useState([]);
+  const [goldVaultOperation, setGoldVaultOperation] = useState([]); 
+  const [silverBalance, setSilverBalance] = useState(0);
+  const [goldBalance, setGoldBalance] = useState(0); 
 
-  const { isOpen: isSilverOpen, onOpen: onSilverOpen, onClose: onSilverClose } = useDisclosure();
-  const { isOpen: isGoldOpen, onOpen: onGoldOpen, onClose: onGoldClose } = useDisclosure();
- 
-  const [ethSilverAmount, setEthSilverAmount] = useState();
-  const [ethGoldAmount, setEthGoldAmount] = useState(); 
-  const [tineUserBalance, setTineUserBalance] = useState(0);
-  const [userTineLockedDate, setTineLockedDate] = useState('');
+  const toast = useToast();
+
+  // Fonction pour formater une date en YYYY-mm-dd
+  const formatDate = (timestamp) => {
+    const date = new Date(Number(timestamp) * 1000); // Convertir le timestamp en millisecondes
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Ajouter un 0 devant si le mois est < 10
+    const day = String(date.getDate()).padStart(2, '0'); // Ajouter un 0 devant si le jour est < 10
+    return `${year}-${month}-${day}`;
+  };
 
   //Way to manage SSR Problems
   useEffect(() => {
@@ -37,145 +37,177 @@ const StakingEthPrivate = ({ isConnected, userAddress }) => {
   }, [isConnected]); 
 
   useEffect(() => {
-    if(isConnected) {
-      //handleUserSilverVaultData();
-      //handleUserGoldVaultData();
+    if (isConnected) {
+      fetchUserSilverVaultData();
+      fetchUserGoldVaultData();
     }
-  }, [isConnected, userAddress])
+  }, [isConnected, userAddress]);
+
+  const fetchUserSilverVaultData = async () => {
+    try {
+      const userSilverDeposits = await getSilverVaultDepositsByUser(userAddress); 
+      const userSilverWithdraws = await getSilverVaultWithdrawsByUser(userAddress); 
+      // Fusionner les dépôts et les retraits en ajoutant une indication de la nature de chaque transaction
+      const allSilverTransactions = [];
+      let balance = 0;
+      userSilverDeposits.forEach(deposit => {
+        allSilverTransactions.push({
+            date: deposit.timeDeposited,
+            deposits: deposit.amount,
+            withdraws: 0, // Il s'agit d'un dépôt, donc le montant de retrait est de 0
+        });
+        // Calcul du solde  
+        balance += Number(deposit.amount);
+      });
+      userSilverWithdraws.forEach(withdraw => {
+        allSilverTransactions.push({
+            date: withdraw.timeDeposited,
+            deposits: 0, // Il s'agit d'un retrait, donc le montant de dépôt est de 0
+            withdraws: withdraw.amount,
+        });
+        // Calcul du solde
+        balance -= Number(withdraw.amount);
+      });
+      // Triez la liste par date
+      const sortedSilverTransactions = allSilverTransactions.sort((a, b) => a.date - b.date);
+      //Set Balance
+      setSilverBalance(balance);
+      //Set operations
+      setSilverVaultOperation(sortedSilverTransactions);
+    } catch (err) {
+      console.log(err.message);
+      toast({
+          title: "Error!",
+          description: "An error occured on fetching silver vault operation.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+    }
+  };
+
+  const fetchUserGoldVaultData = async () => {
+    try {
+      const userGoldDeposits = await getGoldVaultDepositsByUser(userAddress); 
+      const userGoldWithdraws = await getGoldVaultWithdrawsByUser(userAddress); 
+      // Fusionner les dépôts et les retraits en ajoutant une indication de la nature de chaque transaction
+      const allGoldTransactions = [];
+      let balance = 0;
+      userGoldDeposits.forEach(deposit => {
+        allGoldTransactions.push({
+            date: deposit.timeDeposited,
+            deposits: deposit.amount,
+            withdraws: null, // Il s'agit d'un dépôt, donc le montant de retrait est de 0
+        });
+        // Calcul du solde  
+        balance += Number(deposit.amount);
+      });
+      userGoldWithdraws.forEach(withdraw => {
+        allGoldTransactions.push({
+            date: withdraw.timeDeposited,
+            deposits: null, // Il s'agit d'un retrait, donc le montant de dépôt est de 0
+            withdraws: withdraw.amount,
+        });
+        // Calcul du solde
+        balance -= Number(withdraw.amount);
+      });
+      // Triez la liste par date
+      const sortedGoldTransactions = allGoldTransactions.sort((a, b) => a.date - b.date);
+      //Set Balance
+      setGoldBalance(balance);
+      //Set operations
+      setGoldVaultOperation(sortedGoldTransactions);
+    } catch (err) {
+      toast({
+          title: "Error!",
+          description: "An error occured on fetching gold vault operation.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+    }
+  };
   
 
   return (
     <>
       <Flex className='features-list-container' width='100%' justifyContent="center" alignItems="center" marginTop='20px'>
-        <Box className="card-container" width="100%">
-          <img src='./assets/profit1.svg' alt="Balance" />
-          <Heading>Silver Vault</Heading>
-          <Text textAlign='right'>Eth lock: </Text>
-          <Text textAlign='right'>Current APR: </Text>
-          <Text textAlign='right'>Actif User</Text>
-          <Text textAlign='right'>Yield made until today: </Text>
-        </Box>
-        <Box className="card-container" width="100%">
-          <img src='./assets/profit1.svg' alt="Balance" />
-          <Heading>Gold Vault</Heading>
-          <Text textAlign='right'>Eth lock: </Text>
-          <Text textAlign='right'>Current APR: </Text>
-          <Text textAlign='right'>Actif User</Text>
-          <Text textAlign='right'>Yield made until today: </Text>
-        </Box>
+        {clientIsConnected && 
+          <>
+            <Box className="card-container" width="100%">
+              <img src='./assets/profit1.svg' alt="Balance" />
+              <Heading>Silver Vault</Heading>
+              <Table>
+                <Thead>
+                  <Tr>
+                    <Th textAlign="center">Date</Th>
+                    <Th textAlign="right">Deposits</Th>
+                    <Th textAlign="right">Withdraws</Th>
+                    <Th textAlign="right">Balance</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {silverVaultOperation.map(transaction => (
+                    <Tr key={transaction.date}>
+                      <Th textAlign="center">{formatDate(transaction.date)}</Th>
+                      <Th textAlign="right">
+                        {transaction.deposits !== null ? (transaction.deposits.toString() / 10 ** 18) : ""}
+                      </Th>
+                      <Th textAlign="right">
+                        {transaction.withdraws !== null ? (transaction.withdraws.toString() / 10 ** 18) : ""}
+                      </Th>
+                      <Th/>
+                    </Tr>
+                  ))}
+                  <Tr>
+                    <Th/>
+                    <Th/>
+                    <Th/>
+                    <Th textAlign="right">{silverBalance.toString() / 10 ** 18} Eth</Th>
+                  </Tr>
+                </Tbody>
+              </Table>
+            </Box>
+            <Box className="card-container" width="100%">
+              <img src='./assets/profit1.svg' alt="Balance" />
+              <Heading>Gold Vault</Heading>
+              <Table>
+                <Thead>
+                  <Tr>
+                    <Th textAlign="center">Date</Th>
+                    <Th textAlign="right">Deposits</Th>
+                    <Th textAlign="right">Withdraws</Th>
+                    <Th textAlign="right">Balance</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {goldVaultOperation.map(transaction => (
+                    <Tr key={transaction.date}>
+                      <Th textAlign="center">{formatDate(transaction.date)}</Th>
+                      <Th textAlign="right">
+                        {transaction.deposits !== null ? (transaction.deposits.toString() / 10 ** 18) : ""}
+                      </Th>
+                      <Th textAlign="right">
+                        {transaction.withdraws !== null ? (transaction.withdraws.toString() / 10 ** 18) : ""}
+                      </Th>
+                      <Th/>
+                    </Tr>
+                  ))}
+                  <Tr>
+                    <Th/>
+                    <Th/>
+                    <Th/>
+                    <Th textAlign="right">{goldBalance.toString() / 10 ** 18} Eth</Th>
+                  </Tr>
+                </Tbody>
+              </Table>
+            </Box>
+          </>
+        }
       </Flex>
-      
-      {clientIsConnected &&
-        <Flex className='features-list-container' width='100%' justifyContent="space-between" alignItems="center" marginTop='50px'>
-          {/* Exemple de carte pour l'achat */}
-          <Box className="card-container" onClick={onSilverOpen} width="100%" textAlign="center">
-            {/* Vos autres éléments de carte ici */}
-            <Text>Unstake Eth on Silver Vault</Text>
-          </Box>
-          {/* Exemple de carte pour l'achat */}
-          <Box className="card-container" onClick={onGoldOpen} width="100%" textAlign="center">
-            {/* Vos autres éléments de carte ici */}
-            <Text>Unstake Eth on Gold Vault</Text>
-          </Box>
-        </Flex>
-      }
-
-      <Box>
-        {/* Modal pour unstake on silver vault */}
-        <Modal isOpen={isSilverOpen} onClose={onSilverClose}>
-          <ModalOverlay />
-          <ModalContent
-            style={{
-              padding: '20px',
-              backgroundColor: '#131330',
-              color: '#fff',
-              borderRadius: '10px',
-              border: 'double 1px transparent',
-              backgroundClip: 'padding-box, border-box',
-              backgroundOrigin: 'border-box',
-              backgroundImage:
-                'linear-gradient(#131330 0 0) padding-box, linear-gradient(to top left, transparent, #30bddc) border-box',
-            }}
-          >
-            <ModalHeader>Unstake Eth on Silver Vault</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <FormControl>
-                <FormLabel htmlFor='amount'>Amount</FormLabel>
-                <Input
-                  id='amount'
-                  type='number'
-                  value={ethSilverAmount}
-                  onChange={(e) => setEthSilverAmount(e.target.value)}
-                  style={{
-                    borderColor: 'rgba(255, 255, 255, 0.16)', // Adjust as needed
-                  }}
-                />
-              </FormControl>
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                colorScheme="blue"
-                mr={3}
-                onClick={() => {
-                  handleUnStakeOnSilverVault(ethSilverAmount);
-                  onSilverClose();
-                }}
-              >
-                Unstake
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-        {/* Modal pour stake on silver vault */}
-        <Modal isOpen={isGoldOpen} onClose={onGoldClose}>
-          <ModalOverlay />
-          <ModalContent
-            style={{
-              padding: '20px',
-              backgroundColor: '#131330',
-              color: '#fff',
-              borderRadius: '10px',
-              border: 'double 1px transparent',
-              backgroundClip: 'padding-box, border-box',
-              backgroundOrigin: 'border-box',
-              backgroundImage:
-                'linear-gradient(#131330 0 0) padding-box, linear-gradient(to top left, transparent, #30bddc) border-box',
-            }}
-          >
-            <ModalHeader>Unstake Eth on Silver Vault</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <FormControl>
-                <FormLabel htmlFor='amount'>Amount</FormLabel>
-                <Input
-                  id='amount'
-                  type='number'
-                  value={ethGoldAmount}
-                  onChange={(e) => setEthGoldAmount(e.target.value)}
-                  style={{
-                    borderColor: 'rgba(255, 255, 255, 0.16)', // Adjust as needed
-                  }}
-                />
-              </FormControl>
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                colorScheme="blue"
-                mr={3}
-                onClick={() => {
-                  handleUnStakeOnGoldVault(ethGoldAmount);
-                  onGoldClose();
-                }}
-              >
-                Unstake
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      </Box>
     </>
   );
+
 };
 
 export default StakingEthPrivate;

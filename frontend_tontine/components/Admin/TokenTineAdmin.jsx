@@ -201,7 +201,7 @@ const TokenTineAdmin = ({ isConnected, userAddress }) => {
           className="card-container"
           p={4}
           w="full" 
-          maxW="90%" 
+          maxW="95%" 
           h="auto" 
           my={5} 
           mx="auto"
@@ -256,7 +256,7 @@ const TokenTineAdmin = ({ isConnected, userAddress }) => {
               </Box>
               <Box className="card-container">
               <img src='./assets/profit1.svg' alt="Balance" />
-                <Heading>Current Lock Amnt</Heading>
+                <Heading>Current Min Lock</Heading>
                 <Text fontSize="xl" className="metric-value" color='#ffff' textAlign='right'>{smartContractMinLockAmount.toString() / 10 ** 18} Tine</Text>
               </Box>  
             </Flex>

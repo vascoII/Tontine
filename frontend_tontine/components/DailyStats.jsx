@@ -56,7 +56,7 @@ const DailyStats = () => {
       align="center" 
       p={4}
       w="full" 
-      maxW="90%" 
+      maxW="95%" 
       h="auto" 
       my="auto" 
       mx="auto"
