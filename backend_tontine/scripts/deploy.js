@@ -30,6 +30,19 @@ async function main() {
   );
 
   /*******************************************************/
+  /*****************  ROCKETPOOL MOCK  ********************/
+  /*******************************************************/
+  const RocketPoolMock = await ethers.getContractFactory("RocketTokenRETHMock");
+  let rocketPoolMock = await RocketPoolMock.connect(deployer).deploy();
+  await rocketPoolMock.waitForDeployment();
+  const rocketPoolMockContractAddress = await rocketPoolMock.getAddress();
+
+  console.log(
+    "RocketPoolMock contract deployed to:",
+    rocketPoolMockContractAddress
+  );
+
+  /*******************************************************/
   /**********************  TINE  *************************/
   /*******************************************************/
   const Tine = await ethers.getContractFactory("Tine");
@@ -52,15 +65,15 @@ async function main() {
 
   console.log(`50 ethers send to ${tineSmartContractAddress}`);
 
-  /*******************************************************/
-  /**********************  TTETH  ************************/
-  /*******************************************************/
-  const Tteth = await ethers.getContractFactory("Tteth");
-  let tteth = await Tteth.connect(deployer).deploy();
-  await tteth.waitForDeployment();
-  const ttethSmartContractAddress = await tteth.getAddress();
-
-  console.log("Tteth contract deployed to:", ttethSmartContractAddress);
+  // Lock des Tine du owner pour par la suite lancer le vault Gold
+  // Récupérer l'instance du contrat Tine
+  const tineInstance = await ethers.getContractAt(
+    "Tine",
+    tineSmartContractAddress
+  );
+  // Verrouiller les TINE
+  await tineInstance.lockTine();
+  console.log(`Lock Tine's owner on ${tineSmartContractAddress}`);
 
   /*******************************************************/
   /*********************  TONTINE  ***********************/
@@ -68,17 +81,34 @@ async function main() {
   const Tontine = await ethers.getContractFactory("Tontine");
   let tontine = await Tontine.connect(deployer).deploy(
     tineSmartContractAddress,
-    ttethSmartContractAddress,
-    chainlinkPricesOracleMockSmartContractAddress
+    rocketPoolMockContractAddress
   );
   await tontine.waitForDeployment();
   const tontineSmartContractAddress = await tontine.getAddress();
 
   console.log("Tontine contract deployed to:", tontineSmartContractAddress);
 
-  // Transférez ownership de Tteth au contrat Tontine.sol pour lui permettre de mint, burn et increaseMaxSupply
-  await tteth.connect(deployer).transferOwnership(tontineSmartContractAddress);
-  console.log("Transferred ownership Tteth to Tontine contract");
+  // Ajout de 10 ETH en staking sur un node RocketPool de Tontine par silver
+  const tontineInstance = await ethers.getContractAt(
+    "Tontine",
+    tontineSmartContractAddress
+  );
+  const silverVaultInitialBalance = hre.ethers.parseEther("10.0");
+  await tontineInstance.depositEth(false, {
+    value: silverVaultInitialBalance,
+  });
+  console.log(
+    "The Tontine's Silver Vault has been launched and funded with 10 ETH."
+  );
+
+  // Ajout de 32 ETH en staking sur un node RocketPool de Tontine par gold
+  const goldVaultInitialBalance = hre.ethers.parseEther("32.0");
+  await tontineInstance.depositEth(true, {
+    value: goldVaultInitialBalance,
+  });
+  console.log(
+    "The Tontine's Gold Vault has been launched and funded with 32 ETH."
+  );
 }
 
 main().catch((error) => {

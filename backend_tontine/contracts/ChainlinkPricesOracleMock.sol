@@ -11,12 +11,4 @@ contract ChainlinkPricesOracleMock {
     function getLatestEthPriceInTine() public pure returns (uint256) {
         return 10 ** 18;
     }
-
-    function getLatestTinePriceInUsd() public pure returns (uint256) {
-        return 2500;
-    }
-
-    function getLatestEthPriceInUsd() public pure returns (uint256) {
-        return 2500;
-    }
 }

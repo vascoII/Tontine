@@ -26,21 +26,6 @@ const client = createPublicClient({
   transport: http(),
 });
 
-//AnnualInterestRateTontine
-export const getAnnualInterestRateService = async () => {
-  try {
-    const annualInterestRateTontine = await readContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
-      functionName: "annualInterestRateTontine",
-    });
-    return annualInterestRateTontine;
-  } catch (err) {
-    console.error(err.message);
-    throw err; // Relancer l'erreur pour la gestion dans le composant
-  }
-};
-
 //SilverVaultDataService
 export const getSilverVaultDataService = async () => {
   try {
@@ -50,8 +35,13 @@ export const getSilverVaultDataService = async () => {
       functionName: "silverVaultBalance",
     });
 
-    const annualInterestRateTontine = await getAnnualInterestRateService();
-    const apr = Number(annualInterestRateTontine);
+    const silverVaultExchangeRate = await readContract({
+      address: contractAddressTontine,
+      abi: abiTontine,
+      functionName: "getSilverVaultExchangeRate",
+    });
+
+    const apr = Number(silverVaultExchangeRate) / 100;
 
     const activeUsers = await readContract({
       address: contractAddressTontine,
@@ -74,14 +64,12 @@ export const getGoldVaultDataService = async () => {
       functionName: "goldVaultBalance",
     });
 
-    const annualInterestRateTontine = await getAnnualInterestRateService();
-    const goldVaultMultiplier = await readContract({
+    const goldVaultExchangeRate = await readContract({
       address: contractAddressTontine,
       abi: abiTontine,
-      functionName: "GOLD_VAULT_MULTIPLIER",
+      functionName: "getGoldVaultExchangeRate",
     });
-    const apr =
-      (Number(annualInterestRateTontine) * Number(goldVaultMultiplier)) / 100;
+    const apr = Number(goldVaultExchangeRate) / 100;
 
     const activeUsers = await readContract({
       address: contractAddressTontine,

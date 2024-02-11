@@ -68,7 +68,7 @@ export const fetchMaxSupplyService = async () => {
     const smartContractMaxSupply = await readContract({
       address: contractAddressTine,
       abi: abiTine,
-      functionName: "MAX_SUPPLY",
+      functionName: "maxSupply",
     });
     return smartContractMaxSupply;
   } catch (err) {
@@ -82,7 +82,7 @@ export const fetchMaxBalanceService = async () => {
     const smartContractMaxBalance = await readContract({
       address: contractAddressTine,
       abi: abiTine,
-      functionName: "MAX_BALANCE",
+      functionName: "maxBalance",
     });
     return smartContractMaxBalance;
   } catch (err) {
@@ -110,7 +110,7 @@ export const fetchMinLockTimeService = async () => {
     const smartContractCurrentLockTime = await readContract({
       address: contractAddressTine,
       abi: abiTine,
-      functionName: "MIN_LOCK_TIME",
+      functionName: "minLockTime",
     });
     return smartContractCurrentLockTime;
   } catch (err) {
@@ -124,7 +124,7 @@ export const fetchMinLockAmountService = async () => {
     const smartContractCurrentLockAmount = await readContract({
       address: contractAddressTine,
       abi: abiTine,
-      functionName: "MIN_LOCK_AMOUNT",
+      functionName: "minLockAmount",
     });
     return smartContractCurrentLockAmount;
   } catch (err) {
