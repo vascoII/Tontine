@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
 import {
-  Flex, Box, Text, useToast
+  Flex, Box, Text, useToast, Tooltip
 } from "@chakra-ui/react";
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 
 import { getTokenCurrentPrice } from "@/services/api/EtherscanAPI";
 
@@ -81,12 +82,22 @@ const DailyStats = () => {
         <Text fontSize="xl" className="metric-value" color='#ffff'>{ totalLiquidity.toString() / 10 ** 18 }Eth</Text>
       </Box>
       <Box className="metric-container" textAlign="center" m={2}>
-        <Text fontSize="lg" fontWeight="bold" className="metric-title">Current Silver Vault APR</Text>
-        <Text fontSize="xl" className="metric-value" color='#ffff'>{ rpSimpleAPR }%</Text>
+        <Text fontSize="lg" fontWeight="bold" className="metric-title">
+          Silver Vault Average Return
+          <Tooltip label="APR is calculated using a 7 day average" fontSize="md">
+            <InfoOutlineIcon cursor="pointer" ml={2}/>
+          </Tooltip>
+        </Text>
+        <Text fontSize="xl" className="metric-value" color='#ffff'>{rpSimpleAPR}%</Text>
       </Box>
       <Box className="metric-container" textAlign="center" m={2}>
-        <Text fontSize="lg" fontWeight="bold" className="metric-title">Current Gold Vault APR</Text>
-        <Text fontSize="xl" className="metric-value" color='#ffff'>{ rpNodeAPR }%</Text>
+        <Text fontSize="lg" fontWeight="bold" className="metric-title">
+          Gold Vault Average Return
+          <Tooltip label="APR is calculated using a 7 day average" fontSize="md">
+            <InfoOutlineIcon cursor="pointer" ml={2}/>
+          </Tooltip>
+        </Text>
+        <Text fontSize="xl" className="metric-value" color='#ffff'>{rpNodeAPR}%</Text>
       </Box>
     </Flex>
   );
