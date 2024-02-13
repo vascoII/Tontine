@@ -14,6 +14,7 @@ import { handleStakeOnSilverVault, handleStakeOnGoldVault } from "@/services/int
 
 import UnconnectedWallet from "@/components/UnconnectedWallet";
 import CustomModal from "@/components/common/Modal/CustomModal";
+import ActionButtons from "@/components/common/Buttons/ActionButtons";
 
 const StakingEthPublic = ({ isConnected, userAddress }) => {
   const { isUser,
@@ -90,18 +91,13 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
       </Flex>
       
       {clientIsConnected ? (
-        <Flex className='features-list-container' width='100%' justifyContent="space-between" alignItems="center" marginTop='50px'>
-          {/* Exemple de carte pour l'achat */}
-          <Box className="card-container" onClick={onSilverOpen} width="100%" textAlign="center">
-            {/* Vos autres éléments de carte ici */}
-            <Text>Stake Eth on Silver Vault</Text>
-          </Box>
-          {/* Exemple de carte pour l'achat */}
-          <Box className="card-container" onClick={handleGoldButtonClick} width="100%" textAlign="center">
-            {/* Vos autres éléments de carte ici */}
-            <Text>Stake Eth on Gold Vault</Text>
-          </Box>
-        </Flex>
+        <ActionButtons
+          buttons={[
+            { onClick: onSilverOpen, text: "Stake Eth on Silver Vault" },
+            { onClick: handleGoldButtonClick, text: "Stake Eth on Gold Vault" },
+            // Add more buttons as needed
+          ]}
+        />
       ): (
           <UnconnectedWallet />  
       )}

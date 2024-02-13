@@ -14,6 +14,7 @@ import { handleUnstakeOnSilverVault, handleUnstakeOnGoldVault } from "@/services
 import { fetchUserSilverVaultData, fetchUserGoldVaultData } from "@/services/internal/fetch/stakingEthFetchService";
 
 import CustomModal from "@/components/common/Modal/CustomModal";
+import ActionButtons from "@/components/common/Buttons/ActionButtons";
 
 const StakingEthPrivate = ({ isConnected, userAddress }) => {  
   const [clientIsConnected, setClientIsConnected] = useState(false);
@@ -142,18 +143,13 @@ const StakingEthPrivate = ({ isConnected, userAddress }) => {
         }
       </Flex>
       {clientIsConnected && 
-        <Flex className='features-list-container' width='100%' justifyContent="space-between" alignItems="center" marginTop='50px'>
-          {/* Exemple de carte pour l'achat */}
-          <Box className="card-container" onClick={handleSilverButtonClick} width="100%" textAlign="center">
-            {/* Vos autres éléments de carte ici */}
-            <Text>Unstake Eth on Silver Vault</Text>
-          </Box>
-          {/* Exemple de carte pour l'achat */}
-          <Box className="card-container" onClick={handleGoldButtonClick} width="100%" textAlign="center">
-            {/* Vos autres éléments de carte ici */}
-            <Text>Unstake Eth on Gold Vault</Text>
-          </Box>
-        </Flex>
+        <ActionButtons
+          buttons={[
+            { onClick: handleSilverButtonClick, text: "Unstake Eth on Silver Vault" },
+            { onClick: handleGoldButtonClick, text: "Unstake Eth on Gold Vault" },
+            // Add more buttons as needed
+          ]}
+        />
       }
 
       <Box>

@@ -22,6 +22,7 @@ import {
 
 import UnconnectedWallet from "@/components/UnconnectedWallet";
 import CustomModal from "@/components/common/Modal/CustomModal";
+import ConditionalActionButton from "@/components/common/Buttons/ConditionalActionButton";
 
 const TokenTineStack = ({ isConnected, userAddress }) => {
   const { isUser,
@@ -138,33 +139,14 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
       )}
       
       {clientIsConnected &&
-        <Flex className='features-list-container' width='100%' justifyContent="center" alignItems="center" marginTop='50px'>
-          {/* Exemple de carte pour l'achat */}
-          <Box className="card-container" onClick={onBuyOpen}>
-            {/* Vos autres éléments de carte ici */}
-            <Text>Buy Tine</Text>
-          </Box>
-          {tineUserBalance >= 1 && userTineLockedDate == '' &&
-            <Box className="card-container" onClick={onLockOpen}>
-              {/* Vos autres éléments de carte ici */}
-              <Text>Lock Tine</Text>
-            </Box>
-          }
-          
-          {userTineLockedDate != '' && 
-            <Box className="card-container" onClick={onUnlockOpen}>
-              {/* Vos autres éléments de carte ici */}
-              <Text>Unlock Tine</Text>
-            </Box>
-          }  
-          
-          {tineUserBalance > 0 && 
-            <Box className="card-container" onClick={onSellOpen}>
-              {/* Vos autres éléments de carte ici */}
-              <Text>Sell Tine</Text>
-            </Box>
-          }
-        </Flex>
+        <ConditionalActionButton
+          buttons={[
+            { onClick: onBuyOpen, text: "Buy Tine", condition: true },
+            { onClick: onLockOpen, text: "Lock Tine", condition: tineUserBalance >= 1 && userTineLockedDate == '' },
+            { onClick: onUnlockOpen, text: "Unlock Tine", condition: userTineLockedDate != '' },
+            { onClick: onSellOpen, text: "Sell Tine", condition: tineUserBalance > 0 },
+          ]}
+        />
       }
 
       <Box>
