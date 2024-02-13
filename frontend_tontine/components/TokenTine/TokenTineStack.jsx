@@ -23,6 +23,7 @@ import {
 import UnconnectedWallet from "@/components/UnconnectedWallet";
 import CustomModal from "@/components/common/Modal/CustomModal";
 import ConditionalActionButton from "@/components/common/Buttons/ConditionalActionButton";
+import InfoCard from "@/components/common/InfoCard";
 
 const TokenTineStack = ({ isConnected, userAddress }) => {
   const { isUser,
@@ -123,16 +124,19 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
       
       {clientIsConnected ? (
         <Flex className='features-list-container' width='100%' justifyContent="center" alignItems="center" marginTop='20px'>
-          <Box className="card-container">
-            <img src='./assets/profit1.svg' alt="Balance" />
-            <Heading>Your current Tine balance</Heading>
-            <Text fontSize="xl" className="metric-value" color='#ffff' textAlign='right'>{ tineUserBalance.toString() } TINE</Text>
-          </Box>
-          <Box className="card-container">
-            <img src='./assets/insurance1.svg' alt="Lock" />
-            <Heading>Lock Date started</Heading>
-            <Text fontSize="xl" className="metric-value" color='#ffff' textAlign='right'>{ userTineLockedDate.toString() }</Text>
-          </Box>
+          <InfoCard
+            imageSrc='./assets/profit1.svg'
+            altText='Balance'
+            heading='Your current Tine balance'
+            contentArray={[`${tineUserBalance.toString()} TINE`]}
+          />
+
+          <InfoCard
+            imageSrc='./assets/insurance1.svg'
+            altText='Lock'
+            heading='Lock Date started'
+            contentArray={[userTineLockedDate.toString()]}
+          />
         </Flex>
       ) : (
         <UnconnectedWallet/>

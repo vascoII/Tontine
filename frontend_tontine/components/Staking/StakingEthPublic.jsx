@@ -15,6 +15,7 @@ import { handleStakeOnSilverVault, handleStakeOnGoldVault } from "@/services/int
 import UnconnectedWallet from "@/components/UnconnectedWallet";
 import CustomModal from "@/components/common/Modal/CustomModal";
 import ActionButtons from "@/components/common/Buttons/ActionButtons";
+import InfoCard from "@/components/common/InfoCard";
 
 const StakingEthPublic = ({ isConnected, userAddress }) => {
   const { isUser,
@@ -72,22 +73,29 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
   return (
     <>
       <Flex className='features-list-container' width='100%' justifyContent="center" alignItems="center" marginTop='20px'>
-        <Box className="card-container" width="100%">
-          <img src='./assets/profit1.svg' alt="Balance" />
-          <Heading>Silver Vault</Heading>
-          <Text textAlign='right'>Eth lock: { silverVaultData.ethLocked.toString() / 10 ** 18}</Text>
-          <Text textAlign='right'>Current APR: { rpSimpleAPR }%</Text>
-          <Text textAlign='right'>Actif Users: {silverVaultData.activeUsers.toString()}</Text>
-          <Text textAlign='right'>Total Interest Generated: {silverVaultData.interestGenerated.toString()}</Text>
-        </Box>
-        <Box className="card-container" width="100%">
-          <img src='./assets/profit1.svg' alt="Balance" />
-          <Heading>Gold Vault</Heading>
-          <Text textAlign='right'>Eth lock: { goldVaultData.ethLocked.toString() / 10 ** 18}</Text>
-          <Text textAlign='right'>Current APR: { rpNodeAPR }%</Text>
-          <Text textAlign='right'>Actif Users: {goldVaultData.activeUsers.toString()}</Text>
-          <Text textAlign='right'>Total Interest Generated: {silverVaultData.interestGenerated.toString()}</Text>
-        </Box>
+        <InfoCard
+          imageSrc='./assets/profit1.svg'
+          altText='Silver Vault'
+          heading='Silver Vault'
+          contentArray={[
+            `Eth lock: ${silverVaultData.ethLocked.toString() / 10 ** 18}`,
+            `Current APR: ${rpSimpleAPR}%`,
+            `Actif Users: ${silverVaultData.activeUsers.toString()}`,
+            `Total Interest Generated: ${silverVaultData.interestGenerated.toString()}`
+          ]}
+        />
+
+        <InfoCard
+          imageSrc='./assets/profit1.svg'
+          altText='Gold Vault'
+          heading='Gold Vault'
+          contentArray={[
+            `Eth lock: ${goldVaultData.ethLocked.toString() / 10 ** 18}`,
+            `Current APR: ${rpNodeAPR}%`,
+            `Actif Users: ${goldVaultData.activeUsers.toString()}`,
+            `Total Interest Generated: ${goldVaultData.interestGenerated.toString()}`
+          ]}
+        />
       </Flex>
       
       {clientIsConnected ? (
