@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 import {
   Flex, Box, Text, useDisclosure, Button,
-  Modal, ModalOverlay, ModalContent, ModalHeader,
-  ModalFooter, ModalBody, ModalCloseButton, FormControl,
-  FormLabel, Input, useToast, Heading, Link
+  FormControl, FormLabel, Input, useToast,
+  Heading, Link, Image
 } from "@chakra-ui/react";
 
 import { useUser } from "@/context/UserContext";
@@ -14,6 +13,7 @@ import { useTine } from "@/context/TineContext";
 import { handleStakeOnSilverVault, handleStakeOnGoldVault } from "@/services/internal/handle/stakingEthHandleService";
 
 import UnconnectedWallet from "@/components/UnconnectedWallet";
+import CustomModal from "@/components/common/Modal/CustomModal";
 
 const StakingEthPublic = ({ isConnected, userAddress }) => {
   const { isUser,
@@ -108,26 +108,17 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
 
       <Box>
         {/* Modal pour stake on silver vault */}
-        <Modal isOpen={isSilverOpen} onClose={onSilverClose}>
-          <ModalOverlay />
-          <ModalContent
-            style={{
-              padding: '20px',
-              backgroundColor: '#131330',
-              color: '#fff',
-              borderRadius: '10px',
-              border: 'double 1px transparent',
-              backgroundClip: 'padding-box, border-box',
-              backgroundOrigin: 'border-box',
-              backgroundImage:
-                'linear-gradient(#131330 0 0) padding-box, linear-gradient(to top left, transparent, #30bddc) border-box',
-            }}
-          >
-            <ModalHeader>Stake Eth on Silver Vault</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <FormControl>
-                <FormLabel htmlFor='amount'>Stake ETH</FormLabel>
+        <CustomModal
+          isOpen={isSilverOpen}
+          onClose={onSilverClose}
+          headerContent="Stake Eth on Silver Vault"
+          bodyContent={(
+            <>
+              <FormControl position="relative">
+                <Box position="absolute" top="8%" transform="translateY(-50%)" zIndex="10">
+                  <Image src="/assets/Ethereum.png" alt="eth" />
+                </Box>
+                <FormLabel htmlFor='amount' pl="45px">Stake ETH</FormLabel>
                 <Input
                   id='amount'
                   type='number'
@@ -153,9 +144,10 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
               <Text mt={4} fontSize="lg">
                 Current APR: {rpSimpleAPR}%
               </Text>
-            </ModalBody>
-            <ModalFooter>
-              <Button
+            </>
+          )}
+          footerContent={(
+            <Button
                 colorScheme="blue"
                 mr={3}
                 onClick={() => {
@@ -165,31 +157,21 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
                 isDisabled={!(ethSilverAmount > 0)}
               >
                 Stake
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+            </Button>
+          )}
+        />
         {/* Modal pour stake on silver vault */}
-        <Modal isOpen={isGoldOpen} onClose={onGoldClose}>
-          <ModalOverlay />
-          <ModalContent
-            style={{
-              padding: '20px',
-              backgroundColor: '#131330',
-              color: '#fff',
-              borderRadius: '10px',
-              border: 'double 1px transparent',
-              backgroundClip: 'padding-box, border-box',
-              backgroundOrigin: 'border-box',
-              backgroundImage:
-                'linear-gradient(#131330 0 0) padding-box, linear-gradient(to top left, transparent, #30bddc) border-box',
-            }}
-          >
-            <ModalHeader>Stake Eth on Gold Vault</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <FormControl>
-                <FormLabel htmlFor='amount'>Stake ETH</FormLabel>
+        <CustomModal
+          isOpen={isGoldOpen}
+          onClose={onGoldClose}
+          headerContent="Stake Eth on Gold Vault"
+          bodyContent={(
+            <>
+              <FormControl position="relative">
+                <Box position="absolute" top="8%" transform="translateY(-50%)" zIndex="10">
+                  <Image src="/assets/Ethereum.png" alt="eth" />
+                </Box>
+                <FormLabel htmlFor='amount' pl="45px">Stake ETH</FormLabel>
                 <Input
                   id='amount'
                   type='number'
@@ -215,50 +197,40 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
               <Text mt={4} fontSize="lg">
                 Current APR: {rpNodeAPR}%
               </Text>
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                colorScheme="blue"
-                mr={3}
-                onClick={() => {
-                  handleStakeOnGoldVault(ethGoldAmount, fetchVaultData, onGoldClose, toast);
-                  onGoldClose();
-                }}
-                isDisabled={!(ethGoldAmount > 0)}
-              >
-                Stake
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+            </>
+          )}
+          footerContent={(
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={() => {
+                handleStakeOnGoldVault(ethGoldAmount, fetchVaultData, onGoldClose, toast);
+                onGoldClose();
+              }}
+              isDisabled={!(ethGoldAmount > 0)}
+            >
+              Stake
+            </Button>
+          )}
+        />
         {/* Modal d'avertissement */}
-        <Modal isOpen={isWarningOpen} onClose={() => setWarningOpen(false)}>
-          <ModalOverlay />
-          <ModalContent
-            style={{
-              padding: '20px',
-              backgroundColor: '#131330',
-              color: '#fff',
-              borderRadius: '10px',
-              border: 'double 1px transparent',
-              backgroundClip: 'padding-box, border-box',
-              backgroundOrigin: 'border-box',
-              backgroundImage:
-                'linear-gradient(#131330 0 0) padding-box, linear-gradient(to top left, transparent, #30bddc) border-box',
-            }}
-          >
-            <ModalHeader>You cannot stake on Gold Vault yet.</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
+        <CustomModal
+          isOpen={isWarningOpen}
+          onClose={() => setWarningOpen(false)}
+          headerContent="Stake Eth on Gold Vault"
+          bodyContent={(
+            <>
               {warningMessage && <Text>Contratulations! You already have {tineUserBalance} Tine but you need to lock {tineUserBalance == 1 ? 'it' : 'them'} to stake.</Text>}
               {!warningMessage && <Text>You need to buy at least {smartContractMinLockAmount.toString() / 10 ** 18} Tine and lock {smartContractMinLockAmount.toString() / 10 ** 18 == 1 ? 'it' : 'them'} to stake.</Text>}
-            </ModalBody>
-            <ModalFooter>
+            </>
+          )}
+          footerContent={(
+            <>
               {warningMessage && <Button colorScheme="blue" onClick={() => window.location.href = "/tokentine?modal=lock"}>Go to Tine lock</Button>}
               {!warningMessage && <Button colorScheme="blue" onClick={() => window.location.href = "/tokentine?modal=buy"}>Go to Tine purchase</Button>}
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+            </>
+          )}
+        />
       </Box>
     </>
   );

@@ -47,18 +47,19 @@ const Home = () => {
       <Modal isOpen={isDisclaimerOpen} onClose={onDisclaimerClose} isCentered size="xl">
         <ModalOverlay />
         <ModalContent
-            style={{
-              padding: '20px',
-              backgroundColor: '#131330',
-              color: '#fff',
-              borderRadius: '10px',
-              border: 'double 1px transparent',
-              backgroundClip: 'padding-box, border-box',
-              backgroundOrigin: 'border-box',
-              backgroundImage:
-                'linear-gradient(#131330 0 0) padding-box, linear-gradient(to top left, transparent, #30bddc) border-box',
-            }}
-          >
+          style={{
+            padding: '20px',
+            backgroundColor: '#131330',
+            color: '#fff',
+            borderRadius: '10px',
+            border: 'double 1px transparent',
+            backgroundClip: 'padding-box, border-box',
+            backgroundOrigin: 'border-box',
+            backgroundImage:
+              'linear-gradient(#131330 0 0) padding-box, linear-gradient(to top left, transparent, #30bddc) border-box',
+          }}
+        >
+          <Image src="/tontine_coin.png" alt="Tontine" width="33%" height="33%" m="auto"/>
           <ModalHeader textAlign="center" color="#fff">Tontine Disclaimer:</ModalHeader>
           <ModalCloseButton />
           <ModalBody>

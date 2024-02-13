@@ -4,19 +4,24 @@ import { useRouter } from 'next/router';
 
 import {
   Flex, Box, Text, useDisclosure, Button,
-  Modal, ModalOverlay, ModalContent, ModalHeader,
-  ModalFooter, ModalBody, ModalCloseButton, FormControl,
-  FormLabel, Input, useToast, Heading
+  FormControl, FormLabel, Input,
+  useToast, Heading, Image
 } from "@chakra-ui/react";
-
-import UnconnectedWallet from "@/components/UnconnectedWallet";
 
 import { getTineEthRatio } from "@/services/api/EtherscanAPI";
 
 import { useUser } from "@/context/UserContext";
 import { useTine } from "@/context/TineContext";
 
-import { handleBuyTine, handleSellTine, handleLockTine, handleUnlockTine } from "@/services/internal/handle/tokenTineHandleService";
+import {
+  handleBuyTine,
+  handleSellTine,
+  handleLockTine,
+  handleUnlockTine
+} from "@/services/internal/handle/tokenTineHandleService";
+
+import UnconnectedWallet from "@/components/UnconnectedWallet";
+import CustomModal from "@/components/common/Modal/CustomModal";
 
 const TokenTineStack = ({ isConnected, userAddress }) => {
   const { isUser,
@@ -28,6 +33,7 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
 
   const { smartContractMinLockAmount,
     smartContractMinLockTime,
+    smartContractTokenBalance
   } = useTine();
   
   const [clientIsConnected, setClientIsConnected] = useState(false);
@@ -163,26 +169,17 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
 
       <Box>
         {/* Modal pour l'achat de Tine */}
-        <Modal isOpen={isBuyOpen} onClose={onBuyClose}>
-          <ModalOverlay />
-          <ModalContent
-            style={{
-              padding: '20px',
-              backgroundColor: '#131330',
-              color: '#fff',
-              borderRadius: '10px',
-              border: 'double 1px transparent',
-              backgroundClip: 'padding-box, border-box',
-              backgroundOrigin: 'border-box',
-              backgroundImage:
-                'linear-gradient(#131330 0 0) padding-box, linear-gradient(to top left, transparent, #30bddc) border-box',
-            }}
-          >
-            <ModalHeader>Buy Tine to access Gold Vault</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <FormControl>
-                <FormLabel htmlFor='amount'>Tine</FormLabel>
+        <CustomModal
+          isOpen={isBuyOpen}
+          onClose={onBuyClose}
+          headerContent="Buy Tine to access Gold Vault"
+          bodyContent={(
+            <>
+              <FormControl position="relative">
+                <Box position="absolute" top="15%" left="5px" transform="translateY(-50%)" zIndex="10">
+                  <Image src="/assets/tontine_coin.png" alt="eth" width="34px" height="34px"/>
+                </Box>
+                <FormLabel htmlFor='amount' pl="45px">Tine</FormLabel>
                 <Input
                   id='amount'
                   type='number'
@@ -200,8 +197,11 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
                   }}
                 />
               </FormControl>
-              <FormControl mt={4}>
-                <FormLabel htmlFor='readonly-amount'>Price in Eth</FormLabel>
+              <FormControl mt={4} position="relative">
+                <Box position="absolute" top="15%" transform="translateY(-50%)" zIndex="10">
+                  <Image src="/assets/Ethereum.png" alt="eth" />
+                </Box>
+                <FormLabel htmlFor='readonly-amount' pl="45px">Price in Eth</FormLabel>
                 <Input
                   id='readonly-amount'
                   type='number'
@@ -212,109 +212,81 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
                   }}
                 />
               </FormControl>
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                colorScheme="blue"
-                mr={3}
-                onClick={() => {
-                  handleBuyTine(
-                    tineAmountToBuy,
-                    ethCost.toFixed(2),
-                    onBuyClose,
-                    handleActionDone,
-                    setTineUserBalance,
-                    toast,
-                    tineUserBalance
-                  );
-                  onBuyClose();
-                }}
-                isDisabled={!(tineAmountToBuy >= (smartContractMinLockAmount.toString() / 10 ** 18))}
-              >
-                Buy
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+            </>
+          )}
+          footerContent={(
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={() => {
+                handleBuyTine(
+                  tineAmountToBuy,
+                  ethCost.toFixed(2),
+                  onBuyClose,
+                  handleActionDone,
+                  setTineUserBalance,
+                  toast,
+                  tineUserBalance
+                );
+                onBuyClose();
+              }}
+              isDisabled={
+                !(tineAmountToBuy >= (smartContractMinLockAmount.toString() / 10 ** 18)) ||
+                (tineAmountToBuy > (smartContractTokenBalance.toString() / 10 ** 18))
+              }
+            >
+              Buy
+            </Button>
+          )}
+        />
         {/* Modal pour lock de Tine */}
-        <Modal isOpen={isLockOpen} onClose={onLockClose}>
-          <ModalOverlay />
-          <ModalContent
-            style={{
-              padding: '20px',
-              backgroundColor: '#131330',
-              color: '#fff',
-              borderRadius: '10px',
-              border: 'double 1px transparent',
-              backgroundClip: 'padding-box, border-box',
-              backgroundOrigin: 'border-box',
-              backgroundImage:
-                'linear-gradient(#131330 0 0) padding-box, linear-gradient(to top left, transparent, #30bddc) border-box',
-            }}
-          >
-            <ModalHeader>Lock Tine</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody/>
-            <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={() => {
-                handleLockTine(onLockClose, setTineLockedDate, toast);
-                onLockClose();
-              }}>
-                Lock
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+        <CustomModal
+          isOpen={isLockOpen}
+          onClose={onLockClose}
+          headerContent="Lock Tine"
+          bodyContent={(
+            <>
+            </>
+          )}
+          footerContent={(
+            <Button colorScheme="blue" mr={3} onClick={() => {
+              handleLockTine(onLockClose, setTineLockedDate, toast);
+              onLockClose();
+            }}>
+              Lock
+            </Button>
+          )}
+        />
         {/* Modal pour unlock de Tine */}
-        <Modal isOpen={isUnlockOpen} onClose={onUnlockClose}>
-          <ModalOverlay />
-          <ModalContent
-            style={{
-              padding: '20px',
-              backgroundColor: '#131330',
-              color: '#fff',
-              borderRadius: '10px',
-              border: 'double 1px transparent',
-              backgroundClip: 'padding-box, border-box',
-              backgroundOrigin: 'border-box',
-              backgroundImage:
-                'linear-gradient(#131330 0 0) padding-box, linear-gradient(to top left, transparent, #30bddc) border-box',
-            }}
-          >
-            <ModalHeader>Unlock Tine</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody/>
-            <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={() => {
-                handleUnlockTine(onUnlockClose, setTineLockedDate, toast);
-                onUnlockClose();
-              }}>
-                Unlock
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+        <CustomModal
+          isOpen={isUnlockOpen}
+          onClose={onUnlockClose}
+          headerContent="Unlock Tine"
+          bodyContent={(
+            <>
+            </>
+          )}
+          footerContent={(
+            <Button colorScheme="blue" mr={3} onClick={() => {
+              handleUnlockTine(onUnlockClose, setTineLockedDate, toast);
+              onUnlockClose();
+            }}>
+              Unlock
+            </Button>
+          )}
+        />
         {/* Modal pour sell de Tine */}
-        <Modal isOpen={isSellOpen} onClose={onSellClose}>
-          <ModalOverlay />
-          <ModalContent
-            style={{
-              padding: '20px',
-              backgroundColor: '#131330',
-              color: '#fff',
-              borderRadius: '10px',
-              border: 'double 1px transparent',
-              backgroundClip: 'padding-box, border-box',
-              backgroundOrigin: 'border-box',
-              backgroundImage:
-                'linear-gradient(#131330 0 0) padding-box, linear-gradient(to top left, transparent, #30bddc) border-box',
-            }}
-          >
-            <ModalHeader>Sell Tine</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <FormControl>
-                <FormLabel htmlFor='amount'>Amount to Sell</FormLabel>
+        <CustomModal
+          isOpen={isSellOpen}
+          onClose={onSellClose}
+          headerContent="Sell Tine"
+          bodyContent={(
+            <>
+              <FormControl position="relative">
+                <Box position="absolute" top="15%" left="5px" transform="translateY(-50%)" zIndex="10">
+                  <Image src="/assets/tontine_coin.png" alt="eth" width="34px" height="34px"/>
+                </Box>
+                <FormLabel htmlFor='amount' pl="45px">Tine</FormLabel>
                 <Input id='amount' type='number'
                   value={tineAmountToSell}
                   onChange={(e) => {
@@ -327,8 +299,11 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
                   }}
                 />
               </FormControl>
-              <FormControl mt={4}>
-                <FormLabel htmlFor='readonly-amount'>Receive Eth</FormLabel>
+              <FormControl mt={4} position="relative">
+                <Box position="absolute" top="15%" transform="translateY(-50%)" zIndex="10">
+                  <Image src="/assets/Ethereum.png" alt="eth" />
+                </Box>
+                <FormLabel htmlFor='readonly-amount' pl="45px">Receive Eth</FormLabel>
                 <Input
                   id='readonly-amount'
                   type='number'
@@ -339,9 +314,10 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
                   }}
                 />
               </FormControl>
-            </ModalBody>
-            <ModalFooter>
-              <Button
+            </>
+          )}
+          footerContent={(
+            <Button
                 colorScheme="blue" mr={3}
                 onClick={() => {
                   handleSellTine(
@@ -356,10 +332,9 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
                 isDisabled={!(tineAmountToSell >= 1)}
               >
                 Sell
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+            </Button>
+          )}
+        />
       </Box>
     </>
   );

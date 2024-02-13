@@ -4,9 +4,7 @@ import {
   Flex, Box, Text, useToast, Heading, Table, Thead, Tbody, Tr, Th, Td
 } from "@chakra-ui/react";
 import {
-  useDisclosure, Button,
-  Modal, ModalOverlay, ModalContent, ModalHeader,
-  ModalFooter, ModalBody, ModalCloseButton, FormControl,
+  useDisclosure, Button, FormControl, 
   FormLabel, Input, Link
 } from "@chakra-ui/react";
 
@@ -14,6 +12,8 @@ import { formatDate } from "@/services/utils/dateUtils";
 
 import { handleUnstakeOnSilverVault, handleUnstakeOnGoldVault } from "@/services/internal/handle/stakingEthHandleService";
 import { fetchUserSilverVaultData, fetchUserGoldVaultData } from "@/services/internal/fetch/stakingEthFetchService";
+
+import CustomModal from "@/components/common/Modal/CustomModal";
 
 const StakingEthPrivate = ({ isConnected, userAddress }) => {  
   const [clientIsConnected, setClientIsConnected] = useState(false);
@@ -157,25 +157,13 @@ const StakingEthPrivate = ({ isConnected, userAddress }) => {
       }
 
       <Box>
-        {/* Modal pour stake on silver vault */}
-        <Modal isOpen={isSilverOpen} onClose={onSilverClose}>
-          <ModalOverlay />
-          <ModalContent
-            style={{
-              padding: '20px',
-              backgroundColor: '#131330',
-              color: '#fff',
-              borderRadius: '10px',
-              border: 'double 1px transparent',
-              backgroundClip: 'padding-box, border-box',
-              backgroundOrigin: 'border-box',
-              backgroundImage:
-                'linear-gradient(#131330 0 0) padding-box, linear-gradient(to top left, transparent, #30bddc) border-box',
-            }}
-          >
-            <ModalHeader>Unstake Eth on Silver Vault</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
+        {/* Modal pour unstake on silver vault */}
+        <CustomModal
+          isOpen={isSilverOpen}
+          onClose={onSilverClose}
+          headerContent="Unstake Eth on Silver Vault"
+          bodyContent={(
+            <>
               <FormControl>
                 <FormLabel htmlFor='amount'>Unstake ETH</FormLabel>
                 <Input
@@ -214,40 +202,29 @@ const StakingEthPrivate = ({ isConnected, userAddress }) => {
                   This fee is deducted from the withdrawal amount to cover transaction costs.
                 </Text>
               </FormControl>
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                colorScheme="blue"
-                mr={3}
-                onClick={() => {
-                  handleUnstakeOnSilverVault(ethSilverAmount, toast, fetchUserSilverVaultData, onSilverClose);
-                  onSilverClose();
-                }}
-                isDisabled={!(ethSilverAmount > 0) || (ethSilverAmount > (silverBalance.toString() / 10 ** 18))}
-              >
-                Unstake
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-        <Modal isOpen={isGoldOpen} onClose={onGoldClose}>
-          <ModalOverlay />
-          <ModalContent
-            style={{
-              padding: '20px',
-              backgroundColor: '#131330',
-              color: '#fff',
-              borderRadius: '10px',
-              border: 'double 1px transparent',
-              backgroundClip: 'padding-box, border-box',
-              backgroundOrigin: 'border-box',
-              backgroundImage:
-                'linear-gradient(#131330 0 0) padding-box, linear-gradient(to top left, transparent, #30bddc) border-box',
-            }}
-          >
-            <ModalHeader>Unstake Eth on Gold Vault</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
+            </>
+          )}
+          footerContent={(
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={() => {
+                handleUnstakeOnSilverVault(ethSilverAmount, toast, fetchUserSilverVaultData, onSilverClose);
+                onSilverClose();
+              }}
+              isDisabled={!(ethSilverAmount > 0) || (ethSilverAmount > (silverBalance.toString() / 10 ** 18))}
+            >
+              Unstake
+            </Button>
+          )}
+        />
+        {/* Modal pour unstake on gold vault */}
+        <CustomModal
+          isOpen={isGoldOpen}
+          onClose={onGoldClose}
+          headerContent="Unstake Eth on Gold Vault"
+          bodyContent={(
+            <>
               <FormControl>
                 <FormLabel htmlFor='amount'>Unstake ETH</FormLabel>
                 <Input
@@ -286,9 +263,10 @@ const StakingEthPrivate = ({ isConnected, userAddress }) => {
                   This fee is deducted from the withdrawal amount to cover transaction costs.
                 </Text>
               </FormControl>
-            </ModalBody>
-            <ModalFooter>
-              <Button
+            </>
+          )}
+          footerContent={(
+            <Button
                 colorScheme="blue"
                 mr={3}
                 onClick={() => {
@@ -298,35 +276,24 @@ const StakingEthPrivate = ({ isConnected, userAddress }) => {
                 isDisabled={!(ethGoldAmount > 0) || (ethGoldAmount > (goldBalance.toString() / 10 ** 18))}
               >
                 Unstake
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+            </Button>
+          )}
+        />
         {/* Modal d'avertissement */}
-        <Modal isOpen={isWarningOpen} onClose={() => setWarningOpen(false)}>
-          <ModalOverlay />
-          <ModalContent
-            style={{
-              padding: '20px',
-              backgroundColor: '#131330',
-              color: '#fff',
-              borderRadius: '10px',
-              border: 'double 1px transparent',
-              backgroundClip: 'padding-box, border-box',
-              backgroundOrigin: 'border-box',
-              backgroundImage:
-                'linear-gradient(#131330 0 0) padding-box, linear-gradient(to top left, transparent, #30bddc) border-box',
-            }}
-          >
-            <ModalHeader>You cannot unstake on Vault yet.</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
+        <CustomModal
+          isOpen={isWarningOpen}
+          onClose={() => setWarningOpen(false)}
+          headerContent="You cannot unstake on Vault yet."
+          bodyContent={(
+            <>
               {warningMessage && <Text>Your balance does not allow you to unlock Eth on the Gold Vault.</Text>}
               {!warningMessage && <Text>Your balance does not allow you to unlock Eth on the Silver Vault</Text>}
-            </ModalBody>
-            <ModalFooter/>
-          </ModalContent>
-        </Modal>
+            </>
+          )}
+          footerContent={(
+            <></>
+          )}
+        />
       </Box>
     </>
   );
