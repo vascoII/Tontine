@@ -23,7 +23,7 @@ import {
 import UnconnectedWallet from "@/components/UnconnectedWallet";
 import CustomModal from "@/components/common/Modal/CustomModal";
 import ConditionalActionButton from "@/components/common/Buttons/ConditionalActionButton";
-import InfoCard from "@/components/common/InfoCard";
+import InfoCard from "@/components/common/Card/InfoCard";
 
 const TokenTineStack = ({ isConnected, userAddress }) => {
   const { isUser,

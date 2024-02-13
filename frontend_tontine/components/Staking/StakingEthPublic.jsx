@@ -15,7 +15,7 @@ import { handleStakeOnSilverVault, handleStakeOnGoldVault } from "@/services/int
 import UnconnectedWallet from "@/components/UnconnectedWallet";
 import CustomModal from "@/components/common/Modal/CustomModal";
 import ActionButtons from "@/components/common/Buttons/ActionButtons";
-import InfoCard from "@/components/common/InfoCard";
+import InfoCard from "@/components/common/Card/InfoCard";
 
 const StakingEthPublic = ({ isConnected, userAddress }) => {
   const { isUser,
