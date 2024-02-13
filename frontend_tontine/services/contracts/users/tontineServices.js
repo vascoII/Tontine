@@ -17,7 +17,7 @@ import {
 import { useAccount } from "wagmi";
 
 // VIEM (pour les events)
-import { createPublicClient, http, parseAbiItem } from "viem";
+import { createPublicClient, http, parseAbiItem, parseEther } from "viem";
 import { hardhat } from "viem/chains";
 
 // Créer un client `viem`
@@ -103,5 +103,89 @@ export const getGoldVaultWithdrawsByUser = async (userAddress) => {
   } catch (err) {
     console.error(err.message);
     throw err; // Relancer l'erreur pour la gestion dans le composant
+  }
+};
+
+/*************** SETTERS  ****************************/
+// stakeOnSilverService
+export const stakeOnSilverService = async (_ethSilverAmount) => {
+  try {
+    const { request } = await prepareWriteContract({
+      address: contractAddressTontine,
+      abi: abiTontine,
+      functionName: "depositEth",
+      args: [false],
+      value: parseEther(String(_ethSilverAmount)),
+    });
+    const { hash } = await writeContract(request);
+    await waitForTransaction({
+      hash: hash,
+    });
+    // Gérer la réponse de la transaction ici si nécessaire
+    return true;
+  } catch (err) {
+    throw err;
+  }
+};
+
+// stakeOnGoldService
+export const stakeOnGoldService = async (_ethGoldAmount) => {
+  try {
+    const { request } = await prepareWriteContract({
+      address: contractAddressTontine,
+      abi: abiTontine,
+      functionName: "depositEth",
+      args: [true],
+      value: parseEther(String(_ethGoldAmount)),
+    });
+    const { hash } = await writeContract(request);
+    await waitForTransaction({
+      hash: hash,
+    });
+    // Gérer la réponse de la transaction ici si nécessaire
+    return true;
+  } catch (err) {
+    throw err;
+  }
+};
+
+// stakeOnSilverService
+export const unstakeOnSilverService = async (_ethSilverAmount) => {
+  try {
+    const { request } = await prepareWriteContract({
+      address: contractAddressTontine,
+      abi: abiTontine,
+      functionName: "withdrawEth",
+      args: [false, parseEther(String(_ethSilverAmount))],
+    });
+    const { hash } = await writeContract(request);
+    await waitForTransaction({
+      hash: hash,
+    });
+    // Gérer la réponse de la transaction ici si nécessaire
+    return true;
+  } catch (err) {
+    console.log(err.message);
+    throw err;
+  }
+};
+
+// stakeOnGoldService
+export const unstakeOnGoldService = async (_ethGoldAmount) => {
+  try {
+    const { request } = await prepareWriteContract({
+      address: contractAddressTontine,
+      abi: abiTontine,
+      functionName: "withdrawEth",
+      args: [true, parseEther(String(_ethGoldAmount))],
+    });
+    const { hash } = await writeContract(request);
+    await waitForTransaction({
+      hash: hash,
+    });
+    // Gérer la réponse de la transaction ici si nécessaire
+    return true;
+  } catch (err) {
+    throw err;
   }
 };

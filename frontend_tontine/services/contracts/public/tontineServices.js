@@ -48,7 +48,13 @@ export const getSilverVaultDataService = async () => {
       abi: abiTontine,
       functionName: "findSilverVaultUserCount",
     });
-    return { ethLocked, apr, activeUsers };
+
+    const interestGenerated = await readContract({
+      address: contractAddressTontine,
+      abi: abiTontine,
+      functionName: "silverVaultInteretBalance",
+    });
+    return { ethLocked, apr, activeUsers, interestGenerated };
   } catch (err) {
     console.error(err.message);
     throw err; // Relancer l'erreur pour la gestion dans le composant
@@ -76,7 +82,12 @@ export const getGoldVaultDataService = async () => {
       abi: abiTontine,
       functionName: "findGoldVaultUserCount",
     });
-    return { ethLocked, apr, activeUsers };
+    const interestGenerated = await readContract({
+      address: contractAddressTontine,
+      abi: abiTontine,
+      functionName: "goldVaultInteretBalance",
+    });
+    return { ethLocked, apr, activeUsers, interestGenerated };
   } catch (err) {
     console.error(err.message);
     throw err; // Relancer l'erreur pour la gestion dans le composant

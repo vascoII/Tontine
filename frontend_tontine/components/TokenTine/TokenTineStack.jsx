@@ -11,15 +11,12 @@ import {
 
 import UnconnectedWallet from "@/components/UnconnectedWallet";
 
-import {
-  buyTineService,
-  lockTineService,
-  unlockTineService,
-  sellTineService
-} from "@/services/contracts/users/tineServices";
+import { getTineEthRatio } from "@/services/api/EtherscanAPI";
 
 import { useUser } from "@/context/UserContext";
 import { useTine } from "@/context/TineContext";
+
+import { handleBuyTine, handleSellTine, handleLockTine, handleUnlockTine } from "@/services/internal/handle/tokenTineHandleService";
 
 const TokenTineStack = ({ isConnected, userAddress }) => {
   const { isUser,
@@ -38,13 +35,34 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
   const router = useRouter();
   const { modal } = router.query;
 
-  const { isOpen: isBuyOpen, onOpen: onBuyOpen, onClose: onBuyClose } = useDisclosure();
-  const { isOpen: isLockOpen, onOpen: onLockOpen, onClose: onLockClose } = useDisclosure();
+  // Pour supprimer le paramètre de requête après une action
+  const handleActionDone = () => {
+    // Construire une nouvelle URL sans le paramètre modal
+    const newPath = '/tokentine'; // Ou vous pouvez utiliser router.pathname pour être plus dynamique
+    router.replace(newPath, undefined, { shallow: true });
+  }
+
+  // Création d'une nouvelle fonction onClose qui inclut handleActionDone
+  const onBuyClose = () => {
+    handleActionDone(); // Appelle handleActionDone pour gérer l'action terminée
+    originalOnBuyClose(); // Puis ferme la modal en utilisant la fonction onClose originale de useDisclosure
+  };
+
+  const onLockClose = () => {
+    handleActionDone(); // Appelle handleActionDone pour gérer l'action terminée
+    originalOnLockClose(); // Puis ferme la modal en utilisant la fonction onClose originale de useDisclosure
+  };
+  
+  const { isOpen: isBuyOpen, onOpen: onBuyOpen, onClose: originalOnBuyClose } = useDisclosure();
+  const { isOpen: isLockOpen, onOpen: onLockOpen, onClose: originalOnLockClose } = useDisclosure();
   const { isOpen: isUnlockOpen, onOpen: onUnlockOpen, onClose: onUnlockClose } = useDisclosure();
   const { isOpen: isSellOpen, onOpen: onSellOpen, onClose: onSellClose } = useDisclosure();
  
-  const [tineAmountToBuy, setTineAmountToBuy] = useState(1);
+  const [tineAmountToBuy, setTineAmountToBuy] = useState(0);
   const [tineAmountToSell, setTineAmountToSell] = useState(0);
+  const [tineEthRatio, setTineEthRatio] = useState(0);
+  const [ethCost, setEthCost] = useState(0);
+  const [ethValue, setEthValue] = useState(0);
 
   const toast = useToast();
 
@@ -56,6 +74,27 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
   }, [isConnected]); 
 
   useEffect(() => {
+    const fetchRatio = async () => {
+      const ratio = await getTineEthRatio();
+      if (ratio) {
+        setTineEthRatio(ratio);
+      }
+    };
+
+    fetchRatio();
+  }, []);
+
+  useEffect(() => {
+    const costInEth = parseFloat(tineAmountToBuy) * tineEthRatio;
+    setEthCost(costInEth);
+  }, [tineAmountToBuy, tineEthRatio]);
+
+  useEffect(() => {
+    const valueInEth = parseFloat(tineAmountToSell) * tineEthRatio;
+    setEthValue(valueInEth);
+  }, [tineAmountToSell, tineEthRatio]);
+
+  useEffect(() => {
     if (modal === 'buy' && clientIsConnected) {
       onBuyOpen();
     } else if (modal === 'lock' && clientIsConnected) {
@@ -63,197 +102,6 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
     }
   }, [modal, onBuyOpen, onLockOpen]);
   
-  /** BUYING TINE HANDLER */
-  const handleBuyTine = async (tineAmountToBuy) => {
-    try {
-      const success = await buyTineService(tineAmountToBuy);
-      if (success) {
-        onBuyClose();
-        setTineUserBalance(tineUserBalance + tineAmountToBuy);
-        toast({
-          title: "Congratulations!",
-          description: `You have successfully bought Tine`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: "Error!",
-          description: "An error occured while trying to buy Tine.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    } catch (err) {
-      console.log(err.message)
-      toast({
-        title: "Error!",
-        description: "An error occured.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  /** SELLING TINE HANDLER */
-  const handleSellTine = async (tineAmountToSell) => {
-    try {
-      const success = await sellTineService(tineAmountToSell);
-      if (success) {
-        onSellClose();
-        setTineUserBalance(tineUserBalance - tineAmountToSell);
-        toast({
-          title: "Congratulations!",
-          description: `You have successfully sell Tine`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    } catch (err) {
-      if (err.message.includes("Amount must be greater than 0")) {
-        toast({
-          title: "Error!",
-          description: "",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else if (err.message.includes("Must retain at least MIN_LOCK_AMOUNT TINE when locked")) {
-        toast({
-          title: "Error!",
-          description: "As part of Gold vault community your remaining amount of Tine can not be null.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else if (err.message.includes("Insufficient Eth balance in protocol")) {
-        toast({
-          title: "Error!",
-          description: "Insufficient Eth balance in protocol.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: "Error!",
-          description: "An error occured.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    }
-  };
-
-  /** LOCK TINE HANDLER */
-  const handleLockTine = async () => {
-    try {
-      const success = await lockTineService();
-      if (success) {
-        onLockClose();
-        const date = new Date();
-        const formattedDate = date.toLocaleDateString("en-US", {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        });
-        setTineLockedDate(formattedDate);
-
-        toast({
-          title: "Congratulations!",
-          description: `You have successfully lock your Tine`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: "Error!",
-          description: "An error occured while trying to lock your Tine.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    } catch (err) {
-      if (err.message.includes("TINE already locked")) {
-        toast({
-          title: "Congratulations!",
-          description: `Your Tine are already locked.`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: "Error!",
-          description: "An error occured.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    }
-  };
-
-  /** UNLOCK TINE HANDLER */
-  const handleUnlockTine = async () => {
-    try {
-      const success = await unlockTineService();
-      if (success) {
-        onUnlockClose();
-        setTineLockedDate('');
-        toast({
-          title: "Congratulations!",
-          description: `You have successfully unlock your Tine`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: "Error!",
-          description: "An error occured while trying to unlock your Tine.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    } catch (err) {
-      if (err.message.includes("No TINE locked")) {
-        toast({
-          title: "Error!",
-          description: "You dont have Tine to unlock.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else if (err.message.includes("Error_unlockTine_not_over_yet")) {
-        toast({
-          title: "Error!",
-          description: "Lock time is not over yet.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: "Error!",
-          description: "An error occured.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    }
-  };
-
   return (
     <>
       <Text className="hero-info-description" fontSize='1.5rem' marginTop='50px'>
@@ -330,18 +178,37 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
                 'linear-gradient(#131330 0 0) padding-box, linear-gradient(to top left, transparent, #30bddc) border-box',
             }}
           >
-            <ModalHeader>Buy Tine</ModalHeader>
+            <ModalHeader>Buy Tine to access Gold Vault</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <FormControl>
-                <FormLabel htmlFor='amount'>Amount to Buy</FormLabel>
+                <FormLabel htmlFor='amount'>Tine</FormLabel>
                 <Input
                   id='amount'
                   type='number'
                   value={tineAmountToBuy}
-                  onChange={(e) => setTineAmountToBuy(e.target.value)}
+                  onChange={(e) => {
+                    const value = parseFloat(e.target.value);
+                    if (!isNaN(value) && value > 0) {
+                      setTineAmountToBuy(value);
+                    } else {
+                      setTineAmountToBuy('');
+                    }
+                  }}
                   style={{
                     borderColor: 'rgba(255, 255, 255, 0.16)', // Adjust as needed
+                  }}
+                />
+              </FormControl>
+              <FormControl mt={4}>
+                <FormLabel htmlFor='readonly-amount'>Price in Eth</FormLabel>
+                <Input
+                  id='readonly-amount'
+                  type='number'
+                  value={ethCost.toFixed(2)}
+                  isReadOnly
+                  style={{
+                    borderColor: 'rgba(255, 255, 255, 0.16)',
                   }}
                 />
               </FormControl>
@@ -351,9 +218,18 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
                 colorScheme="blue"
                 mr={3}
                 onClick={() => {
-                  handleBuyTine(tineAmountToBuy);
+                  handleBuyTine(
+                    tineAmountToBuy,
+                    ethCost.toFixed(2),
+                    onBuyClose,
+                    handleActionDone,
+                    setTineUserBalance,
+                    toast,
+                    tineUserBalance
+                  );
                   onBuyClose();
                 }}
+                isDisabled={!(tineAmountToBuy >= (smartContractMinLockAmount.toString() / 10 ** 18))}
               >
                 Buy
               </Button>
@@ -381,7 +257,7 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
             <ModalBody/>
             <ModalFooter>
               <Button colorScheme="blue" mr={3} onClick={() => {
-                handleLockTine();
+                handleLockTine(onLockClose, setTineLockedDate, toast);
                 onLockClose();
               }}>
                 Lock
@@ -410,7 +286,7 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
             <ModalBody/>
             <ModalFooter>
               <Button colorScheme="blue" mr={3} onClick={() => {
-                handleUnlockTine();
+                handleUnlockTine(onUnlockClose, setTineLockedDate, toast);
                 onUnlockClose();
               }}>
                 Unlock
@@ -439,14 +315,46 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
             <ModalBody>
               <FormControl>
                 <FormLabel htmlFor='amount'>Amount to Sell</FormLabel>
-                <Input id='amount' type='number' value={tineAmountToSell} onChange={(e) => setTineAmountToSell(e.target.value)} />
+                <Input id='amount' type='number'
+                  value={tineAmountToSell}
+                  onChange={(e) => {
+                    const value = parseFloat(e.target.value);
+                    if (!isNaN(value) && value > 0) {
+                      setTineAmountToSell(value);
+                    } else {
+                      setTineAmountToSell('');
+                    }
+                  }}
+                />
+              </FormControl>
+              <FormControl mt={4}>
+                <FormLabel htmlFor='readonly-amount'>Receive Eth</FormLabel>
+                <Input
+                  id='readonly-amount'
+                  type='number'
+                  value={ethValue.toFixed(2)}
+                  isReadOnly
+                  style={{
+                    borderColor: 'rgba(255, 255, 255, 0.16)',
+                  }}
+                />
               </FormControl>
             </ModalBody>
             <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={() => {
-                handleSellTine(tineAmountToSell);
-                onSellClose();
-              }}>
+              <Button
+                colorScheme="blue" mr={3}
+                onClick={() => {
+                  handleSellTine(
+                    tineAmountToSell,
+                    onSellClose,
+                    setTineUserBalance,
+                    toast,
+                    tineUserBalance
+                  );
+                  onSellClose();
+                }}
+                isDisabled={!(tineAmountToSell >= 1)}
+              >
                 Sell
               </Button>
             </ModalFooter>

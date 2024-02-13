@@ -35,14 +35,13 @@ const client = createPublicClient({
 
 /************* GETTERS  ***********************/
 // Approve
-export const approveService = async (_tineAmount) => {
+export const approveService = async (_tineAmountInWei) => {
   try {
-    const tineAmountInWei = parseUnits(_tineAmount, 18);
     const { request } = await prepareWriteContract({
       address: contractAddressTine,
       abi: abiTine,
       functionName: "approve",
-      args: [contractAddressTine, tineAmountInWei],
+      args: [contractAddressTine, _tineAmountInWei],
     });
     const { hash } = await writeContract(request);
     await waitForTransaction({
@@ -88,14 +87,15 @@ export const getUserTineBalanceService = async (userAddress) => {
 
 /*************** SETTERS  ****************************/
 // buyTine
-export const buyTineService = async (_tineAmount) => {
+export const buyTineService = async (_tineAmount, ethCost) => {
   try {
+    const tineAmountInWei = parseUnits(String(_tineAmount), 18);
     const { request } = await prepareWriteContract({
       address: contractAddressTine,
       abi: abiTine,
       functionName: "buyTine",
-      args: [_tineAmount],
-      value: parseEther(_tineAmount.toString()),
+      args: [tineAmountInWei],
+      value: parseEther(ethCost),
     });
     const { hash } = await writeContract(request);
     await waitForTransaction({
@@ -151,12 +151,13 @@ export const unlockTineService = async () => {
 // sellTine
 export const sellTineService = async (_tineAmount) => {
   try {
-    const approveSucess = await approveService(_tineAmount);
+    const tineAmountInWei = parseUnits(String(_tineAmount), 18);
+    const approveSucess = await approveService(tineAmountInWei);
     const { request } = await prepareWriteContract({
       address: contractAddressTine,
       abi: abiTine,
       functionName: "sellTine",
-      args: [_tineAmount],
+      args: [tineAmountInWei],
     });
     const { hash } = await writeContract(request);
     await waitForTransaction({

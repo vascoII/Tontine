@@ -15,8 +15,15 @@ async function getTokenCurrentPrice(token, currency) {
     const data = await response.json();
 
     if (data.status === "1") {
-      const ethPriceInUSD = parseFloat(data.result.ethusd);
-      return ethPriceInUSD;
+      const priceInUSD = parseFloat(data.result.ethusd);
+      const roundedPrice = parseFloat(priceInUSD.toFixed(2)); // Arrondir à deux chiffres après la virgule et reconvertir en nombre
+
+      if (token == "TINE") {
+        // Pour TINE, diviser le prix arrondi par 10 tout en gardant deux chiffres après la virgule
+        return parseFloat((roundedPrice / 10).toFixed(2));
+      }
+      // Pour ETH, retourner le prix arrondi
+      return roundedPrice;
     } else {
       throw new Error(
         `Etherscan API request failed with message: ${data.message}`
@@ -53,8 +60,13 @@ function getTineCardData() {
   };
 }
 
+async function getTineEthRatio() {
+  return 0.1;
+}
+
 module.exports = {
   getTokenCurrentPrice,
   getTontineChains,
   getTontineTokenStake,
+  getTineEthRatio,
 };

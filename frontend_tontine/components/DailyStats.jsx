@@ -32,10 +32,10 @@ const DailyStats = () => {
     async function fetchPrices() {
       try {
         const tontinePrice = await getTokenCurrentPrice('TINE', 'USD');
-        setTontineCurrentPrice(Math.round(tontinePrice));
+        setTontineCurrentPrice(tontinePrice);
 
         const ethPrice = await getTokenCurrentPrice('ETH', 'USD');
-        setEthCurrentPrice(Math.round(ethPrice));
+        setEthCurrentPrice(ethPrice);
       } catch (err) {console.log(err.message)
         toast({
           title: "Error!",
@@ -84,7 +84,15 @@ const DailyStats = () => {
       <Box className="metric-container" textAlign="center" m={2}>
         <Text fontSize="lg" fontWeight="bold" className="metric-title">
           Silver Vault Average Return
-          <Tooltip label="APR is calculated using a 7 day average" fontSize="md">
+          <Tooltip
+            label="APR is calculated using a 7 day average"
+            fontSize="md"
+            backgroundColor="#131330"
+            borderRadius="10px"
+            border="double 1px transparent"
+            backgroundClip="padding-box, border-box"
+            backgroundOrigin="border-box"
+          >
             <InfoOutlineIcon cursor="pointer" ml={2}/>
           </Tooltip>
         </Text>
@@ -93,7 +101,15 @@ const DailyStats = () => {
       <Box className="metric-container" textAlign="center" m={2}>
         <Text fontSize="lg" fontWeight="bold" className="metric-title">
           Gold Vault Average Return
-          <Tooltip label="APR is calculated using a 7 day average" fontSize="md">
+          <Tooltip
+            label="APR is calculated using a 7 day average"
+            fontSize="md"
+            backgroundColor="#131330"
+            borderRadius="10px"
+            border="double 1px transparent"
+            backgroundClip="padding-box, border-box"
+            backgroundOrigin="border-box"
+          >
             <InfoOutlineIcon cursor="pointer" ml={2}/>
           </Tooltip>
         </Text>

@@ -11,6 +11,8 @@ import { useUser } from "@/context/UserContext";
 import { useTontine } from "@/context/TontineContext";
 import { useTine } from "@/context/TineContext";
 
+import { handleStakeOnSilverVault, handleStakeOnGoldVault } from "@/services/internal/handle/stakingEthHandleService";
+
 import UnconnectedWallet from "@/components/UnconnectedWallet";
 
 const StakingEthPublic = ({ isConnected, userAddress }) => {
@@ -24,7 +26,8 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
   const { silverVaultData,
     goldVaultData,
     rpSimpleAPR,
-    rpNodeAPR
+    rpNodeAPR,
+    fetchVaultData
   } = useTontine();
   
   const { smartContractMinLockAmount,
@@ -40,8 +43,8 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
   
   const [isWarningOpen, setWarningOpen] = useState(false);
   const [warningMessage, setWarningMessage] = useState();
-  const [ethSilverAmount, setEthSilverAmount] = useState();
-  const [ethGoldAmount, setEthGoldAmount] = useState(); 
+  const [ethSilverAmount, setEthSilverAmount] = useState(0);
+  const [ethGoldAmount, setEthGoldAmount] = useState(0); 
   
   const toast = useToast();
 
@@ -65,67 +68,24 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
     }
   };
   
-  /** SILVER */
-  const handleStakeOnSilverVault = async (ethSilverAmount) => {
-    try {
-        toast({
-          title: "Congratulations!",
-          description: `You have successfully stake Eth on Silver Vault`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-    
-    } catch (err) {
-      console.log(err.message)
-      toast({
-        title: "Error!",
-        description: "An error occured.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  /** GOLD */
-  const handleStakeOnGoldVault = async (ethGoldAmount) => {
-    try {
-      toast({
-          title: "Congratulations!",
-          description: `You have successfully stake Eth on Silver Vault`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-    } catch (err) {
-      console.log(err.message)
-      toast({
-        title: "Error!",
-        description: "An error occured.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-  
   return (
     <>
       <Flex className='features-list-container' width='100%' justifyContent="center" alignItems="center" marginTop='20px'>
         <Box className="card-container" width="100%">
           <img src='./assets/profit1.svg' alt="Balance" />
           <Heading>Silver Vault</Heading>
-          <Text textAlign='right'>Eth lock: { silverVaultData.ethLocked.toString() }</Text>
+          <Text textAlign='right'>Eth lock: { silverVaultData.ethLocked.toString() / 10 ** 18}</Text>
           <Text textAlign='right'>Current APR: { rpSimpleAPR }%</Text>
-          <Text textAlign='right'>Actif Users: { silverVaultData.activeUsers.toString() }</Text>
+          <Text textAlign='right'>Actif Users: {silverVaultData.activeUsers.toString()}</Text>
+          <Text textAlign='right'>Total Interest Generated: {silverVaultData.interestGenerated.toString()}</Text>
         </Box>
         <Box className="card-container" width="100%">
           <img src='./assets/profit1.svg' alt="Balance" />
           <Heading>Gold Vault</Heading>
           <Text textAlign='right'>Eth lock: { goldVaultData.ethLocked.toString() / 10 ** 18}</Text>
           <Text textAlign='right'>Current APR: { rpNodeAPR }%</Text>
-          <Text textAlign='right'>Actif Users: { goldVaultData.activeUsers.toString() }</Text>
+          <Text textAlign='right'>Actif Users: {goldVaultData.activeUsers.toString()}</Text>
+          <Text textAlign='right'>Total Interest Generated: {silverVaultData.interestGenerated.toString()}</Text>
         </Box>
       </Flex>
       
@@ -143,7 +103,7 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
           </Box>
         </Flex>
       ): (
-        <UnconnectedWallet/>  
+          <UnconnectedWallet />  
       )}
 
       <Box>
@@ -172,26 +132,26 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
                   id='amount'
                   type='number'
                   value={ethSilverAmount}
-                  onChange={(e) => setEthSilverAmount(e.target.value)}
+                  onChange={(e) => {
+                    const value = parseFloat(e.target.value);
+                    if (!isNaN(value) && value > 0) {
+                      setEthSilverAmount(value);
+                    } else {
+                      setEthSilverAmount('');
+                    }
+                  }}
                   style={{
                     borderColor: 'rgba(255, 255, 255, 0.16)',
                   }}
                 />
-              </FormControl>
-              <FormControl mt={4}>
-                <FormLabel htmlFor='readonly-amount'>Receive ttEth</FormLabel>
-                <Input
-                  id='readonly-amount'
-                  type='number'
-                  value={ethSilverAmount}
-                  isReadOnly
-                  style={{
-                    borderColor: 'rgba(255, 255, 255, 0.16)',
-                  }}
-                />
+                <Text fontSize="sm" color="gray.400" mt={2}>
+                  Please note: Each withdrawal from the vault will incur a fee of 0.05%.
+                  This fee is deducted from the withdrawal amount to cover transaction costs.
+                  Ensure to consider this fee before planning your deposits.
+                </Text>
               </FormControl>
               <Text mt={4} fontSize="lg">
-                Current APR: {rpNodeAPR}%
+                Current APR: {rpSimpleAPR}%
               </Text>
             </ModalBody>
             <ModalFooter>
@@ -199,9 +159,10 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
                 colorScheme="blue"
                 mr={3}
                 onClick={() => {
-                  handleStakeOnSilverVault(ethSilverAmount);
+                  handleStakeOnSilverVault(ethSilverAmount, fetchVaultData, onSilverClose, toast);
                   onSilverClose();
                 }}
+                isDisabled={!(ethSilverAmount > 0)}
               >
                 Stake
               </Button>
@@ -233,23 +194,23 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
                   id='amount'
                   type='number'
                   value={ethGoldAmount}
-                  onChange={(e) => setEthGoldAmount(e.target.value)}
+                  onChange={(e) => {
+                    const value = parseFloat(e.target.value);
+                    if (!isNaN(value) && value > 0) {
+                      setEthGoldAmount(value);
+                    } else {
+                      setEthGoldAmount('');
+                    }
+                  }}
                   style={{
                     borderColor: 'rgba(255, 255, 255, 0.16)', // Adjust as needed
                   }}
                 />
-              </FormControl>
-              <FormControl mt={4}>
-                <FormLabel htmlFor='readonly-amount'>Receive ttEth</FormLabel>
-                <Input
-                  id='readonly-amount'
-                  type='number'
-                  value={ethGoldAmount}
-                  isReadOnly
-                  style={{
-                    borderColor: 'rgba(255, 255, 255, 0.16)',
-                  }}
-                />
+                <Text fontSize="sm" color="gray.400" mt={2}>
+                  Please note: Each withdrawal from the vault will incur a fee of 0.05%.
+                  This fee is deducted from the withdrawal amount to cover transaction costs.
+                  Ensure to consider this fee before planning your deposits.
+                </Text>
               </FormControl>
               <Text mt={4} fontSize="lg">
                 Current APR: {rpNodeAPR}%
@@ -260,9 +221,10 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
                 colorScheme="blue"
                 mr={3}
                 onClick={() => {
-                  handleStakeOnGoldVault(ethGoldAmount);
+                  handleStakeOnGoldVault(ethGoldAmount, fetchVaultData, onGoldClose, toast);
                   onGoldClose();
                 }}
+                isDisabled={!(ethGoldAmount > 0)}
               >
                 Stake
               </Button>
