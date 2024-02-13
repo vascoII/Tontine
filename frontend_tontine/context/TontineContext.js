@@ -21,12 +21,14 @@ export const TontineProvider = ({ children }) => {
     ethLocked: 0,
     apr: 0,
     activeUsers: 0,
+    interestGenerated: 0,
   });
 
   const [goldVaultData, setGoldVaultData] = useState({
     ethLocked: 0,
     apr: 0,
     activeUsers: 0,
+    interestGenerated: 0,
   });
 
   const [rpSimpleAPR, setRpSimpleAPR] = useState(0);
@@ -40,12 +42,14 @@ export const TontineProvider = ({ children }) => {
         ethLocked: silverData.ethLocked,
         apr: silverData.apr,
         activeUsers: silverData.activeUsers,
+        interestGenerated: silverData.interestGenerated,
       });
       const goldData = await getGoldVaultDataService();
       setGoldVaultData({
         ethLocked: goldData.ethLocked,
         apr: goldData.apr,
         activeUsers: goldData.activeUsers,
+        interestGenerated: goldData.interestGenerated,
       });
     } catch (err) {
       toast({
@@ -88,11 +92,10 @@ export const TontineProvider = ({ children }) => {
     <TontineContext.Provider
       value={{
         silverVaultData,
-        setSilverVaultData,
         goldVaultData,
-        setGoldVaultData,
         rpSimpleAPR,
         rpNodeAPR,
+        fetchVaultData,
       }}
     >
       {children}
