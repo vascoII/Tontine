@@ -5,10 +5,11 @@ contract ChainlinkPricesOracleMock {
     constructor() {}
 
     function getLatestTinePriceInEth() public pure returns (uint256) {
-        return 10 ** 18;
+        // 0.1 ETH en Wei
+        return 10 ** 17; // équivalent à 0.1 * 10 ** 18
     }
 
     function getLatestEthPriceInTine() public pure returns (uint256) {
-        return 10 ** 18;
+        return 10;
     }
 }

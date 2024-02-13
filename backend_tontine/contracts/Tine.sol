@@ -34,7 +34,7 @@ contract Tine is ERC20, Ownable, ReentrancyGuard {
         ChainlinkPricesOracleMock _chainlinkPricesOracleMock
     ) ERC20("Tine", "TINE") Ownable(msg.sender) {
         chainlinkPricesOracleMock = _chainlinkPricesOracleMock;
-        _mint(msg.sender, 1_000 * 10 ** decimals());
+        //_mint(msg.sender, 1_000 * 10 ** decimals());
         _mint(address(this), 1_000 * 10 ** decimals());
     }
 
@@ -60,14 +60,14 @@ contract Tine is ERC20, Ownable, ReentrancyGuard {
             "Max supply exceeded"
         );
 
-        _mint(owner(), 100 * 10 ** decimals());
+        _mint(address(this), 100 * 10 ** decimals());
         lastMintEvent = block.timestamp;
     }
 
     function buyTine(uint256 _tineAmount) public payable nonReentrant {
         require(_tineAmount > 0, "Amount must be greater than 0");
         uint256 ethRate = chainlinkPricesOracleMock.getLatestTinePriceInEth();
-        uint256 requiredEth = _tineAmount * ethRate;
+        uint256 requiredEth = (_tineAmount * ethRate) / 10 ** 18; // Assurez-vous que cela calcule correctement le coût en ETH.
         require(msg.value >= requiredEth, "Incorrect ETH amount");
 
         uint256 excessEth = msg.value - requiredEth;
@@ -101,28 +101,33 @@ contract Tine is ERC20, Ownable, ReentrancyGuard {
         emit UnlockTineEvent(msg.sender);
     }
 
-    function sellTine(uint256 _tineAmount) public nonReentrant {
-        require(_tineAmount > 0, "Amount must be greater than 0");
+    function sellTine(uint256 _tineAmountInWei) public nonReentrant {
+        require(_tineAmountInWei > 0, "Amount must be greater than 0");
         require(
-            balanceOf(msg.sender) >= _tineAmount,
+            balanceOf(msg.sender) >= _tineAmountInWei,
             "Insufficient TINE balance"
         );
         require(
-            allowance(msg.sender, address(this)) >= _tineAmount,
+            allowance(msg.sender, address(this)) >= _tineAmountInWei,
             "Insufficient allowance"
         );
 
-        uint256 ethRate = chainlinkPricesOracleMock.getLatestEthPriceInTine();
-        uint256 ethAmount = _tineAmount * ethRate;
+        uint256 ethRate = chainlinkPricesOracleMock.getLatestEthPriceInTine(); // 10 Tine pour 1 ETH
+        // Ajuster le calcul pour utiliser le ratio inverse
+        uint256 ethAmount = _tineAmountInWei / ethRate; // Utilise 1e18 pour augmenter la précision
+
         require(
             address(this).balance >= ethAmount,
             "Insufficient ETH balance in contract"
         );
 
-        _transfer(msg.sender, address(this), _tineAmount);
-        payable(msg.sender).transfer(ethAmount);
+        _transfer(msg.sender, address(this), _tineAmountInWei);
 
-        emit SellTineEvent(msg.sender, _tineAmount, ethAmount);
+        // Envoyer les ETH net à l'utilisateur
+        (bool success, ) = payable(msg.sender).call{value: ethAmount}("");
+        require(success, "Failed to send Ether");
+
+        emit SellTineEvent(msg.sender, _tineAmountInWei, ethAmount);
     }
 
     function setMinLockTime(uint256 _minLockTime) public onlyOwner {

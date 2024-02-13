@@ -290,8 +290,18 @@ contract Tontine is Ownable {
         // Enregistrer le retrait
         _recordWithdraw(msg.sender, _ethAmount, _isGoldVault);
 
-        // Envoyer les ETH à l'utilisateur
-        payable(msg.sender).transfer(_ethAmount);
+        // Calculer le montant net à envoyer après les frais
+        uint256 netAmountToSend = (_ethAmount * 995) / 1000; // 0.995 pour représenter 99.5% du montant, reflétant les frais de 0.05%
+
+        // Vérifier que le contrat a suffisamment d'ETH pour effectuer l'envoi après avoir reçu de rETH
+        require(
+            address(this).balance >= netAmountToSend,
+            "Not enough ETH in contract after exchange"
+        );
+
+        // Envoyer les ETH net à l'utilisateur
+        (bool success, ) = payable(msg.sender).call{value: netAmountToSend}("");
+        require(success, "Failed to send Ether");
 
         emit WithdrawEvent(msg.sender, _ethAmount, _isGoldVault);
     }
