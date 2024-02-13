@@ -15,6 +15,7 @@ import { fetchUserSilverVaultData, fetchUserGoldVaultData } from "@/services/int
 
 import CustomModal from "@/components/common/Modal/CustomModal";
 import ActionButtons from "@/components/common/Buttons/ActionButtons";
+import VaultTable from "@/components/common/Table/VaultTable";
 
 const StakingEthPrivate = ({ isConnected, userAddress }) => {  
   const [clientIsConnected, setClientIsConnected] = useState(false);
@@ -71,74 +72,17 @@ const StakingEthPrivate = ({ isConnected, userAddress }) => {
       <Flex className='features-list-container' width='100%' justifyContent="center" alignItems="center" marginTop='20px'>
         {clientIsConnected && 
           <>
-            <Box className="card-container" width="100%">
-              <img src='./assets/profit1.svg' alt="Balance" />
-              <Heading>Silver Vault</Heading>
-              <Table>
-                <Thead>
-                  <Tr>
-                    <Th textAlign="center">Date</Th>
-                    <Th textAlign="right">Deposits</Th>
-                    <Th textAlign="right">Withdraws</Th>
-                    <Th textAlign="right">Balance</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {silverVaultOperation.map(transaction => (
-                    <Tr key={transaction.key}>
-                      <Th textAlign="center">{formatDate(transaction.date)}</Th>
-                      <Th textAlign="right">
-                        {transaction.deposits !== null ? (transaction.deposits.toString() / 10 ** 18) : ""}
-                      </Th>
-                      <Th textAlign="right">
-                        {transaction.withdraws !== null ? (transaction.withdraws.toString() / 10 ** 18) : ""}
-                      </Th>
-                      <Th/>
-                    </Tr>
-                  ))}
-                  <Tr>
-                    <Th/>
-                    <Th/>
-                    <Th/>
-                    <Th textAlign="right">{silverBalance.toString() / 10 ** 18} Eth</Th>
-                  </Tr>
-                </Tbody>
-              </Table>
-            </Box>
-            <Box className="card-container" width="100%">
-              <img src='./assets/profit1.svg' alt="Balance" />
-              <Heading>Gold Vault</Heading>
-              <Table>
-                <Thead>
-                  <Tr>
-                    <Th textAlign="center">Date</Th>
-                    <Th textAlign="right">Deposits</Th>
-                    <Th textAlign="right">Withdraws</Th>
-                    <Th textAlign="right">Balance</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {goldVaultOperation.map(transaction => (
-                    <Tr key={transaction.key}>
-                      <Th textAlign="center">{formatDate(transaction.date)}</Th>
-                      <Th textAlign="right">
-                        {transaction.deposits !== null ? (transaction.deposits.toString() / 10 ** 18) : ""}
-                      </Th>
-                      <Th textAlign="right">
-                        {transaction.withdraws !== null ? (transaction.withdraws.toString() / 10 ** 18) : ""}
-                      </Th>
-                      <Th/>
-                    </Tr>
-                  ))}
-                  <Tr>
-                    <Th/>
-                    <Th/>
-                    <Th/>
-                    <Th textAlign="right">{goldBalance.toString() / 10 ** 18} Eth</Th>
-                  </Tr>
-                </Tbody>
-              </Table>
-            </Box>
+            <VaultTable 
+              vaultType="Silver" 
+              vaultOperations={silverVaultOperation} 
+              balance={silverBalance} 
+            />
+
+            <VaultTable 
+              vaultType="Gold" 
+              vaultOperations={goldVaultOperation} 
+              balance={goldBalance} 
+            />
           </>
         }
       </Flex>
