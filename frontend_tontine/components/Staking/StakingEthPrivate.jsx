@@ -24,7 +24,9 @@ const StakingEthPrivate = ({ isConnected, userAddress }) => {
   const [silverVaultOperation, setSilverVaultOperation] = useState([]);
   const [goldVaultOperation, setGoldVaultOperation] = useState([]); 
   const [silverBalance, setSilverBalance] = useState(0n);
-  const [goldBalance, setGoldBalance] = useState(0n); 
+  const [goldBalance, setGoldBalance] = useState(0n);
+  const [silverInterest, setSilverInterest] = useState(0n);
+  const [goldInterest, setGoldInterest] = useState(0n);
 
   const { isOpen: isSilverOpen, onOpen: onSilverOpen, onClose: onSilverClose } = useDisclosure();
   const { isOpen: isGoldOpen, onOpen: onGoldOpen, onClose: onGoldClose } = useDisclosure();
@@ -45,8 +47,8 @@ const StakingEthPrivate = ({ isConnected, userAddress }) => {
 
   useEffect(() => {
     if (isConnected) {
-      fetchUserSilverVaultData(userAddress, setSilverBalance, setSilverVaultOperation, toast);
-      fetchUserGoldVaultData(userAddress, setGoldBalance, setGoldVaultOperation, toast);
+      fetchUserSilverVaultData(userAddress, setSilverBalance, setSilverVaultOperation, setSilverInterest, toast);
+      fetchUserGoldVaultData(userAddress, setGoldBalance, setGoldVaultOperation, setGoldInterest, toast);
     }
   }, [isConnected, userAddress]);
 
@@ -77,13 +79,15 @@ const StakingEthPrivate = ({ isConnected, userAddress }) => {
             <VaultTable 
               vaultType="Silver" 
               vaultOperations={silverVaultOperation} 
-              balance={silverBalance} 
+              balance={silverBalance}
+              interest={silverInterest}
             />
 
             <VaultTable 
               vaultType="Gold" 
               vaultOperations={goldVaultOperation} 
               balance={goldBalance} 
+              interest={goldInterest}
             />
           </>
         }
@@ -248,6 +252,7 @@ const StakingEthPrivate = ({ isConnected, userAddress }) => {
           )}
         />
       </Box>
+      {isLoading && <CustomSpinner/>}
     </>
   );
 

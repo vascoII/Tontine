@@ -83,7 +83,7 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
             `Eth lock: ${silverVaultData.ethLocked.toString() / 10 ** 18}`,
             `Current APR: ${rpSimpleAPR}%`,
             `Actif Users: ${silverVaultData.activeUsers.toString()}`,
-            `Total Interest Generated: ${silverVaultData.interestGenerated.toString()}`
+            `Total Interest Generated: ${silverVaultData.interestGenerated.toString() / 10 ** 19}`
           ]}
         />
 
@@ -95,7 +95,7 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
             `Eth lock: ${goldVaultData.ethLocked.toString() / 10 ** 18}`,
             `Current APR: ${rpNodeAPR}%`,
             `Actif Users: ${goldVaultData.activeUsers.toString()}`,
-            `Total Interest Generated: ${goldVaultData.interestGenerated.toString()}`
+            `Total Interest Generated: ${goldVaultData.interestGenerated.toString() / 10 ** 19}`
           ]}
         />
       </Flex>
@@ -166,7 +166,7 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
                   );
                   onSilverClose();
                 }}
-                isDisabled={!(ethSilverAmount > 0)}
+                isDisabled={!(ethSilverAmount > 1)}
               >
                 Stake
             </Button>
@@ -225,7 +225,7 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
                 );
                 onGoldClose();
               }}
-              isDisabled={!(ethGoldAmount > 0)}
+              isDisabled={!(ethGoldAmount > 1)}
             >
               Stake
             </Button>
@@ -250,6 +250,7 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
           )}
         />
       </Box>
+      {isLoading && <CustomSpinner/>}
     </>
   );
 };

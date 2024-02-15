@@ -2,7 +2,7 @@
 import { Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Text } from '@chakra-ui/react';
 import { formatDate } from '@/services/utils/dateUtils';
 
-const VaultTable = ({ vaultType, vaultOperations, balance }) => {
+const VaultTable = ({ vaultType, vaultOperations, balance, interest }) => {
   return (
     <Box className="card-container" width="100%">
       <img src="./assets/profit1.svg" alt={vaultType} />
@@ -34,6 +34,11 @@ const VaultTable = ({ vaultType, vaultOperations, balance }) => {
             <Td />
             <Td />
             <Td textAlign="right">{(balance.toString() / 10 ** 18) + ' Eth'}</Td>
+          </Tr>
+          <Tr>
+            <Td colSpan={4} textAlign="right">
+              {'Interests made: ' + (interest.toString() / 10 ** 18) + ' Eth'}
+            </Td>
           </Tr>
         </Tbody>
       </Table>

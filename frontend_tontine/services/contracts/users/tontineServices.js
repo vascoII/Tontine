@@ -57,6 +57,7 @@ export const getSilverVaultDepositsByUser = async (userAddress) => {
     throw err; // Relancer l'erreur pour la gestion dans le composant
   }
 };
+/*************** GETTERS  ****************************/
 
 // Contract SilverVaultWithdrawsByUser
 export const getSilverVaultWithdrawsByUser = async (userAddress) => {
@@ -106,6 +107,35 @@ export const getGoldVaultWithdrawsByUser = async (userAddress) => {
   }
 };
 
+export const getSilverVaultInterestByUser = async (userAddress) => {
+  try {
+    const goldVaultWithdraws = await readContract({
+      address: contractAddressTontine,
+      abi: abiTontine,
+      functionName: "getSilverVaultInterestsForUser",
+      args: [userAddress],
+    });
+    return goldVaultWithdraws;
+  } catch (err) {
+    console.error(err.message);
+    throw err; // Relancer l'erreur pour la gestion dans le composant
+  }
+};
+
+export const getGoldVaultInterestByUser = async (userAddress) => {
+  try {
+    const goldVaultWithdraws = await readContract({
+      address: contractAddressTontine,
+      abi: abiTontine,
+      functionName: "getGoldVaultInterestsForUser",
+      args: [userAddress],
+    });
+    return goldVaultWithdraws;
+  } catch (err) {
+    console.error(err.message);
+    throw err; // Relancer l'erreur pour la gestion dans le composant
+  }
+};
 /*************** SETTERS  ****************************/
 // stakeOnSilverService
 export const stakeOnSilverService = async (_ethSilverAmount) => {

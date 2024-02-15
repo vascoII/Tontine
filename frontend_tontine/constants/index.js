@@ -1036,6 +1036,25 @@ export const abiTontine = [
         type: "address",
       },
     ],
+    name: "getGoldVaultInterestsForUser",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_userAddress",
+        type: "address",
+      },
+    ],
     name: "getGoldVaultWithdrawsForUser",
     outputs: [
       {
@@ -1112,6 +1131,25 @@ export const abiTontine = [
   {
     inputs: [],
     name: "getSilverVaultExchangeRate",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_userAddress",
+        type: "address",
+      },
+    ],
+    name: "getSilverVaultInterestsForUser",
     outputs: [
       {
         internalType: "uint256",

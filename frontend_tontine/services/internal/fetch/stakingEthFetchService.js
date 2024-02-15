@@ -1,8 +1,10 @@
 import {
   getSilverVaultDepositsByUser,
   getSilverVaultWithdrawsByUser,
+  getSilverVaultInterestByUser,
   getGoldVaultDepositsByUser,
   getGoldVaultWithdrawsByUser,
+  getGoldVaultInterestByUser,
 } from "@/services/contracts/users/tontineServices";
 
 import { toBigIntSafe } from "@/services/utils/numberUtils";
@@ -11,6 +13,7 @@ export const fetchUserSilverVaultData = async (
   userAddress,
   setSilverBalance,
   setSilverVaultOperation,
+  setSilverInterest,
   toast
 ) => {
   try {
@@ -18,8 +21,7 @@ export const fetchUserSilverVaultData = async (
     const userSilverWithdraws = await getSilverVaultWithdrawsByUser(
       userAddress
     );
-    console.log(userSilverDeposits);
-    console.log(userSilverWithdraws);
+    const userSilverInterest = await getSilverVaultInterestByUser(userAddress);
     // Fusionner les dépôts et les retraits en ajoutant une indication de la nature de chaque transaction
     const allSilverTransactions = [];
     let balance = 0n;
@@ -53,6 +55,8 @@ export const fetchUserSilverVaultData = async (
     setSilverBalance(balance);
     //Set operations
     setSilverVaultOperation(sortedSilverTransactions);
+    //Set Interest
+    setSilverInterest(userSilverInterest);
   } catch (err) {
     toast({
       title: "Error!",
@@ -68,11 +72,13 @@ export const fetchUserGoldVaultData = async (
   userAddress,
   setGoldBalance,
   setGoldVaultOperation,
+  setGoldInterest,
   toast
 ) => {
   try {
     const userGoldDeposits = await getGoldVaultDepositsByUser(userAddress);
     const userGoldWithdraws = await getGoldVaultWithdrawsByUser(userAddress);
+    const userGoldInterest = await getGoldVaultInterestByUser(userAddress);
 
     // Fusionner les dépôts et les retraits en ajoutant une indication de la nature de chaque transaction
     const allGoldTransactions = [];
@@ -107,6 +113,8 @@ export const fetchUserGoldVaultData = async (
     setGoldBalance(balance);
     //Set operations
     setGoldVaultOperation(sortedGoldTransactions);
+    //Set Interest
+    setGoldInterest(userGoldInterest);
   } catch (err) {
     toast({
       title: "Error!",

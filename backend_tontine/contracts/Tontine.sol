@@ -318,6 +318,28 @@ contract Tontine is Ownable {
         return goldVaultDepositsByUser[_userAddress];
     }
 
+    function getSilverVaultInterestsForUser(
+        address _userAddress
+    ) external view returns (uint256) {
+        for (uint256 i = 0; i < accounts.length; i++) {
+            if (accounts[i].userAddress == _userAddress) {
+                return accounts[i].amountEthInteretInSilverVault;
+            }
+        }
+        return 0;
+    }
+
+    function getGoldVaultInterestsForUser(
+        address _userAddress
+    ) external view returns (uint256) {
+        for (uint256 i = 0; i < accounts.length; i++) {
+            if (accounts[i].userAddress == _userAddress) {
+                return accounts[i].amountEthInteretInGoldVault;
+            }
+        }
+        return 0;
+    }
+
     function getSilverVaultWithdrawsForUser(
         address _userAddress
     ) external view returns (Withdraw[] memory) {
@@ -366,19 +388,14 @@ contract Tontine is Ownable {
         // Additional logic can be added here if required.
     }
 
-    /*************** FUNCTION TO SIMULATE 6 MONTH INTERESTS ***********/
-    function simulateSixMonthsInterest() public onlyOwner {
-        uint256 silverRateForSixMonths = rEth.getExchangeRate(1); // 500 pour 0.5% sur 6 mois
-        uint256 goldRateForSixMonths = rEth.getExchangeRate(2); // 1000 pour 1% sur 6 mois
-
+    /*************** FUNCTION TO SIMULATE 12 MONTH INTERESTS ***********/
+    function simulateTwelveMonthsInterest() public onlyOwner {
         for (uint256 i = 0; i < accounts.length; i++) {
             Account storage account = accounts[i];
 
-            // Appliquer directement le taux pour 6 mois
-            uint256 silverInterest = (account.amountEthInSilverVault *
-                silverRateForSixMonths) / 1000;
-            uint256 goldInterest = (account.amountEthInGoldVault *
-                goldRateForSixMonths) / 1000;
+            // Appliquer directement le taux pour 12 mois
+            uint256 silverInterest = account.amountEthInSilverVault / 20;
+            uint256 goldInterest = account.amountEthInGoldVault / 10;
 
             account.amountEthInteretInSilverVault += silverInterest;
 
@@ -386,11 +403,7 @@ contract Tontine is Ownable {
         }
 
         // Interets des Silver et Gold Vaults
-        silverVaultInteretBalance +=
-            (silverVaultBalance * silverRateForSixMonths) /
-            1000;
-        goldVaultInteretBalance +=
-            (goldVaultBalance * goldRateForSixMonths) /
-            1000;
+        silverVaultBalance += (silverVaultInteretBalance / 20);
+        goldVaultBalance += (goldVaultInteretBalance / 10);
     }
 }
