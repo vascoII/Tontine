@@ -24,6 +24,7 @@ import UnconnectedWallet from "@/components/UnconnectedWallet";
 import CustomModal from "@/components/common/Modal/CustomModal";
 import ConditionalActionButton from "@/components/common/Buttons/ConditionalActionButton";
 import InfoCard from "@/components/common/Card/InfoCard";
+import CustomSpinner from "@/components/common/CustomSpinner";
 
 const TokenTineStack = ({ isConnected, userAddress }) => {
   const { isUser,
@@ -39,6 +40,7 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
   } = useTine();
   
   const [clientIsConnected, setClientIsConnected] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
   const { modal } = router.query;
@@ -212,7 +214,8 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
                   handleActionDone,
                   setTineUserBalance,
                   toast,
-                  tineUserBalance
+                  tineUserBalance, 
+                  setIsLoading
                 );
                 onBuyClose();
               }}
@@ -236,7 +239,12 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
           )}
           footerContent={(
             <Button colorScheme="blue" mr={3} onClick={() => {
-              handleLockTine(onLockClose, setTineLockedDate, toast);
+              handleLockTine(
+                onLockClose,
+                setTineLockedDate,
+                toast,  
+                setIsLoading
+              );
               onLockClose();
             }}>
               Lock
@@ -254,7 +262,12 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
           )}
           footerContent={(
             <Button colorScheme="blue" mr={3} onClick={() => {
-              handleUnlockTine(onUnlockClose, setTineLockedDate, toast);
+              handleUnlockTine(
+                onUnlockClose,
+                setTineLockedDate,
+                toast, 
+                setIsLoading
+              );
               onUnlockClose();
             }}>
               Unlock
@@ -311,7 +324,8 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
                     onSellClose,
                     setTineUserBalance,
                     toast,
-                    tineUserBalance
+                    tineUserBalance, 
+                    setIsLoading
                   );
                   onSellClose();
                 }}
@@ -322,6 +336,7 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
           )}
         />
       </Box>
+      {isLoading && <CustomSpinner/>}
     </>
   );
 };

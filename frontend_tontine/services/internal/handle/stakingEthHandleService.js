@@ -10,10 +10,13 @@ export const handleStakeOnSilverVault = async (
   ethSilverAmount,
   fetchVaultData,
   onSilverClose,
-  toast
+  toast,
+  setIsLoading
 ) => {
   try {
+    setIsLoading(true);
     const success = await stakeOnSilverService(ethSilverAmount);
+    setIsLoading(false);
     if (success) {
       fetchVaultData();
       onSilverClose();
@@ -35,14 +38,24 @@ export const handleStakeOnSilverVault = async (
       });
     }
   } catch (err) {
-    console.log(err.message);
-    toast({
-      title: "Error!",
-      description: "An error occured.",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
+    setIsLoading(false);
+    if (err.message.includes("User rejected the request")) {
+      toast({
+        title: "Transaction Rejected",
+        description: "You rejected the request.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: "Error!",
+        description: "An error occured.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   }
 };
 
@@ -51,10 +64,13 @@ export const handleStakeOnGoldVault = async (
   ethGoldAmount,
   fetchVaultData,
   onGoldClose,
-  toast
+  toast,
+  setIsLoading
 ) => {
   try {
+    setIsLoading(true);
     const success = await stakeOnGoldService(ethGoldAmount);
+    setIsLoading(false);
     if (success) {
       fetchVaultData();
       onGoldClose();
@@ -76,14 +92,24 @@ export const handleStakeOnGoldVault = async (
       });
     }
   } catch (err) {
-    console.log(err.message);
-    toast({
-      title: "Error!",
-      description: "An error occured.",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
+    setIsLoading(false);
+    if (err.message.includes("User rejected the request")) {
+      toast({
+        title: "Transaction Rejected",
+        description: "You rejected the request.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: "Error!",
+        description: "An error occured.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   }
 };
 
@@ -92,10 +118,13 @@ export const handleUnstakeOnSilverVault = async (
   ethSilverAmount,
   toast,
   fetchUserSilverVaultData,
-  onSilverClose
+  onSilverClose,
+  setIsLoading
 ) => {
   try {
+    setIsLoading(true);
     const success = await unstakeOnSilverService(ethSilverAmount);
+    setIsLoading(false);
     if (success) {
       fetchUserSilverVaultData();
       onSilverClose();
@@ -117,13 +146,24 @@ export const handleUnstakeOnSilverVault = async (
       });
     }
   } catch (err) {
-    toast({
-      title: "Error!",
-      description: "An error occured.",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
+    setIsLoading(false);
+    if (err.message.includes("User rejected the request")) {
+      toast({
+        title: "Transaction Rejected",
+        description: "You rejected the request.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: "Error!",
+        description: "An error occured.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   }
 };
 
@@ -132,10 +172,13 @@ export const handleUnstakeOnGoldVault = async (
   ethGoldAmount,
   toast,
   fetchUserGoldVaultData,
-  onGoldClose
+  onGoldClose,
+  setIsLoading
 ) => {
   try {
+    setIsLoading(true);
     const success = await unstakeOnGoldService(ethGoldAmount);
+    setIsLoading(false);
     if (success) {
       fetchUserGoldVaultData();
       onGoldClose();
@@ -157,11 +200,20 @@ export const handleUnstakeOnGoldVault = async (
       });
     }
   } catch (err) {
+    setIsLoading(false);
     if (err.message.includes("TINE must be unlocked for Gold Vault")) {
       toast({
-        title: "Error!",
+        title: "Wait!",
         description: "You must unlock TINE to withdraw from Gold Vault.",
-        status: "error",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else if (err.message.includes("User rejected the request")) {
+      toast({
+        title: "Transaction Rejected",
+        description: "You rejected the request.",
+        status: "warning",
         duration: 3000,
         isClosable: true,
       });

@@ -16,8 +16,10 @@ import UnconnectedWallet from "@/components/UnconnectedWallet";
 import CustomModal from "@/components/common/Modal/CustomModal";
 import ActionButtons from "@/components/common/Buttons/ActionButtons";
 import InfoCard from "@/components/common/Card/InfoCard";
+import CustomSpinner from "@/components/common/CustomSpinner";
 
 const StakingEthPublic = ({ isConnected, userAddress }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const { isUser,
     tineUserBalance,
     setTineUserBalance,
@@ -155,7 +157,13 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
                 colorScheme="blue"
                 mr={3}
                 onClick={() => {
-                  handleStakeOnSilverVault(ethSilverAmount, fetchVaultData, onSilverClose, toast);
+                  handleStakeOnSilverVault(
+                    ethSilverAmount,
+                    fetchVaultData,
+                    onSilverClose,
+                    toast,  
+                    setIsLoading
+                  );
                   onSilverClose();
                 }}
                 isDisabled={!(ethSilverAmount > 0)}
@@ -208,7 +216,13 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
               colorScheme="blue"
               mr={3}
               onClick={() => {
-                handleStakeOnGoldVault(ethGoldAmount, fetchVaultData, onGoldClose, toast);
+                handleStakeOnGoldVault(
+                  ethGoldAmount,
+                  fetchVaultData,
+                  onGoldClose,
+                  toast,  
+                  setIsLoading
+                );
                 onGoldClose();
               }}
               isDisabled={!(ethGoldAmount > 0)}

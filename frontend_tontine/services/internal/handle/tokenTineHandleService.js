@@ -13,10 +13,13 @@ export const handleBuyTine = async (
   handleActionDone,
   setTineUserBalance,
   toast,
-  tineUserBalance
+  tineUserBalance,
+  setIsLoading
 ) => {
   try {
+    setIsLoading(true);
     const success = await buyTineService(tineAmountToBuy, ethCost);
+    setIsLoading(false);
     if (success) {
       onBuyClose();
       handleActionDone();
@@ -38,14 +41,24 @@ export const handleBuyTine = async (
       });
     }
   } catch (err) {
-    console.log(err.message);
-    toast({
-      title: "Error!",
-      description: "An error occured.",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
+    setIsLoading(false);
+    if (err.message.includes("User rejected the request")) {
+      toast({
+        title: "Transaction Rejected",
+        description: "You rejected the request.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: "Error!",
+        description: "An error occured.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   }
 };
 
@@ -55,9 +68,11 @@ export const handleSellTine = async (
   onSellClose,
   setTineUserBalance,
   toast,
-  tineUserBalance
+  tineUserBalance,
+  setIsLoading
 ) => {
   try {
+    setIsLoading(true);
     const success = await sellTineService(tineAmountToSell);
     if (success) {
       onSellClose();
@@ -71,12 +86,20 @@ export const handleSellTine = async (
       });
     }
   } catch (err) {
-    console.log(err.message);
-    if (err.message.includes("Amount must be greater than 0")) {
+    setIsLoading(false);
+    if (err.message.includes("User rejected the request")) {
+      toast({
+        title: "Transaction Rejected",
+        description: "You rejected the request.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else if (err.message.includes("Amount must be greater than 0")) {
       toast({
         title: "Error!",
         description: "",
-        status: "error",
+        status: "warning",
         duration: 3000,
         isClosable: true,
       });
@@ -89,7 +112,7 @@ export const handleSellTine = async (
         title: "Error!",
         description:
           "As part of Gold vault community your remaining amount of Tine can not be null.",
-        status: "error",
+        status: "warning",
         duration: 3000,
         isClosable: true,
       });
@@ -97,7 +120,7 @@ export const handleSellTine = async (
       toast({
         title: "Error!",
         description: "Insufficient Eth balance in protocol.",
-        status: "error",
+        status: "warning",
         duration: 3000,
         isClosable: true,
       });
@@ -114,9 +137,16 @@ export const handleSellTine = async (
 };
 
 /** LOCK TINE HANDLER */
-export const handleLockTine = async (onLockClose, setTineLockedDate, toast) => {
+export const handleLockTine = async (
+  onLockClose,
+  setTineLockedDate,
+  toast,
+  setIsLoading
+) => {
   try {
+    setIsLoading(true);
     const success = await lockTineService();
+    setIsLoading(false);
     if (success) {
       onLockClose();
       const date = new Date();
@@ -145,11 +175,20 @@ export const handleLockTine = async (onLockClose, setTineLockedDate, toast) => {
       });
     }
   } catch (err) {
-    if (err.message.includes("TINE already locked")) {
+    setIsLoading(false);
+    if (err.message.includes("User rejected the request")) {
       toast({
-        title: "Congratulations!",
+        title: "Transaction Rejected",
+        description: "You rejected the request.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else if (err.message.includes("TINE already locked")) {
+      toast({
+        title: "Dont worry!",
         description: `Your Tine are already locked.`,
-        status: "success",
+        status: "warning",
         duration: 3000,
         isClosable: true,
       });
@@ -169,10 +208,13 @@ export const handleLockTine = async (onLockClose, setTineLockedDate, toast) => {
 export const handleUnlockTine = async (
   onUnlockClose,
   setTineLockedDate,
-  toast
+  toast,
+  setIsLoading
 ) => {
   try {
+    setIsLoading(true);
     const success = await unlockTineService();
+    setIsLoading(false);
     if (success) {
       onUnlockClose();
       setTineLockedDate("");
@@ -193,20 +235,28 @@ export const handleUnlockTine = async (
       });
     }
   } catch (err) {
-    console.log(err.message);
-    if (err.message.includes("No TINE locked")) {
+    setIsLoading(false);
+    if (err.message.includes("User rejected the request")) {
       toast({
-        title: "Error!",
+        title: "Transaction Rejected",
+        description: "You rejected the request.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else if (err.message.includes("No TINE locked")) {
+      toast({
+        title: "Lock first!",
         description: "You dont have Tine to unlock.",
-        status: "error",
+        status: "warning",
         duration: 3000,
         isClosable: true,
       });
     } else if (err.message.includes("Lock period not over")) {
       toast({
-        title: "Error!",
+        title: "Wait!",
         description: "Lock period is not over yet.",
-        status: "error",
+        status: "warning",
         duration: 3000,
         isClosable: true,
       });

@@ -16,9 +16,11 @@ import { fetchUserSilverVaultData, fetchUserGoldVaultData } from "@/services/int
 import CustomModal from "@/components/common/Modal/CustomModal";
 import ActionButtons from "@/components/common/Buttons/ActionButtons";
 import VaultTable from "@/components/common/Table/VaultTable";
+import CustomSpinner from "@/components/common/CustomSpinner";
 
 const StakingEthPrivate = ({ isConnected, userAddress }) => {  
   const [clientIsConnected, setClientIsConnected] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [silverVaultOperation, setSilverVaultOperation] = useState([]);
   const [goldVaultOperation, setGoldVaultOperation] = useState([]); 
   const [silverBalance, setSilverBalance] = useState(0n);
@@ -149,7 +151,12 @@ const StakingEthPrivate = ({ isConnected, userAddress }) => {
               colorScheme="blue"
               mr={3}
               onClick={() => {
-                handleUnstakeOnSilverVault(ethSilverAmount, toast, fetchUserSilverVaultData, onSilverClose);
+                handleUnstakeOnSilverVault(
+                  ethSilverAmount,
+                  toast,
+                  fetchUserSilverVaultData,
+                  onSilverClose, 
+                  setIsLoading);
                 onSilverClose();
               }}
               isDisabled={!(ethSilverAmount > 0) || (ethSilverAmount > (silverBalance.toString() / 10 ** 18))}
@@ -210,7 +217,13 @@ const StakingEthPrivate = ({ isConnected, userAddress }) => {
                 colorScheme="blue"
                 mr={3}
                 onClick={() => {
-                  handleUnstakeOnGoldVault(ethGoldAmount, toast, fetchUserGoldVaultData, onGoldClose);
+                  handleUnstakeOnGoldVault(
+                    ethGoldAmount,
+                    toast,
+                    fetchUserGoldVaultData,
+                    onGoldClose,
+                    setIsLoading
+                  );
                   onGoldClose();
                 }}
                 isDisabled={!(ethGoldAmount > 0) || (ethGoldAmount > (goldBalance.toString() / 10 ** 18))}
