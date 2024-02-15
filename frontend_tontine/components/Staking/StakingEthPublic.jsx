@@ -166,7 +166,7 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
                   );
                   onSilverClose();
                 }}
-                isDisabled={!(ethSilverAmount > 1)}
+                isDisabled={!(ethSilverAmount >= 1)}
               >
                 Stake
             </Button>
@@ -225,7 +225,7 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
                 );
                 onGoldClose();
               }}
-              isDisabled={!(ethGoldAmount > 1)}
+              isDisabled={!(ethGoldAmount >= 1)}
             >
               Stake
             </Button>
