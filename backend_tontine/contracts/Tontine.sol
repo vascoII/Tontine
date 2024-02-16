@@ -403,7 +403,7 @@ contract Tontine is Ownable {
         }
 
         // Interets des Silver et Gold Vaults
-        silverVaultBalance += (silverVaultInteretBalance / 20);
-        goldVaultBalance += (goldVaultInteretBalance / 10);
+        silverVaultInteretBalance += (silverVaultBalance / 20);
+        goldVaultInteretBalance += (goldVaultBalance / 10);
     }
 }
