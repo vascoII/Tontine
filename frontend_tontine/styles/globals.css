@@ -119,6 +119,7 @@ span.highlighted {
   border-radius: 5px;
   padding: 0 10px;
   color: #fff;
+  opacity: 0.8;
 }
 
 span.highlighted-right {
@@ -407,6 +408,7 @@ p {
   font-weight: 500;
   line-height: 43px;
   margin-top: 30px;
+  opacity: 0.8;
 }
 
 @media only screen and (max-width: 768px) {
@@ -444,6 +446,7 @@ p {
   background-origin: border-box;
   background-clip: padding-box, border-box;
   border: double 1px transparent;
+  opacity: 0.8;
 }
 
 .card-container h1 {

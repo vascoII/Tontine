@@ -117,16 +117,25 @@ export const handleStakeOnGoldVault = async (
 export const handleUnstakeOnSilverVault = async (
   ethSilverAmount,
   toast,
-  fetchUserSilverVaultData,
   onSilverClose,
-  setIsLoading
+  setIsLoading,
+  fetchUserSilverVaultData,
+  userAddress,
+  setSilverBalance,
+  setSilverVaultOperation,
+  setSilverInterest
 ) => {
   try {
     setIsLoading(true);
     const success = await unstakeOnSilverService(ethSilverAmount);
     setIsLoading(false);
     if (success) {
-      fetchUserSilverVaultData();
+      fetchUserSilverVaultData(
+        userAddress,
+        setSilverBalance,
+        setSilverVaultOperation,
+        setSilverInterest
+      );
       onSilverClose();
       toast({
         title: "Congratulations!",
@@ -171,16 +180,25 @@ export const handleUnstakeOnSilverVault = async (
 export const handleUnstakeOnGoldVault = async (
   ethGoldAmount,
   toast,
-  fetchUserGoldVaultData,
   onGoldClose,
-  setIsLoading
+  setIsLoading,
+  fetchUserGoldVaultData,
+  userAddress,
+  setGoldBalance,
+  setGoldVaultOperation,
+  setGoldInterest
 ) => {
   try {
     setIsLoading(true);
     const success = await unstakeOnGoldService(ethGoldAmount);
     setIsLoading(false);
     if (success) {
-      fetchUserGoldVaultData();
+      fetchUserGoldVaultData(
+        userAddress,
+        setGoldBalance,
+        setGoldVaultOperation,
+        setGoldInterest
+      );
       onGoldClose();
       toast({
         title: "Congratulations!",

@@ -74,6 +74,7 @@ export const handleSellTine = async (
   try {
     setIsLoading(true);
     const success = await sellTineService(tineAmountToSell);
+    setIsLoading(false);
     if (success) {
       onSellClose();
       setTineUserBalance(tineUserBalance - tineAmountToSell);

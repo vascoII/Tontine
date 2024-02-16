@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { Box, Heading, Text, Collapse, Button } from "@chakra-ui/react";
+import TontineStats from './Stats/TontineStats';
 
 const TontineAdmin = ({ isConnected, userAddress }) => {
   const [showContent, setShowContent] = useState(false);
@@ -34,8 +35,7 @@ const TontineAdmin = ({ isConnected, userAddress }) => {
             shadow="md"
             bgColor="#131330"
           >
-            {/* Le contenu caché que vous voulez montrer quand on clique sur BLABLABLA */}
-            <Text>Ce contenu est révélé par l'accordéon</Text>
+            <TontineStats/>
           </Box>
         </Collapse>
       </Box>

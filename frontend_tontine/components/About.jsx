@@ -31,7 +31,7 @@ const About = ({ isConnected, userAddress }) => {
           <Flex className="search-container" align="center" />
           
           <Text className="hero-info-description" fontSize='1.5rem' marginBottom='10px' marginTop='50px'>
-             Tontine's <span className="highlighted" color='#ffff'><Link href='/staking'>GoldVault</Link></span> presents a superior yielding opportunity. 
+             The <span className="highlighted" color='#ffff'><Link href='/staking'>GoldVault</Link></span> in Tontine offers a superior yielding opportunity. 
           </Text>
           <Text className="hero-info-description" fontSize='1.5rem' marginBottom='10px'>
              To access the <span className="highlighted" color='#ffff'><Link href='/staking'>GoldVault</Link></span>, participants are required to purchase a minimum of {smartContractMinLockAmount.toString() / 10 ** 18} <span className="highlighted" color='#ffff'><Link href="/tokentine?modal=buy">Tine</Link></span>, the native coin of the dApp.

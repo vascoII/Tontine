@@ -13,8 +13,7 @@ export const fetchUserSilverVaultData = async (
   userAddress,
   setSilverBalance,
   setSilverVaultOperation,
-  setSilverInterest,
-  toast
+  setSilverInterest
 ) => {
   try {
     const userSilverDeposits = await getSilverVaultDepositsByUser(userAddress);
@@ -58,13 +57,7 @@ export const fetchUserSilverVaultData = async (
     //Set Interest
     setSilverInterest(userSilverInterest);
   } catch (err) {
-    toast({
-      title: "Error!",
-      description: "An error occured on fetching silver vault operation.",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
+    return err;
   }
 };
 
@@ -72,8 +65,7 @@ export const fetchUserGoldVaultData = async (
   userAddress,
   setGoldBalance,
   setGoldVaultOperation,
-  setGoldInterest,
-  toast
+  setGoldInterest
 ) => {
   try {
     const userGoldDeposits = await getGoldVaultDepositsByUser(userAddress);
@@ -116,12 +108,6 @@ export const fetchUserGoldVaultData = async (
     //Set Interest
     setGoldInterest(userGoldInterest);
   } catch (err) {
-    toast({
-      title: "Error!",
-      description: "An error occured on fetching gold vault operation.",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
+    return err;
   }
 };

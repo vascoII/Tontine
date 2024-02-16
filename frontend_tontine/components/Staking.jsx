@@ -29,7 +29,7 @@ const Staking = ({ isConnected, userAddress }) => {
           >
             Public Vaults
           </Button>
-          {isUser && <Button
+          {isUser && isConnected && <Button
             className="toggle-option"
             bg={!showPublic ? "blue.500" : "transparent"}
             color={!showPublic ? "white" : "blue.500"}
@@ -39,9 +39,9 @@ const Staking = ({ isConnected, userAddress }) => {
           </Button>
           }
           {showPublic ? (
-            <StakingEthPublic isConnected={isConnected} userAddress={userAddress}/>
+            <StakingEthPublic isConnected={isConnected} userAddress={userAddress} />
           ) : (
-            <StakingEthPrivate isConnected={isConnected} userAddress={userAddress}/>
+            <StakingEthPrivate isConnected={isConnected} userAddress={userAddress} setShowPublic/>
           )}
           
         </Box>

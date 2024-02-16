@@ -18,7 +18,7 @@ import ActionButtons from "@/components/common/Buttons/ActionButtons";
 import VaultTable from "@/components/common/Table/VaultTable";
 import CustomSpinner from "@/components/common/CustomSpinner";
 
-const StakingEthPrivate = ({ isConnected, userAddress }) => {  
+const StakingEthPrivate = ({ isConnected, userAddress, setShowPublic }) => {  
   const [clientIsConnected, setClientIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [silverVaultOperation, setSilverVaultOperation] = useState([]);
@@ -47,10 +47,21 @@ const StakingEthPrivate = ({ isConnected, userAddress }) => {
 
   useEffect(() => {
     if (isConnected) {
-      fetchUserSilverVaultData(userAddress, setSilverBalance, setSilverVaultOperation, setSilverInterest, toast);
-      fetchUserGoldVaultData(userAddress, setGoldBalance, setGoldVaultOperation, setGoldInterest, toast);
+      try {
+        fetchUserSilverVaultData(userAddress, setSilverBalance, setSilverVaultOperation, setSilverInterest);
+        fetchUserGoldVaultData(userAddress, setGoldBalance, setGoldVaultOperation, setGoldInterest);
+      } catch (err) {
+        toast({
+        title: "Fetching error",
+        description: err.message,
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      }
+      
     }
-  }, [isConnected, userAddress]);
+  }, [isConnected, userAddress, toast, fetchUserSilverVaultData, fetchUserGoldVaultData]);
 
   /************ UNSTAKING *****************/
   const handleGoldButtonClick = () => {
@@ -158,9 +169,14 @@ const StakingEthPrivate = ({ isConnected, userAddress }) => {
                 handleUnstakeOnSilverVault(
                   ethSilverAmount,
                   toast,
-                  fetchUserSilverVaultData,
                   onSilverClose, 
-                  setIsLoading);
+                  setIsLoading,
+                  fetchUserSilverVaultData,
+                  userAddress,
+                  setSilverBalance,
+                  setSilverVaultOperation,
+                  setSilverInterest
+                );
                 onSilverClose();
               }}
               isDisabled={!(ethSilverAmount > 0) || (ethSilverAmount > (silverBalance.toString() / 10 ** 18))}
@@ -224,9 +240,13 @@ const StakingEthPrivate = ({ isConnected, userAddress }) => {
                   handleUnstakeOnGoldVault(
                     ethGoldAmount,
                     toast,
-                    fetchUserGoldVaultData,
                     onGoldClose,
-                    setIsLoading
+                    setIsLoading,
+                    fetchUserGoldVaultData,
+                    userAddress,
+                    setGoldBalance,
+                    setGoldVaultOperation,
+                    setGoldInterest
                   );
                   onGoldClose();
                 }}
