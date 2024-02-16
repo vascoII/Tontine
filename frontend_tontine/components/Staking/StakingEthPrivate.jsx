@@ -179,7 +179,7 @@ const StakingEthPrivate = ({ isConnected, userAddress, setShowPublic }) => {
                 );
                 onSilverClose();
               }}
-              isDisabled={!(ethSilverAmount > 0) || (ethSilverAmount > (silverBalance.toString() / 10 ** 18))}
+              isDisabled={!(ethSilverAmount > 0) || (ethSilverAmount > ((silverBalance.toString() / 10 ** 18) + (silverInterest.toString() / 10 ** 18)))}
             >
               Unstake
             </Button>
@@ -250,7 +250,7 @@ const StakingEthPrivate = ({ isConnected, userAddress, setShowPublic }) => {
                   );
                   onGoldClose();
                 }}
-                isDisabled={!(ethGoldAmount > 0) || (ethGoldAmount > (goldBalance.toString() / 10 ** 18))}
+                isDisabled={!(ethGoldAmount > 0) || (ethGoldAmount > ((goldBalance.toString() / 10 ** 18) + (goldInterest.toString() / 10 ** 18)))}
               >
                 Unstake
             </Button>
