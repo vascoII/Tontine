@@ -23,16 +23,16 @@ const Staking = ({ isConnected, userAddress }) => {
         <Box className="hero-info-text">
           <Button
             className="toggle-option"
-            bg={showPublic ? "blue.500" : "transparent"}
-            color={showPublic ? "white" : "blue.500"}
+            bg={showPublic ? "#3182CE" : "transparent"} 
+            color={showPublic ? "white" : "#3182CE"}
             onClick={() => setShowPublic(true)}
           >
             Public Vaults
           </Button>
           {isUser && isConnected && <Button
             className="toggle-option"
-            bg={!showPublic ? "blue.500" : "transparent"}
-            color={!showPublic ? "white" : "blue.500"}
+            bg={!showPublic ? "#3182CE" : "transparent"}
+            color={!showPublic ? "white" : "#3182CE"}
             onClick={() => setShowPublic(false)}
           >
             Your deposits
