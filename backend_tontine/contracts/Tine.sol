@@ -6,68 +6,63 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./ChainlinkPricesOracleMock.sol";
 
+/// @title Tine Token Contract
+/// @dev Extends ERC20 token standards with additional functionality such as locking tokens and adjusting supply.
+/// Incorporates Ownable and ReentrancyGuard from OpenZeppelin for security.
 contract Tine is ERC20, Ownable, ReentrancyGuard {
     ChainlinkPricesOracleMock private chainlinkPricesOracleMock;
 
     uint256 public lastMintEvent;
-    uint256 public minLockTime = 60; // 1 minute
-    uint256 public minLockAmount = 1 * 10 ** decimals();
-    uint256 public maxSupply = 21_000 * 10 ** decimals();
-    uint256 public maxBalance = 100 * 10 ** decimals();
+    uint256 public minLockTime = 60; // Minimum lock time set to 1 minute.
+    uint256 public minLockAmount = 1 * 10 ** decimals(); // Minimum lock amount.
+    uint256 public maxSupply = 21_000 * 10 ** decimals(); // Maximum token supply.
+    uint256 public maxBalance = 100 * 10 ** decimals(); // Maximum balance a single address can hold.
 
-    mapping(address => uint256) public tineLocked;
+    mapping(address => uint256) public tineLocked; // Tracks locked Tine tokens by address.
 
-    event BuyTineEvent(
-        address indexed userAddress,
-        uint256 tineAmount,
-        uint256 ethAmount
-    );
+    // Events for token purchase, locking, unlocking, and selling.
+    event BuyTineEvent(address indexed userAddress, uint256 tineAmount, uint256 ethAmount);
     event LockTineEvent(address indexed userAddress);
     event UnlockTineEvent(address indexed userAddress);
-    event SellTineEvent(
-        address indexed userAddress,
-        uint256 tineAmount,
-        uint256 ethAmount
-    );
+    event SellTineEvent(address indexed userAddress, uint256 tineAmount, uint256 ethAmount);
 
-    constructor(
-        ChainlinkPricesOracleMock _chainlinkPricesOracleMock
-    ) ERC20("Tine", "TINE") Ownable(msg.sender) {
+    constructor(ChainlinkPricesOracleMock _chainlinkPricesOracleMock) ERC20("Tine", "TINE") Ownable(msg.sender) {
         chainlinkPricesOracleMock = _chainlinkPricesOracleMock;
-        //_mint(msg.sender, 1_000 * 10 ** decimals());
-        _mint(address(this), 1_000 * 10 ** decimals());
+        _mint(address(this), 1_000 * 10 ** decimals()); // Initial minting to the contract itself for liquidity.
     }
 
+    /// @notice Returns the contract's token balance.
     function getSmartContractTokenBalance() external view returns (uint) {
         return balanceOf(address(this));
     }
 
+    /// @notice Returns the contract's ETH balance.
     function getSmartContractEthBalance() external view returns (uint) {
         return address(this).balance;
     }
 
+    /// @notice Checks if a user has locked Tine tokens.
+    /// @param user Address of the user to check.
+    /// @return True if the user has locked Tine tokens, false otherwise.
     function hasLockedTine(address user) external view returns (bool) {
         return tineLocked[user] != 0;
     }
 
+    /// @notice Allows monthly token minting by the owner, adhering to the max supply limit.
     function mintMonthly() public onlyOwner {
-        require(
-            block.timestamp >= lastMintEvent + 30 days,
-            "Minting not yet allowed"
-        );
-        require(
-            totalSupply() + 100 * 10 ** decimals() <= maxSupply,
-            "Max supply exceeded"
-        );
+        require(block.timestamp >= lastMintEvent + 30 days, "Minting not yet allowed");
+        require(totalSupply() + 100 * 10 ** decimals() <= maxSupply, "Max supply exceeded");
 
         _mint(address(this), 100 * 10 ** decimals());
         lastMintEvent = block.timestamp;
     }
 
+    /// @notice Buys Tine tokens with ETH.
+    /// @param _tineAmount Amount of Tine tokens to buy.
     function buyTine(uint256 _tineAmount) public payable nonReentrant {
         require(_tineAmount > 0, "Amount must be greater than 0");
         uint256 ethRate = chainlinkPricesOracleMock.getLatestTinePriceInEth();
-        uint256 requiredEth = (_tineAmount * ethRate) / 10 ** 18; // Assurez-vous que cela calcule correctement le coût en ETH.
+        uint256 requiredEth = (_tineAmount * ethRate) / 10 ** 18;
         require(msg.value >= requiredEth, "Incorrect ETH amount");
 
         uint256 excessEth = msg.value - requiredEth;
@@ -79,57 +74,44 @@ contract Tine is ERC20, Ownable, ReentrancyGuard {
         emit BuyTineEvent(msg.sender, _tineAmount, msg.value);
     }
 
+    /// @notice Locks Tine tokens to prevent them from being transferred.
     function lockTine() public {
-        require(
-            balanceOf(msg.sender) >= minLockAmount,
-            "Insufficient TINE to lock"
-        );
+        require(balanceOf(msg.sender) >= minLockAmount, "Insufficient TINE to lock");
         require(tineLocked[msg.sender] == 0, "TINE already locked");
 
         tineLocked[msg.sender] = block.timestamp;
         emit LockTineEvent(msg.sender);
     }
 
+    /// @notice Unlocks the Tine tokens after the lock period.
     function unlockTine() public {
         require(tineLocked[msg.sender] != 0, "No TINE locked");
-        require(
-            block.timestamp - tineLocked[msg.sender] >= minLockTime,
-            "Lock period not over"
-        );
+        require(block.timestamp - tineLocked[msg.sender] >= minLockTime, "Lock period not over");
 
         tineLocked[msg.sender] = 0;
         emit UnlockTineEvent(msg.sender);
     }
 
+    /// @notice Sells Tine tokens in exchange for ETH.
+    /// @param _tineAmountInWei Amount of Tine tokens to sell in Wei.
     function sellTine(uint256 _tineAmountInWei) public nonReentrant {
         require(_tineAmountInWei > 0, "Amount must be greater than 0");
-        require(
-            balanceOf(msg.sender) >= _tineAmountInWei,
-            "Insufficient TINE balance"
-        );
-        require(
-            allowance(msg.sender, address(this)) >= _tineAmountInWei,
-            "Insufficient allowance"
-        );
+        require(balanceOf(msg.sender) >= _tineAmountInWei, "Insufficient TINE balance");
+        require(allowance(msg.sender, address(this)) >= _tineAmountInWei, "Insufficient allowance");
 
-        uint256 ethRate = chainlinkPricesOracleMock.getLatestEthPriceInTine(); // 10 Tine pour 1 ETH
-        // Ajuster le calcul pour utiliser le ratio inverse
-        uint256 ethAmount = _tineAmountInWei / ethRate; // Utilise 1e18 pour augmenter la précision
+        uint256 ethRate = chainlinkPricesOracleMock.getLatestEthPriceInTine();
+        uint256 ethAmount = _tineAmountInWei / ethRate;
 
-        require(
-            address(this).balance >= ethAmount,
-            "Insufficient ETH balance in contract"
-        );
+        require(address(this).balance >= ethAmount, "Insufficient ETH balance in contract");
 
         _transfer(msg.sender, address(this), _tineAmountInWei);
-
-        // Envoyer les ETH net à l'utilisateur
         (bool success, ) = payable(msg.sender).call{value: ethAmount}("");
         require(success, "Failed to send Ether");
 
         emit SellTineEvent(msg.sender, _tineAmountInWei, ethAmount);
     }
 
+    /// @dev Sets minimum lock time, lock amount, max supply, and max balance restrictions.
     function setMinLockTime(uint256 _minLockTime) public onlyOwner {
         require(_minLockTime > 0, "Lock time must be > 0");
         minLockTime = _minLockTime;
@@ -148,15 +130,16 @@ contract Tine is ERC20, Ownable, ReentrancyGuard {
         maxBalance = _maxBalance * 10 ** decimals();
     }
 
-    function withdrawEth(
-        uint256 _amount,
-        address payable _recipient
-    ) public onlyOwner {
+    /// @notice Allows the owner to withdraw ETH from the contract.
+    /// @param _amount Amount of ETH to withdraw.
+    /// @param _recipient Recipient of the withdrawn ETH.
+    function withdrawEth(uint256 _amount, address payable _recipient) public onlyOwner {
         require(_amount <= address(this).balance, "Insufficient ETH balance");
         require(_recipient != address(0), "Invalid recipient");
 
         _recipient.transfer(_amount);
     }
 
+    /// @dev Allows the contract to receive ETH.
     receive() external payable {}
 }
