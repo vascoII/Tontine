@@ -1,40 +1,54 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+# Tontine DApp Frontend
 
-First, run the development server:
+## Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+The frontend of the Tontine dApp, developed using React, Next.js, and styled with Chakra UI, provides a user-friendly and intuitive interface. It enables users to interact seamlessly with the underlying smart contracts, guiding them through the processes of buying, locking, and unlocking TINE tokens, as well as managing deposits and withdrawals from the Silver and Gold Vaults.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Key Features
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+- **User Dashboard**: Displays essential information such as current TINE balance, locked TINE status, and individual vault balances.
+- **Interactive Staking Interface**: Facilitates easy staking of ETH in either the Silver or Gold Vault.
+- **Dynamic Earning Calculations**: Dynamically calculates potential earnings based on deposited amounts and chosen vault.
+- **Admin Panel**: Allows the dApp administrator to mint TINE, adjust parameters, and manage the contract's ETH balance.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+## Setup and Installation
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+1. Clone the repository:
+   ```
+   git clone https://github.com/vascoII/Tontine.git
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+2. Navigate to the frontend directory and install dependencies:
+   ```
+   cd frontend_tontine
+   npm install
+   ```
 
-## Learn More
+3. Start the development server:
+   ```
+   npm run dev
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+   The frontend is accessible through `localhost:3000`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Architecture Overview
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+The frontend architecture is designed to enhance usability, maintainability, and developer experience. It includes:
 
-## Deploy on Vercel
+- **Components**: Reusable UI components and layout components.
+- **Constants**: Constants such as contract addresses and ABI.
+- **Context**: React contexts for global state management.
+- **Hooks**: Custom React hooks for logic encapsulation.
+- **Pages**: Application pages, utilizing Next.js's routing.
+- **Public**: Static assets like images and fonts.
+- **Services**: External services interaction, including smart contract interactions.
+- **Styles**: Global styles and theme settings.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Authors
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- vascoII
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
