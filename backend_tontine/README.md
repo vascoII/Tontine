@@ -1,4 +1,4 @@
-# Smart Contracts, deploy file, enabling vaults file, tests files
+# Smart Contract, deploy file, enabling vaults file, tests files
 
 ## Overview
 
