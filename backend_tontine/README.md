@@ -36,7 +36,7 @@ Admin Features:
 
 2. Deploy the contracts on hardhat localnode or on sépolia testnet. <br>
    ```bash
-   cd backend
+   cd backend_tontine
    npx hardhat run scripts/deploy.js --network localhost  (for localnode) 
    or 
    npx hardhat run scripts/deploy.js --network sepolia  (for sepolia testnet) 
