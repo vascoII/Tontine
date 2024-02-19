@@ -1,8 +1,5 @@
 "use client";
 
-// CONTRACT
-import { contractAddressTineSep, abiTineSep } from "@/constants";
-
 // WAGMI
 import {
   prepareWriteContract,

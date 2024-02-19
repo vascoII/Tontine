@@ -1,6 +1,8 @@
 // TineContext.js
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { useToast } from "@chakra-ui/react";
+import { getContractInfo } from "@/services/contracts/contractInfo";
+import { useChainId } from "wagmi";
 
 const TineContext = createContext();
 
@@ -17,6 +19,7 @@ import {
 } from "@/services/contracts/public/tineServices";
 
 export const TineProvider = ({ children }) => {
+  const chainId = useChainId();
   const [smartContractTokenBalance, setSmartContractTokenBalance] = useState(0);
   const [smartContractEthBalance, setSmartContractEthBalance] = useState(0);
   const [smartContractMaxSupply, setSmartContractMaxSupply] = useState(0);
@@ -30,25 +33,48 @@ export const TineProvider = ({ children }) => {
 
   const toast = useToast();
 
+  const { contractAddressTine: contractAddressTine, abiTine: abiTine } =
+    getContractInfo(chainId);
+
   useEffect(() => {
     const checkTineStatus = async () => {
       try {
-        const smartContractTineBalance = await fetchTokenBalanceService();
+        const smartContractTineBalance = await fetchTokenBalanceService(
+          contractAddressTine,
+          abiTine
+        );
         setSmartContractTokenBalance(smartContractTineBalance);
-        const smartContractEthBalance = await fetchEthBalanceService();
+        const smartContractEthBalance = await fetchEthBalanceService(
+          contractAddressTine,
+          abiTine,
+          chainId
+        );
         setSmartContractEthBalance(smartContractEthBalance);
-        const totalSupply = await fetchCurrentSupplyService();
+        const totalSupply = await fetchCurrentSupplyService(
+          contractAddressTine,
+          abiTine
+        );
         setSmartContractCurrentSupply(totalSupply);
-        const maxSupply = await fetchMaxSupplyService();
+        const maxSupply = await fetchMaxSupplyService(
+          contractAddressTine,
+          abiTine
+        );
         setSmartContractMaxSupply(Math.round(maxSupply.toString() / 10 ** 18));
-        const maxBalance = await fetchMaxBalanceService();
+        const maxBalance = await fetchMaxBalanceService(
+          contractAddressTine,
+          abiTine
+        );
         setSmartContractMaxBalance(maxBalance);
-        const smartContractMinLockTimeService = await fetchMinLockTimeService();
+        const smartContractMinLockTimeService = await fetchMinLockTimeService(
+          contractAddressTine,
+          abiTine
+        );
         setSmartContractMinLockTime(smartContractMinLockTimeService);
         const smartContractMinLockAmountService =
-          await fetchMinLockAmountService();
+          await fetchMinLockAmountService(contractAddressTine, abiTine);
         setSmartContractMinLockAmount(smartContractMinLockAmountService);
       } catch (err) {
+        alert(err.message);
         toast({
           title: "Error!",
           description: "An error occured on Tine Context",

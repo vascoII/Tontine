@@ -7,8 +7,9 @@ import { ChakraProvider, extendTheme, CSSReset, Box } from "@chakra-ui/react";
 
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { hardhat, sepolia } from "wagmi/chains";
+import { hardhat, sepolia, polygonMumbai } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
+import { alchemyProvider } from "wagmi/providers/alchemy";
 
 import Header from "@/components/Header";
 import DailyStats from "@/components/DailyStats";
@@ -20,8 +21,18 @@ import { TontineProvider } from "@/context/TontineContext";
 import { TontineStatsProvider } from "@/context/TontineStatsContext";
 
 const { chains, publicClient } = configureChains(
-  [hardhat, sepolia],
-  [publicProvider()]
+  // [hardhat, sepolia, polygonMumbai],
+  // [publicProvider()]
+  [hardhat, sepolia, polygonMumbai],
+  [
+    publicProvider(),
+    alchemyProvider({
+      apiKey: process.env.NEXT_PUBLIC_ALCHEMY_SEPOLIA_API_KEY,
+    }),
+    alchemyProvider({
+      apiKey: process.env.NEXT_PUBLIC_ALCHEMY_POLYGON_API_KEY,
+    }),
+  ]
 );
 
 const { connectors } = getDefaultWallets({

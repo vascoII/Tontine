@@ -3,9 +3,6 @@
 // REACT
 import { useState, useEffect } from "react";
 
-// CONTRACT
-import { contractAddressTineSep, abiTineSep } from "@/constants";
-
 // WAGMI
 import {
   prepareWriteContract,
@@ -35,11 +32,11 @@ const client = createPublicClient({
 
 /*********** SETTERS *************/
 // mintMonthly
-export const mintMonthlyService = async () => {
+export const mintMonthlyService = async (contractAddressTine, abiTine) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTineSep,
-      abi: abiTineSep,
+      address: contractAddressTine,
+      abi: abiTine,
       functionName: "mintMonthly",
       args: [],
     });
@@ -55,11 +52,15 @@ export const mintMonthlyService = async () => {
 };
 
 //SetSmartContractMaxBalance
-export const setSmartContractMaxBalanceService = async (_maxBalance) => {
+export const setSmartContractMaxBalanceService = async (
+  _maxBalance,
+  contractAddressTine,
+  abiTine
+) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTineSep,
-      abi: abiTineSep,
+      address: contractAddressTine,
+      abi: abiTine,
       functionName: "setMaxBalance",
       args: [_maxBalance],
     });
@@ -75,11 +76,15 @@ export const setSmartContractMaxBalanceService = async (_maxBalance) => {
 };
 
 //setMinLockTime
-export const setSmartContracMinLockTimeService = async (_minLockTime) => {
+export const setSmartContracMinLockTimeService = async (
+  _minLockTime,
+  contractAddressTine,
+  abiTine
+) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTineSep,
-      abi: abiTineSep,
+      address: contractAddressTine,
+      abi: abiTine,
       functionName: "setMinLockTime",
       args: [_minLockTime],
     });
@@ -95,11 +100,15 @@ export const setSmartContracMinLockTimeService = async (_minLockTime) => {
 };
 
 //setMinLockAmount
-export const setSmartContracMinLockAmountService = async (_minLockAmount) => {
+export const setSmartContracMinLockAmountService = async (
+  _minLockAmount,
+  contractAddressTine,
+  abiTine
+) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTineSep,
-      abi: abiTineSep,
+      address: contractAddressTine,
+      abi: abiTine,
       functionName: "setMinLockAmount",
       args: [_minLockAmount],
     });
@@ -117,12 +126,14 @@ export const setSmartContracMinLockAmountService = async (_minLockAmount) => {
 //withdrawEthService
 export const withdrawEthService = async (
   _smartContractWithdrawEth,
-  _address
+  _address,
+  contractAddressTine,
+  abiTine
 ) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTineSep,
-      abi: abiTineSep,
+      address: contractAddressTine,
+      abi: abiTine,
       functionName: "withdrawEth",
       args: [_smartContractWithdrawEth * 10 * 18, _address],
     });

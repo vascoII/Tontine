@@ -1,8 +1,5 @@
 "use client";
 
-// CONTRACT
-import { contractAddressTontineSep, abiTontineSep } from "@/constants";
-
 // WAGMI
 import {
   prepareWriteContract,
@@ -23,7 +20,10 @@ const client = createPublicClient({
   transport: http(),
 });
 
-export const fetchTontineContractEvents = async () => {
+export const fetchTontineContractEvents = async (
+  contractAddressTontine,
+  abiTontine
+) => {
   try {
     // Récupérer les logs des événements AddUserEvent
     const addUserLogs = await client.getLogs({

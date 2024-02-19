@@ -3,9 +3,6 @@
 // REACT
 import { useState, useEffect } from "react";
 
-// CONTRACT
-import { contractAddressTineSep, abiTineSep } from "@/constants";
-
 // WAGMI
 import {
   prepareWriteContract,
@@ -35,11 +32,14 @@ const client = createPublicClient({
 
 /************* GETTERS  ***********************/
 //SmartContractTokenBalance
-export const fetchTokenBalanceService = async () => {
+export const fetchTokenBalanceService = async (
+  contractAddressTine,
+  abiTine
+) => {
   try {
     const smartContractTokenBalance = await readContract({
-      address: contractAddressTineSep,
-      abi: abiTineSep,
+      address: contractAddressTine,
+      abi: abiTine,
       functionName: "getSmartContractTokenBalance",
     });
     return smartContractTokenBalance;
@@ -49,12 +49,19 @@ export const fetchTokenBalanceService = async () => {
 };
 
 //SmartContractEthBalance
-export const fetchEthBalanceService = async () => {
+export const fetchEthBalanceService = async (
+  contractAddressTine,
+  abiTine,
+  chainId
+) => {
   try {
     const smartContractEthBalance = await readContract({
-      address: contractAddressTineSep,
-      abi: abiTineSep,
-      functionName: "getSmartContractEthBalance",
+      address: contractAddressTine,
+      abi: abiTine,
+      functionName:
+        chainId == 80001
+          ? "getSmartContractMaticBalance"
+          : "getSmartContractEthBalance",
     });
     return smartContractEthBalance;
   } catch (err) {
@@ -63,11 +70,11 @@ export const fetchEthBalanceService = async () => {
 };
 
 //SmartContractMaxSupply
-export const fetchMaxSupplyService = async () => {
+export const fetchMaxSupplyService = async (contractAddressTine, abiTine) => {
   try {
     const smartContractMaxSupply = await readContract({
-      address: contractAddressTineSep,
-      abi: abiTineSep,
+      address: contractAddressTine,
+      abi: abiTine,
       functionName: "maxSupply",
     });
     return smartContractMaxSupply;
@@ -77,11 +84,11 @@ export const fetchMaxSupplyService = async () => {
 };
 
 //SmartContractMaxBalance
-export const fetchMaxBalanceService = async () => {
+export const fetchMaxBalanceService = async (contractAddressTine, abiTine) => {
   try {
     const smartContractMaxBalance = await readContract({
-      address: contractAddressTineSep,
-      abi: abiTineSep,
+      address: contractAddressTine,
+      abi: abiTine,
       functionName: "maxBalance",
     });
     return smartContractMaxBalance;
@@ -91,11 +98,14 @@ export const fetchMaxBalanceService = async () => {
 };
 
 //SmartContractCurrentSupply
-export const fetchCurrentSupplyService = async () => {
+export const fetchCurrentSupplyService = async (
+  contractAddressTine,
+  abiTine
+) => {
   try {
     const smartContractCurrentSupply = await readContract({
-      address: contractAddressTineSep,
-      abi: abiTineSep,
+      address: contractAddressTine,
+      abi: abiTine,
       functionName: "totalSupply",
     });
     return smartContractCurrentSupply;
@@ -105,11 +115,11 @@ export const fetchCurrentSupplyService = async () => {
 };
 
 //SmartContractCurrentLockTime
-export const fetchMinLockTimeService = async () => {
+export const fetchMinLockTimeService = async (contractAddressTine, abiTine) => {
   try {
     const smartContractCurrentLockTime = await readContract({
-      address: contractAddressTineSep,
-      abi: abiTineSep,
+      address: contractAddressTine,
+      abi: abiTine,
       functionName: "minLockTime",
     });
     return smartContractCurrentLockTime;
@@ -119,11 +129,14 @@ export const fetchMinLockTimeService = async () => {
 };
 
 //SmartContractCurrentLockAmount
-export const fetchMinLockAmountService = async () => {
+export const fetchMinLockAmountService = async (
+  contractAddressTine,
+  abiTine
+) => {
   try {
     const smartContractCurrentLockAmount = await readContract({
-      address: contractAddressTineSep,
-      abi: abiTineSep,
+      address: contractAddressTine,
+      abi: abiTine,
       functionName: "minLockAmount",
     });
     return smartContractCurrentLockAmount;

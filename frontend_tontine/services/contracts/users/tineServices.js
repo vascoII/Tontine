@@ -3,9 +3,6 @@
 // REACT
 import { useState, useEffect } from "react";
 
-// CONTRACT
-import { contractAddressTineSep, abiTineSep } from "@/constants";
-
 // WAGMI
 import {
   prepareWriteContract,
@@ -35,13 +32,17 @@ const client = createPublicClient({
 
 /************* GETTERS  ***********************/
 // Approve
-export const approveService = async (_tineAmountInWei) => {
+export const approveService = async (
+  _tineAmountInWei,
+  contractAddressTine,
+  abiTine
+) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTineSep,
-      abi: abiTineSep,
+      address: contractAddressTine,
+      abi: abiTine,
       functionName: "approve",
-      args: [contractAddressTineSep, _tineAmountInWei],
+      args: [contractAddressTine, _tineAmountInWei],
     });
     const { hash } = await writeContract(request);
     await waitForTransaction({
@@ -55,11 +56,15 @@ export const approveService = async (_tineAmountInWei) => {
 };
 
 // Contract getTineLocked
-export const getTineLockedDateService = async (userAddress) => {
+export const getTineLockedDateService = async (
+  userAddress,
+  contractAddressTine,
+  abiTine
+) => {
   try {
     const tineLockedDate = await readContract({
-      address: contractAddressTineSep,
-      abi: abiTineSep,
+      address: contractAddressTine,
+      abi: abiTine,
       functionName: "tineLocked",
       args: [userAddress],
     });
@@ -71,11 +76,15 @@ export const getTineLockedDateService = async (userAddress) => {
 };
 
 // Contract getUserTineBalance
-export const getUserTineBalanceService = async (userAddress) => {
+export const getUserTineBalanceService = async (
+  userAddress,
+  contractAddressTine,
+  abiTine
+) => {
   try {
     const tineBalance = await readContract({
-      address: contractAddressTineSep,
-      abi: abiTineSep,
+      address: contractAddressTine,
+      abi: abiTine,
       functionName: "balanceOf",
       args: [userAddress],
     });
@@ -87,12 +96,17 @@ export const getUserTineBalanceService = async (userAddress) => {
 
 /*************** SETTERS  ****************************/
 // buyTine
-export const buyTineService = async (_tineAmount, ethCost) => {
+export const buyTineService = async (
+  _tineAmount,
+  ethCost,
+  contractAddressTine,
+  abiTine
+) => {
   try {
     const tineAmountInWei = parseUnits(String(_tineAmount), 18);
     const { request } = await prepareWriteContract({
-      address: contractAddressTineSep,
-      abi: abiTineSep,
+      address: contractAddressTine,
+      abi: abiTine,
       functionName: "buyTine",
       args: [tineAmountInWei],
       value: parseEther(ethCost),
@@ -109,11 +123,11 @@ export const buyTineService = async (_tineAmount, ethCost) => {
 };
 
 // lockTine
-export const lockTineService = async () => {
+export const lockTineService = async (contractAddressTine, abiTine) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTineSep,
-      abi: abiTineSep,
+      address: contractAddressTine,
+      abi: abiTine,
       functionName: "lockTine",
       args: [],
     });
@@ -129,11 +143,11 @@ export const lockTineService = async () => {
 };
 
 // unLock
-export const unlockTineService = async () => {
+export const unlockTineService = async (contractAddressTine, abiTine) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTineSep,
-      abi: abiTineSep,
+      address: contractAddressTine,
+      abi: abiTine,
       functionName: "unlockTine",
       args: [],
     });
@@ -149,13 +163,17 @@ export const unlockTineService = async () => {
 };
 
 // sellTine
-export const sellTineService = async (_tineAmount) => {
+export const sellTineService = async (
+  _tineAmount,
+  contractAddressTine,
+  abiTine
+) => {
   try {
     const tineAmountInWei = parseUnits(String(_tineAmount), 18);
     const approveSucess = await approveService(tineAmountInWei);
     const { request } = await prepareWriteContract({
-      address: contractAddressTineSep,
-      abi: abiTineSep,
+      address: contractAddressTine,
+      abi: abiTine,
       functionName: "sellTine",
       args: [tineAmountInWei],
     });

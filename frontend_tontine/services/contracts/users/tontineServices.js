@@ -3,9 +3,6 @@
 // REACT
 import { useState, useEffect, useRef } from "react";
 
-// CONTRACT
-import { contractAddressTontineSep, abiTontineSep } from "@/constants";
-
 // WAGMI
 import {
   prepareWriteContract,
@@ -27,11 +24,15 @@ const client = createPublicClient({
 });
 
 // Contract getUserByAddress
-export const isAlreadyUser = async (userAddress) => {
+export const isAlreadyUser = async (
+  userAddress,
+  contractAddressTontine,
+  abiTontine
+) => {
   try {
     const isUserExists = await readContract({
-      address: contractAddressTontineSep,
-      abi: abiTontineSep,
+      address: contractAddressTontine,
+      abi: abiTontine,
       functionName: "isAlreadyUser",
       args: [userAddress],
     });
@@ -43,11 +44,15 @@ export const isAlreadyUser = async (userAddress) => {
 };
 
 // Contract SilverVaultDepositsByUser
-export const getSilverVaultDepositsByUser = async (userAddress) => {
+export const getSilverVaultDepositsByUser = async (
+  userAddress,
+  contractAddressTontine,
+  abiTontine
+) => {
   try {
     const silverVaultDeposits = await readContract({
-      address: contractAddressTontineSep,
-      abi: abiTontineSep,
+      address: contractAddressTontine,
+      abi: abiTontine,
       functionName: "getSilverVaultDepositsForUser",
       args: [userAddress],
     });
@@ -60,11 +65,15 @@ export const getSilverVaultDepositsByUser = async (userAddress) => {
 /*************** GETTERS  ****************************/
 
 // Contract SilverVaultWithdrawsByUser
-export const getSilverVaultWithdrawsByUser = async (userAddress) => {
+export const getSilverVaultWithdrawsByUser = async (
+  userAddress,
+  contractAddressTontine,
+  abiTontine
+) => {
   try {
     const silverVaultWithdraws = await readContract({
-      address: contractAddressTontineSep,
-      abi: abiTontineSep,
+      address: contractAddressTontine,
+      abi: abiTontine,
       functionName: "getSilverVaultWithdrawsForUser",
       args: [userAddress],
     });
@@ -76,11 +85,15 @@ export const getSilverVaultWithdrawsByUser = async (userAddress) => {
 };
 
 // Contract GoldVaultDepositsByUser
-export const getGoldVaultDepositsByUser = async (userAddress) => {
+export const getGoldVaultDepositsByUser = async (
+  userAddress,
+  contractAddressTontine,
+  abiTontine
+) => {
   try {
     const goldVaultDeposits = await readContract({
-      address: contractAddressTontineSep,
-      abi: abiTontineSep,
+      address: contractAddressTontine,
+      abi: abiTontine,
       functionName: "getGoldVaultDepositsForUser",
       args: [userAddress],
     });
@@ -92,11 +105,15 @@ export const getGoldVaultDepositsByUser = async (userAddress) => {
 };
 
 // Contract GoldVaultWithdrawsByUser
-export const getGoldVaultWithdrawsByUser = async (userAddress) => {
+export const getGoldVaultWithdrawsByUser = async (
+  userAddress,
+  contractAddressTontine,
+  abiTontine
+) => {
   try {
     const goldVaultWithdraws = await readContract({
-      address: contractAddressTontineSep,
-      abi: abiTontineSep,
+      address: contractAddressTontine,
+      abi: abiTontine,
       functionName: "getGoldVaultWithdrawsForUser",
       args: [userAddress],
     });
@@ -107,11 +124,15 @@ export const getGoldVaultWithdrawsByUser = async (userAddress) => {
   }
 };
 
-export const getSilverVaultInterestByUser = async (userAddress) => {
+export const getSilverVaultInterestByUser = async (
+  userAddress,
+  contractAddressTontine,
+  abiTontine
+) => {
   try {
     const goldVaultWithdraws = await readContract({
-      address: contractAddressTontineSep,
-      abi: abiTontineSep,
+      address: contractAddressTontine,
+      abi: abiTontine,
       functionName: "getSilverVaultInterestsForUser",
       args: [userAddress],
     });
@@ -122,11 +143,15 @@ export const getSilverVaultInterestByUser = async (userAddress) => {
   }
 };
 
-export const getGoldVaultInterestByUser = async (userAddress) => {
+export const getGoldVaultInterestByUser = async (
+  userAddress,
+  contractAddressTontine,
+  abiTontine
+) => {
   try {
     const goldVaultWithdraws = await readContract({
-      address: contractAddressTontineSep,
-      abi: abiTontineSep,
+      address: contractAddressTontine,
+      abi: abiTontine,
       functionName: "getGoldVaultInterestsForUser",
       args: [userAddress],
     });
@@ -138,11 +163,15 @@ export const getGoldVaultInterestByUser = async (userAddress) => {
 };
 /*************** SETTERS  ****************************/
 // stakeOnSilverService
-export const stakeOnSilverService = async (_ethSilverAmount) => {
+export const stakeOnSilverService = async (
+  _ethSilverAmount,
+  contractAddressTontine,
+  abiTontine
+) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTontineSep,
-      abi: abiTontineSep,
+      address: contractAddressTontine,
+      abi: abiTontine,
       functionName: "depositEth",
       args: [false],
       value: parseEther(String(_ethSilverAmount)),
@@ -159,11 +188,15 @@ export const stakeOnSilverService = async (_ethSilverAmount) => {
 };
 
 // stakeOnGoldService
-export const stakeOnGoldService = async (_ethGoldAmount) => {
+export const stakeOnGoldService = async (
+  _ethGoldAmount,
+  contractAddressTontine,
+  abiTontine
+) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTontineSep,
-      abi: abiTontineSep,
+      address: contractAddressTontine,
+      abi: abiTontine,
       functionName: "depositEth",
       args: [true],
       value: parseEther(String(_ethGoldAmount)),
@@ -180,11 +213,15 @@ export const stakeOnGoldService = async (_ethGoldAmount) => {
 };
 
 // stakeOnSilverService
-export const unstakeOnSilverService = async (_ethSilverAmount) => {
+export const unstakeOnSilverService = async (
+  _ethSilverAmount,
+  contractAddressTontine,
+  abiTontine
+) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTontineSep,
-      abi: abiTontineSep,
+      address: contractAddressTontine,
+      abi: abiTontine,
       functionName: "withdrawEth",
       args: [false, parseEther(String(_ethSilverAmount))],
     });
@@ -201,11 +238,15 @@ export const unstakeOnSilverService = async (_ethSilverAmount) => {
 };
 
 // stakeOnGoldService
-export const unstakeOnGoldService = async (_ethGoldAmount) => {
+export const unstakeOnGoldService = async (
+  _ethGoldAmount,
+  contractAddressTontine,
+  abiTontine
+) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTontineSep,
-      abi: abiTontineSep,
+      address: contractAddressTontine,
+      abi: abiTontine,
       functionName: "withdrawEth",
       args: [true, parseEther(String(_ethGoldAmount))],
     });
