@@ -13,7 +13,7 @@ contract ChainlinkPricesOracleMock {
     /// @return The price of Tine in MATIC as a uint256.
     function getLatestTinePriceInMatic() public pure returns (uint256) {
         // 0.1 MATIC in Wei
-        return 10 ** 18; // equivalent to 1 * 10 ** 18
+        return 10 ** 17; // equivalent to 1 * 10 ** 18
     }
 
     /// @notice Retrieves the latest MATIC price in Tine.
@@ -21,6 +21,6 @@ contract ChainlinkPricesOracleMock {
     /// @return The price of MATIC in Tine as a uint256.
     function getLatestMaticPriceInTine() public pure returns (uint256) {
         // Simulates a fixed price of MATIC in Tine
-        return 1;
+        return 10;
     }
 }
