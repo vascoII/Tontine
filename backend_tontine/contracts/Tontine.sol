@@ -2,18 +2,18 @@
 pragma solidity ^0.8.22;
 
 import "./Interface/ITine.sol";
-import "./Interface/IRocketTokenRETHMock.sol";
+import "./Interface/IRocketTokenRMATICMock.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-// Custom error for failed Ether transfers
-error FailedToSendEther();
+// Custom error for failed Maticer transfers
+error FailedToSendMatic();
 
 /// @title Tontine Contract
 /// @dev Implements a tontine structure for managing deposits and withdrawals in two vaults (Silver and Gold), with interest calculations.
-/// Utilizes external interfaces for ITine (custom token) and IRocketTokenRETHMock (mock of Rocket Pool's rETH).
+/// Utilizes external interfaces for ITine (custom token) and IRocketTokenRMATICMock (mock of Rocket Pool's rMATIC).
 contract Tontine is Ownable {
     ITine public tine;
-    IRocketTokenRETHMock public rEth;
+    IRocketTokenRMATICMock public rMatic;
 
     // Represents a deposit with an amount and the timestamp of deposit
     struct Deposit {
@@ -30,10 +30,10 @@ contract Tontine is Ownable {
     // Represents an account with balances in both vaults and interest accrued
     struct Account {
         address userAddress;
-        uint256 amountEthInSilverVault;
-        uint256 amountEthInteretInSilverVault;
-        uint256 amountEthInGoldVault;
-        uint256 amountEthInteretInGoldVault;
+        uint256 amountMaticInSilverVault;
+        uint256 amountMaticInteretInSilverVault;
+        uint256 amountMaticInGoldVault;
+        uint256 amountMaticInteretInGoldVault;
     }
 
     Account[] public accounts; // List of accounts participating in the tontine
@@ -56,9 +56,21 @@ contract Tontine is Ownable {
     uint256 public lastInterestCalculationDate;
 
     // Events for tracking actions within the contract
-    event AddUserEvent(address _userAddress, uint256 _amountInSilverVault, uint256 _amountInGoldVault);
-    event DepositEvent(address indexed _user, uint256 _amount, bool _isGoldVault);
-    event WithdrawEvent(address indexed _user, uint256 _amount, bool _isGoldVault);
+    event AddUserEvent(
+        address _userAddress,
+        uint256 _amountInSilverVault,
+        uint256 _amountInGoldVault
+    );
+    event DepositEvent(
+        address indexed _user,
+        uint256 _amount,
+        bool _isGoldVault
+    );
+    event WithdrawEvent(
+        address indexed _user,
+        uint256 _amount,
+        bool _isGoldVault
+    );
     event CalculateDailyInterestsEvent(uint256 _lastInterestCalculationDate);
 
     /// @notice Retrieves the total amount of deposits across both vaults.
@@ -66,16 +78,32 @@ contract Tontine is Ownable {
         return silverVaultBalance + goldVaultBalance;
     }
 
-    /// @notice Retrieves the contract's Ether balance.
+    /// @notice Retrieves the contract's Maticer balance.
     function getContractBalance() public view returns (uint) {
         return address(this).balance;
     }
 
     /// @dev Adds a new user to the tontine, restricted to less than 1000 users.
-    function addUser(address _userAddress, uint256 _amountInSilverVault, uint256 _amountInGoldVault) private {
+    function addUser(
+        address _userAddress,
+        uint256 _amountInSilverVault,
+        uint256 _amountInGoldVault
+    ) private {
         require(accounts.length < 1000, "User limit reached");
-        accounts.push(Account(_userAddress, _amountInSilverVault, 0, _amountInGoldVault, 0));
-        emit AddUserEvent(_userAddress, _amountInSilverVault, _amountInGoldVault);
+        accounts.push(
+            Account(
+                _userAddress,
+                _amountInSilverVault,
+                0,
+                _amountInGoldVault,
+                0
+            )
+        );
+        emit AddUserEvent(
+            _userAddress,
+            _amountInSilverVault,
+            _amountInGoldVault
+        );
     }
 
     /// @dev Finds a user in the tontine by address, returning their index or -1 if not found.
@@ -92,7 +120,7 @@ contract Tontine is Ownable {
     function findSilverVaultUserCount() public view returns (uint256) {
         uint256 count = 0;
         for (uint256 i = 0; i < accounts.length; i++) {
-            if (accounts[i].amountEthInSilverVault > 0) {
+            if (accounts[i].amountMaticInSilverVault > 0) {
                 count++;
             }
         }
@@ -103,7 +131,7 @@ contract Tontine is Ownable {
     function findGoldVaultUserCount() public view returns (uint256) {
         uint256 count = 0;
         for (uint256 i = 0; i < accounts.length; i++) {
-            if (accounts[i].amountEthInGoldVault > 0) {
+            if (accounts[i].amountMaticInGoldVault > 0) {
                 count++;
             }
         }
@@ -116,28 +144,33 @@ contract Tontine is Ownable {
     }
 
     /// @notice Retrieves the Silver Vault balance for a given user.
-    function getSilverVaultBalance(address _user) public view returns (uint256) {
+    function getSilverVaultBalance(
+        address _user
+    ) public view returns (uint256) {
         int256 userIndex = findUser(_user);
         require(userIndex != -1, "User not found");
-        return accounts[uint256(userIndex)].amountEthInSilverVault;
+        return accounts[uint256(userIndex)].amountMaticInSilverVault;
     }
 
     /// @notice Retrieves the Gold Vault balance for a given user.
     function getGoldVaultBalance(address _user) public view returns (uint256) {
         int256 userIndex = findUser(_user);
         require(userIndex != -1, "User not found");
-        return accounts[uint256(userIndex)].amountEthInGoldVault;
+        return accounts[uint256(userIndex)].amountMaticInGoldVault;
     }
 
-    /// @dev Constructor sets up the tontine with references to the Tine and rEth contracts.
-    constructor(address _tineAddress, address _rEthAddress) Ownable(msg.sender) {
+    /// @dev Constructor sets up the tontine with references to the Tine and rMatic contracts.
+    constructor(
+        address _tineAddress,
+        address _rMaticAddress
+    ) Ownable(msg.sender) {
         tine = ITine(_tineAddress);
-        rEth = IRocketTokenRETHMock(_rEthAddress);
+        rMatic = IRocketTokenRMATICMock(_rMaticAddress);
     }
 
     /// @dev Records a deposit into either the Silver or Gold Vault for a user.
     /// @param _user The address of the user making the deposit.
-    /// @param _amount The amount of ETH deposited.
+    /// @param _amount The amount of MATIC deposited.
     /// @param _isGoldVault Boolean indicating if the deposit is for the Gold Vault.
     function _recordDeposit(
         address _user,
@@ -159,7 +192,7 @@ contract Tontine is Ownable {
                 "TINE must be locked for Gold Vault"
             );
             if (userIndex != -1) {
-                accounts[uint256(userIndex)].amountEthInGoldVault += _amount;
+                accounts[uint256(userIndex)].amountMaticInGoldVault += _amount;
                 goldVaultDepositsByUser[_user].push(newDeposit);
             } else {
                 addUser(_user, 0, _amount);
@@ -168,7 +201,8 @@ contract Tontine is Ownable {
         } else {
             // Silver Vault specific logic
             if (userIndex != -1) {
-                accounts[uint256(userIndex)].amountEthInSilverVault += _amount;
+                accounts[uint256(userIndex)]
+                    .amountMaticInSilverVault += _amount;
                 silverVaultDepositsByUser[_user].push(newDeposit);
             } else {
                 addUser(_user, _amount, 0);
@@ -179,7 +213,7 @@ contract Tontine is Ownable {
 
     /// @dev Records a withdrawal from either the Silver or Gold Vault for a user.
     /// @param _user The address of the user making the withdrawal.
-    /// @param _amount The amount of ETH withdrawn.
+    /// @param _amount The amount of MATIC withdrawn.
     /// @param _isGoldVault Boolean indicating if the withdrawal is for the Gold Vault.
     function _recordWithdraw(
         address _user,
@@ -199,24 +233,24 @@ contract Tontine is Ownable {
         // Apply withdrawal logic based on vault type, adjusting balances accordingly
         if (_isGoldVault) {
             // Gold Vault specific logic for withdrawals
-            if (_amount <= account.amountEthInGoldVault) {
-                account.amountEthInGoldVault -= _amount;
+            if (_amount <= account.amountMaticInGoldVault) {
+                account.amountMaticInGoldVault -= _amount;
             } else {
-                uint256 remaining = _amount - account.amountEthInGoldVault;
-                account.amountEthInGoldVault = 0;
-                account.amountEthInteretInGoldVault -= remaining;
+                uint256 remaining = _amount - account.amountMaticInGoldVault;
+                account.amountMaticInGoldVault = 0;
+                account.amountMaticInteretInGoldVault -= remaining;
             }
 
             goldVaultWithdrawsByUser[_user].push(newWithdraw);
             goldVaultBalance -= _amount;
         } else {
             // Silver Vault specific logic for withdrawals
-            if (_amount <= account.amountEthInSilverVault) {
-                account.amountEthInSilverVault -= _amount;
+            if (_amount <= account.amountMaticInSilverVault) {
+                account.amountMaticInSilverVault -= _amount;
             } else {
-                uint256 remaining = _amount - account.amountEthInSilverVault;
-                account.amountEthInSilverVault = 0;
-                account.amountEthInteretInSilverVault -= remaining;
+                uint256 remaining = _amount - account.amountMaticInSilverVault;
+                account.amountMaticInSilverVault = 0;
+                account.amountMaticInteretInSilverVault -= remaining;
             }
 
             silverVaultWithdrawsByUser[_user].push(newWithdraw);
@@ -224,24 +258,24 @@ contract Tontine is Ownable {
         }
     }
 
-    /// @notice Allows users to deposit ETH into the Tontine, choosing between the Silver and Gold Vaults.
+    /// @notice Allows users to deposit MATIC into the Tontine, choosing between the Silver and Gold Vaults.
     /// @param _isGoldVault Boolean indicating if the deposit is for the Gold Vault.
-    function depositEth(bool _isGoldVault) public payable {
-        require(msg.value >= 1 ether, "Minimum deposit is 1 ETH");
+    function depositMatic(bool _isGoldVault) public payable {
+        require(msg.value >= 1 ether, "Minimum deposit is 1 MATIC");
 
-        // Record the deposit before sending ETH to ensure transaction traceability
+        // Record the deposit before sending MATIC to ensure transaction traceability
         _recordDeposit(msg.sender, msg.value, _isGoldVault);
 
-        // Deposit ETH and mint rETH through the rEth contract
-        rEth.depositETH{value: msg.value}();
+        // Deposit MATIC and mint rMATIC through the rMatic contract
+        rMatic.depositMATIC{value: msg.value}();
 
         emit DepositEvent(msg.sender, msg.value, _isGoldVault);
     }
 
-    /// @notice Allows users to withdraw ETH from the Tontine, choosing between the Silver and Gold Vaults.
+    /// @notice Allows users to withdraw MATIC from the Tontine, choosing between the Silver and Gold Vaults.
     /// @param _isGoldVault Boolean indicating if the withdrawal is from the Gold Vault.
-    /// @param _ethAmount The amount of ETH to withdraw.
-    function withdrawEth(bool _isGoldVault, uint256 _ethAmount) public {
+    /// @param _maticAmount The amount of MATIC to withdraw.
+    function withdrawMatic(bool _isGoldVault, uint256 _maticAmount) public {
         int256 userIndex = findUser(msg.sender);
         require(userIndex != -1, "User not found");
 
@@ -254,50 +288,50 @@ contract Tontine is Ownable {
                 "TINE must be unlocked for Gold Vault"
             );
 
-            uint256 totalGoldBalance = userAccount.amountEthInGoldVault +
-                userAccount.amountEthInteretInGoldVault;
+            uint256 totalGoldBalance = userAccount.amountMaticInGoldVault +
+                userAccount.amountMaticInteretInGoldVault;
             require(
-                totalGoldBalance >= _ethAmount,
+                totalGoldBalance >= _maticAmount,
                 "Insufficient balance in Gold Vault"
             );
         } else {
-            uint256 totalSilverBalance = userAccount.amountEthInSilverVault +
-                userAccount.amountEthInteretInSilverVault;
+            uint256 totalSilverBalance = userAccount.amountMaticInSilverVault +
+                userAccount.amountMaticInteretInSilverVault;
             require(
-                totalSilverBalance >= _ethAmount,
+                totalSilverBalance >= _maticAmount,
                 "Insufficient balance in Silver Vault"
             );
         }
 
-        // Convert the ETH amount to rETH for withdrawal
-        uint256 rEthAmountNeeded = rEth.getRethValue(_ethAmount);
+        // Convert the MATIC amount to rMATIC for withdrawal
+        uint256 rMaticAmountNeeded = rMatic.getRmaticValue(_maticAmount);
 
-        // Ensure the Tontine contract has enough rETH for the withdrawal
+        // Ensure the Tontine contract has enough rMATIC for the withdrawal
         require(
-            rEth.balanceOf(address(this)) >= rEthAmountNeeded,
-            "Not enough rETH in Tontine contract"
+            rMatic.balanceOf(address(this)) >= rMaticAmountNeeded,
+            "Not enough rMATIC in Tontine contract"
         );
 
-        // Withdraw rETH in exchange for ETH
-        rEth.withdrawETH(rEthAmountNeeded);
+        // Withdraw rMATIC in exchange for MATIC
+        rMatic.withdrawMATIC(rMaticAmountNeeded);
 
         // Record the withdrawal
-        _recordWithdraw(msg.sender, _ethAmount, _isGoldVault);
+        _recordWithdraw(msg.sender, _maticAmount, _isGoldVault);
 
         // Calculate the net amount to send to the user after fees
-        uint256 netAmountToSend = (_ethAmount * 995) / 1000; // Applying a 0.5% fee
+        uint256 netAmountToSend = (_maticAmount * 995) / 1000; // Applying a 0.5% fee
 
-        // Ensure the contract has enough ETH to send after the exchange
+        // Ensure the contract has enough MATIC to send after the exchange
         require(
             address(this).balance >= netAmountToSend,
-            "Not enough ETH in contract after exchange"
+            "Not enough MATIC in contract after exchange"
         );
 
-        // Send the net ETH amount to the user
+        // Send the net MATIC amount to the user
         (bool success, ) = payable(msg.sender).call{value: netAmountToSend}("");
-        require(success, "Failed to send Ether");
+        require(success, "Failed to send Maticer");
 
-        emit WithdrawEvent(msg.sender, _ethAmount, _isGoldVault);
+        emit WithdrawEvent(msg.sender, _maticAmount, _isGoldVault);
     }
 
     /// @notice Retrieves all silver vault deposits for a specific user.
@@ -320,13 +354,13 @@ contract Tontine is Ownable {
 
     /// @notice Retrieves the total interest accrued in the silver vault for a specific user.
     /// @param _userAddress The address of the user.
-    /// @return The total interest amount in ETH that has accrued in the user's silver vault account.
+    /// @return The total interest amount in MATIC that has accrued in the user's silver vault account.
     function getSilverVaultInterestsForUser(
         address _userAddress
     ) external view returns (uint256) {
         for (uint256 i = 0; i < accounts.length; i++) {
             if (accounts[i].userAddress == _userAddress) {
-                return accounts[i].amountEthInteretInSilverVault;
+                return accounts[i].amountMaticInteretInSilverVault;
             }
         }
         return 0; // Returns 0 if the user is not found
@@ -334,13 +368,13 @@ contract Tontine is Ownable {
 
     /// @notice Retrieves the total interest accrued in the gold vault for a specific user.
     /// @param _userAddress The address of the user.
-    /// @return The total interest amount in ETH that has accrued in the user's gold vault account.
+    /// @return The total interest amount in MATIC that has accrued in the user's gold vault account.
     function getGoldVaultInterestsForUser(
         address _userAddress
     ) external view returns (uint256) {
         for (uint256 i = 0; i < accounts.length; i++) {
             if (accounts[i].userAddress == _userAddress) {
-                return accounts[i].amountEthInteretInGoldVault;
+                return accounts[i].amountMaticInteretInGoldVault;
             }
         }
         return 0; // Returns 0 if the user is not found
@@ -365,24 +399,24 @@ contract Tontine is Ownable {
     }
 
     /// @notice Gets the current exchange rate for deposits into the silver vault.
-    /// @return The exchange rate used for converting ETH to the equivalent value in the silver vault.
+    /// @return The exchange rate used for converting MATIC to the equivalent value in the silver vault.
     function getSilverVaultExchangeRate() public view returns (uint256) {
-        return rEth.getExchangeRate(1); // Assumes 1 represents the silver vault in the external contract
+        return rMatic.getExchangeRate(1); // Assumes 1 represents the silver vault in the external contract
     }
 
     /// @notice Gets the current exchange rate for deposits into the gold vault.
-    /// @return The exchange rate used for converting ETH to the equivalent value in the gold vault.
+    /// @return The exchange rate used for converting MATIC to the equivalent value in the gold vault.
     function getGoldVaultExchangeRate() public view returns (uint256) {
-        return rEth.getExchangeRate(2); // Assumes 2 represents the gold vault in the external contract
+        return rMatic.getExchangeRate(2); // Assumes 2 represents the gold vault in the external contract
     }
 
-    /// @notice Allows the owner of the contract to withdraw ETH from the contract's balance.
+    /// @notice Allows the owner of the contract to withdraw MATIC from the contract's balance.
     /// This function enforces that only the contract owner can initiate a withdrawal,
     /// checks that the withdrawal amount is positive and does not exceed the contract's current balance,
-    /// and validates the recipient's address before transferring ETH.
-    /// @param _amount The amount of ETH to be withdrawn from the contract.
-    /// @param _recipient The payable address to which the withdrawn ETH is to be sent.
-    function ownerWithdrawEth(
+    /// and validates the recipient's address before transferring MATIC.
+    /// @param _amount The amount of MATIC to be withdrawn from the contract.
+    /// @param _recipient The payable address to which the withdrawn MATIC is to be sent.
+    function ownerWithdrawMatic(
         uint256 _amount,
         address payable _recipient
     ) public onlyOwner {
@@ -393,15 +427,15 @@ contract Tontine is Ownable {
         );
         require(_recipient != address(0), "Invalid recipient address");
 
-        // Execute the transfer of ETH to the specified recipient.
+        // Execute the transfer of MATIC to the specified recipient.
         _recipient.transfer(_amount);
     }
 
-    /// @notice Fallback function to accept incoming ETH payments directly to the contract.
-    /// This function is triggered when the contract receives ETH without a function call.
-    /// Additional logic can be implemented here if needed, for example, logging the event of receiving ETH.
+    /// @notice Fallback function to accept incoming MATIC payments directly to the contract.
+    /// This function is triggered when the contract receives MATIC without a function call.
+    /// Additional logic can be implemented here if needed, for example, logging the event of receiving MATIC.
     receive() external payable {
-        // Implement any additional logic for receiving ETH if required.
+        // Implement any additional logic for receiving MATIC if required.
     }
 
     /// @notice Simulates the calculation and application of 12 months' interest for both Silver and Gold Vaults.
@@ -414,17 +448,16 @@ contract Tontine is Ownable {
             Account storage account = accounts[i];
 
             // Direct application of 12-month interest rates: 5% for Silver, 10% for Gold
-            uint256 silverInterest = account.amountEthInSilverVault / 20; // 5% interest
-            uint256 goldInterest = account.amountEthInGoldVault / 10; // 10% interest
+            uint256 silverInterest = account.amountMaticInSilverVault / 20; // 5% interest
+            uint256 goldInterest = account.amountMaticInGoldVault / 10; // 10% interest
 
             // Apply the calculated interest to the account's vault interest balances
-            account.amountEthInteretInSilverVault += silverInterest;
-            account.amountEthInteretInGoldVault += goldInterest;
+            account.amountMaticInteretInSilverVault += silverInterest;
+            account.amountMaticInteretInGoldVault += goldInterest;
         }
 
         // Update the overall interest balances for the Silver and Gold Vaults
         silverVaultInteretBalance += (silverVaultBalance / 20); // Apply 5% interest to Silver Vault balance
         goldVaultInteretBalance += (goldVaultBalance / 10); // Apply 10% interest to Gold Vault balance
     }
-
 }
