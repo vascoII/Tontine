@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from "react";
 
 // CONTRACT
-import { contractAddressTontine, abiTontine } from "@/constants";
+import { contractAddressTontineSep, abiTontineSep } from "@/constants";
 
 // WAGMI
 import {
@@ -30,8 +30,8 @@ const client = createPublicClient({
 export const getOwner = async (userAddress) => {
   try {
     const ownerAddress = await readContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "owner",
     });
     return ownerAddress === userAddress;

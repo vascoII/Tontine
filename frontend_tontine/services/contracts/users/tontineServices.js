@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from "react";
 
 // CONTRACT
-import { contractAddressTontine, abiTontine } from "@/constants";
+import { contractAddressTontineSep, abiTontineSep } from "@/constants";
 
 // WAGMI
 import {
@@ -30,8 +30,8 @@ const client = createPublicClient({
 export const isAlreadyUser = async (userAddress) => {
   try {
     const isUserExists = await readContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "isAlreadyUser",
       args: [userAddress],
     });
@@ -46,8 +46,8 @@ export const isAlreadyUser = async (userAddress) => {
 export const getSilverVaultDepositsByUser = async (userAddress) => {
   try {
     const silverVaultDeposits = await readContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "getSilverVaultDepositsForUser",
       args: [userAddress],
     });
@@ -63,8 +63,8 @@ export const getSilverVaultDepositsByUser = async (userAddress) => {
 export const getSilverVaultWithdrawsByUser = async (userAddress) => {
   try {
     const silverVaultWithdraws = await readContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "getSilverVaultWithdrawsForUser",
       args: [userAddress],
     });
@@ -79,8 +79,8 @@ export const getSilverVaultWithdrawsByUser = async (userAddress) => {
 export const getGoldVaultDepositsByUser = async (userAddress) => {
   try {
     const goldVaultDeposits = await readContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "getGoldVaultDepositsForUser",
       args: [userAddress],
     });
@@ -95,8 +95,8 @@ export const getGoldVaultDepositsByUser = async (userAddress) => {
 export const getGoldVaultWithdrawsByUser = async (userAddress) => {
   try {
     const goldVaultWithdraws = await readContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "getGoldVaultWithdrawsForUser",
       args: [userAddress],
     });
@@ -110,8 +110,8 @@ export const getGoldVaultWithdrawsByUser = async (userAddress) => {
 export const getSilverVaultInterestByUser = async (userAddress) => {
   try {
     const goldVaultWithdraws = await readContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "getSilverVaultInterestsForUser",
       args: [userAddress],
     });
@@ -125,8 +125,8 @@ export const getSilverVaultInterestByUser = async (userAddress) => {
 export const getGoldVaultInterestByUser = async (userAddress) => {
   try {
     const goldVaultWithdraws = await readContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "getGoldVaultInterestsForUser",
       args: [userAddress],
     });
@@ -141,8 +141,8 @@ export const getGoldVaultInterestByUser = async (userAddress) => {
 export const stakeOnSilverService = async (_ethSilverAmount) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "depositEth",
       args: [false],
       value: parseEther(String(_ethSilverAmount)),
@@ -162,8 +162,8 @@ export const stakeOnSilverService = async (_ethSilverAmount) => {
 export const stakeOnGoldService = async (_ethGoldAmount) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "depositEth",
       args: [true],
       value: parseEther(String(_ethGoldAmount)),
@@ -183,8 +183,8 @@ export const stakeOnGoldService = async (_ethGoldAmount) => {
 export const unstakeOnSilverService = async (_ethSilverAmount) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "withdrawEth",
       args: [false, parseEther(String(_ethSilverAmount))],
     });
@@ -204,8 +204,8 @@ export const unstakeOnSilverService = async (_ethSilverAmount) => {
 export const unstakeOnGoldService = async (_ethGoldAmount) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "withdrawEth",
       args: [true, parseEther(String(_ethGoldAmount))],
     });

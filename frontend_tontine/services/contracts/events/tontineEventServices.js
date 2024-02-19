@@ -1,7 +1,7 @@
 "use client";
 
 // CONTRACT
-import { contractAddressTontine, abiTontine } from "@/constants";
+import { contractAddressTontineSep, abiTontineSep } from "@/constants";
 
 // WAGMI
 import {

@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from "react";
 
 // CONTRACT
-import { contractAddressTontine, abiTontine } from "@/constants";
+import { contractAddressTontineSep, abiTontineSep } from "@/constants";
 
 // WAGMI
 import {
@@ -30,28 +30,28 @@ const client = createPublicClient({
 export const getSilverVaultDataService = async () => {
   try {
     const ethLocked = await readContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "silverVaultBalance",
     });
 
     const silverVaultExchangeRate = await readContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "getSilverVaultExchangeRate",
     });
 
     const apr = Number(silverVaultExchangeRate) / 100;
 
     const activeUsers = await readContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "findSilverVaultUserCount",
     });
 
     const interestGenerated = await readContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "silverVaultInteretBalance",
     });
     return { ethLocked, apr, activeUsers, interestGenerated };
@@ -65,26 +65,26 @@ export const getSilverVaultDataService = async () => {
 export const getGoldVaultDataService = async () => {
   try {
     const ethLocked = await readContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "goldVaultBalance",
     });
 
     const goldVaultExchangeRate = await readContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "getGoldVaultExchangeRate",
     });
     const apr = Number(goldVaultExchangeRate) / 100;
 
     const activeUsers = await readContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "findGoldVaultUserCount",
     });
     const interestGenerated = await readContract({
-      address: contractAddressTontine,
-      abi: abiTontine,
+      address: contractAddressTontineSep,
+      abi: abiTontineSep,
       functionName: "goldVaultInteretBalance",
     });
     return { ethLocked, apr, activeUsers, interestGenerated };

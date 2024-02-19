@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 
 // CONTRACT
-import { contractAddressTine, abiTine } from "@/constants";
+import { contractAddressTineSep, abiTineSep } from "@/constants";
 
 // WAGMI
 import {
@@ -38,8 +38,8 @@ const client = createPublicClient({
 export const mintMonthlyService = async () => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTine,
-      abi: abiTine,
+      address: contractAddressTineSep,
+      abi: abiTineSep,
       functionName: "mintMonthly",
       args: [],
     });
@@ -58,8 +58,8 @@ export const mintMonthlyService = async () => {
 export const setSmartContractMaxBalanceService = async (_maxBalance) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTine,
-      abi: abiTine,
+      address: contractAddressTineSep,
+      abi: abiTineSep,
       functionName: "setMaxBalance",
       args: [_maxBalance],
     });
@@ -78,8 +78,8 @@ export const setSmartContractMaxBalanceService = async (_maxBalance) => {
 export const setSmartContracMinLockTimeService = async (_minLockTime) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTine,
-      abi: abiTine,
+      address: contractAddressTineSep,
+      abi: abiTineSep,
       functionName: "setMinLockTime",
       args: [_minLockTime],
     });
@@ -98,8 +98,8 @@ export const setSmartContracMinLockTimeService = async (_minLockTime) => {
 export const setSmartContracMinLockAmountService = async (_minLockAmount) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTine,
-      abi: abiTine,
+      address: contractAddressTineSep,
+      abi: abiTineSep,
       functionName: "setMinLockAmount",
       args: [_minLockAmount],
     });
@@ -121,8 +121,8 @@ export const withdrawEthService = async (
 ) => {
   try {
     const { request } = await prepareWriteContract({
-      address: contractAddressTine,
-      abi: abiTine,
+      address: contractAddressTineSep,
+      abi: abiTineSep,
       functionName: "withdrawEth",
       args: [_smartContractWithdrawEth * 10 * 18, _address],
     });

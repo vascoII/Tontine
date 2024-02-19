@@ -10,12 +10,22 @@ import {
 /** MINT MONTHLY */
 export const handleSmartContractMintMonthly = async (
   setSmartContractMintMonthly,
+  setSmartContractCurrentSupply,
+  smartContractCurrentSupply,
+  setSmartContractTokenBalance,
+  smartContractTokenBalance,
   toast
 ) => {
   try {
     const result = await mintMonthlyService();
     if (result) {
-      setSmartContractMintMonthly(result); // Mise à jour de l'état avec le résultat
+      setSmartContractMintMonthly(result);
+      setSmartContractCurrentSupply(
+        Number(smartContractCurrentSupply) + 100 * 10 ** 18
+      );
+      setSmartContractTokenBalance(
+        Number(smartContractTokenBalance) + 100 * 10 ** 18
+      );
       toast({
         title: "Success",
         description: "Successfully minted new Tine.",
@@ -26,11 +36,12 @@ export const handleSmartContractMintMonthly = async (
       return true;
     }
   } catch (err) {
-    if (err.message.includes("Mint period")) {
+    console.log(err.message);
+    if (err.message.includes("Minting not yet allowed")) {
       toast({
-        title: "Error!",
+        title: "Transaction Rejected",
         description: "Mint period is not open yet.",
-        status: "error",
+        status: "warning",
         duration: 3000,
         isClosable: true,
       });

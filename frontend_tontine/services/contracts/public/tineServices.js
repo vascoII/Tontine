@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 
 // CONTRACT
-import { contractAddressTine, abiTine } from "@/constants";
+import { contractAddressTineSep, abiTineSep } from "@/constants";
 
 // WAGMI
 import {
@@ -38,8 +38,8 @@ const client = createPublicClient({
 export const fetchTokenBalanceService = async () => {
   try {
     const smartContractTokenBalance = await readContract({
-      address: contractAddressTine,
-      abi: abiTine,
+      address: contractAddressTineSep,
+      abi: abiTineSep,
       functionName: "getSmartContractTokenBalance",
     });
     return smartContractTokenBalance;
@@ -52,8 +52,8 @@ export const fetchTokenBalanceService = async () => {
 export const fetchEthBalanceService = async () => {
   try {
     const smartContractEthBalance = await readContract({
-      address: contractAddressTine,
-      abi: abiTine,
+      address: contractAddressTineSep,
+      abi: abiTineSep,
       functionName: "getSmartContractEthBalance",
     });
     return smartContractEthBalance;
@@ -66,8 +66,8 @@ export const fetchEthBalanceService = async () => {
 export const fetchMaxSupplyService = async () => {
   try {
     const smartContractMaxSupply = await readContract({
-      address: contractAddressTine,
-      abi: abiTine,
+      address: contractAddressTineSep,
+      abi: abiTineSep,
       functionName: "maxSupply",
     });
     return smartContractMaxSupply;
@@ -80,8 +80,8 @@ export const fetchMaxSupplyService = async () => {
 export const fetchMaxBalanceService = async () => {
   try {
     const smartContractMaxBalance = await readContract({
-      address: contractAddressTine,
-      abi: abiTine,
+      address: contractAddressTineSep,
+      abi: abiTineSep,
       functionName: "maxBalance",
     });
     return smartContractMaxBalance;
@@ -94,8 +94,8 @@ export const fetchMaxBalanceService = async () => {
 export const fetchCurrentSupplyService = async () => {
   try {
     const smartContractCurrentSupply = await readContract({
-      address: contractAddressTine,
-      abi: abiTine,
+      address: contractAddressTineSep,
+      abi: abiTineSep,
       functionName: "totalSupply",
     });
     return smartContractCurrentSupply;
@@ -108,8 +108,8 @@ export const fetchCurrentSupplyService = async () => {
 export const fetchMinLockTimeService = async () => {
   try {
     const smartContractCurrentLockTime = await readContract({
-      address: contractAddressTine,
-      abi: abiTine,
+      address: contractAddressTineSep,
+      abi: abiTineSep,
       functionName: "minLockTime",
     });
     return smartContractCurrentLockTime;
@@ -122,8 +122,8 @@ export const fetchMinLockTimeService = async () => {
 export const fetchMinLockAmountService = async () => {
   try {
     const smartContractCurrentLockAmount = await readContract({
-      address: contractAddressTine,
-      abi: abiTine,
+      address: contractAddressTineSep,
+      abi: abiTineSep,
       functionName: "minLockAmount",
     });
     return smartContractCurrentLockAmount;
