@@ -48,8 +48,8 @@ const TokenTineAdmin = ({ isConnected, userAddress }) => {
   
   const chainId = useChainId();
   const {
-    contractAddressTontine: contractAddressTontine,
-    abiTontine: abiTontine,
+    contractAddressTine: contractAddressTine,
+    abiTine: abiTine,
   } = getContractInfo(chainId);
 
   const [smartContractWithdrawEth, setSmartContractWithdrawEth] = useState(0);
@@ -160,7 +160,16 @@ const TokenTineAdmin = ({ isConnected, userAddress }) => {
           }
           footerContent={
             <Button colorScheme="blue" mr={3} onClick={() => {
-              handleSmartContractMintMonthly(setSmartContractMintMonthly, toast);
+              handleSmartContractMintMonthly(
+                setSmartContractMintMonthly,
+                setSmartContractCurrentSupply,
+                smartContractCurrentSupply,
+                setSmartContractTokenBalance,
+                smartContractTokenBalance,
+                toast,
+                contractAddressTine,
+                abiTine
+              );
               onMintClose(); // Ferme le modal après l'action
             }}>
               Mint

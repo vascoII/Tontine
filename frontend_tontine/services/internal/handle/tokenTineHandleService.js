@@ -15,16 +15,16 @@ export const handleBuyTine = async (
   toast,
   tineUserBalance,
   setIsLoading,
-  contractAddressTontine,
-  abiTontine
+  contractAddressTine,
+  abiTine
 ) => {
   try {
     setIsLoading(true);
     const success = await buyTineService(
       tineAmountToBuy,
       ethCost,
-      contractAddressTontine,
-      abiTontine
+      contractAddressTine,
+      abiTine
     );
     setIsLoading(false);
     if (success) {
@@ -78,15 +78,15 @@ export const handleSellTine = async (
   toast,
   tineUserBalance,
   setIsLoading,
-  contractAddressTontine,
-  abiTontine
+  contractAddressTine,
+  abiTine
 ) => {
   try {
     setIsLoading(true);
     const success = await sellTineService(
       tineAmountToSell,
-      contractAddressTontine,
-      abiTontine
+      contractAddressTine,
+      abiTine
     );
     setIsLoading(false);
     if (success) {
@@ -157,12 +157,12 @@ export const handleLockTine = async (
   setTineLockedDate,
   toast,
   setIsLoading,
-  contractAddressTontine,
-  abiTontine
+  contractAddressTine,
+  abiTine
 ) => {
   try {
     setIsLoading(true);
-    const success = await lockTineService(contractAddressTontine, abiTontine);
+    const success = await lockTineService(contractAddressTine, abiTine);
     setIsLoading(false);
     if (success) {
       onLockClose();
@@ -227,12 +227,12 @@ export const handleUnlockTine = async (
   setTineLockedDate,
   toast,
   setIsLoading,
-  contractAddressTontine,
-  abiTontine
+  contractAddressTine,
+  abiTine
 ) => {
   try {
     setIsLoading(true);
-    const success = await unlockTineService(contractAddressTontine, abiTontine);
+    const success = await unlockTineService(contractAddressTine, abiTine);
     setIsLoading(false);
     if (success) {
       onUnlockClose();
