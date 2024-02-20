@@ -85,7 +85,7 @@ export const TineProvider = ({ children }) => {
       }
     };
     checkTineStatus();
-  }, []);
+  }, [chainId]);
 
   return (
     <TineContext.Provider

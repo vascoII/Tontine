@@ -25,7 +25,7 @@ export const TontineStatsProvider = ({ children }) => {
       setEvents(eventsData);
     };
     loadEvents();
-  }, []);
+  }, [chainId]);
 
   return (
     <TontineStatsContext.Provider value={{ events }}>

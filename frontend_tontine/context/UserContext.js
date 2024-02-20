@@ -73,7 +73,7 @@ export const UserProvider = ({ children }) => {
     };
 
     checkUserStatus();
-  }, [address, isConnected, tineUserBalance, userTineLockedDate]);
+  }, [address, isConnected, tineUserBalance, userTineLockedDate, chainId]);
 
   return (
     <UserContext.Provider

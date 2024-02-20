@@ -101,7 +101,7 @@ export const TontineProvider = ({ children }) => {
   useEffect(() => {
     fetchVaultData();
     fetchAprData();
-  }, []);
+  }, [chainId]);
 
   return (
     <TontineContext.Provider

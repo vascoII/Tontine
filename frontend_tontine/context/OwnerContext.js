@@ -44,7 +44,7 @@ export const OwnerProvider = ({ children }) => {
     };
 
     checkOwnerStatus();
-  }, [address, isConnected]);
+  }, [address, isConnected, chainId]);
 
   return (
     <OwnerContext.Provider value={{ isOwner }}>
