@@ -8,7 +8,11 @@ import {
   useToast, Heading, Image
 } from "@chakra-ui/react";
 
+import { useChainId } from "wagmi";
+import { getContractInfo } from "@/services/contracts/contractInfo";
+
 import { getTineEthRatio } from "@/services/api/EtherscanAPI";
+import { getTineMaticRatio } from "@/services/api/PolygonscanAPI";
 
 import { useUser } from "@/context/UserContext";
 import { useTine } from "@/context/TineContext";
@@ -70,11 +74,20 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
  
   const [tineAmountToBuy, setTineAmountToBuy] = useState(0);
   const [tineAmountToSell, setTineAmountToSell] = useState(0);
-  const [tineEthRatio, setTineEthRatio] = useState(0);
-  const [ethCost, setEthCost] = useState(0);
-  const [ethValue, setEthValue] = useState(0);
+  const [tineNativeTokenRatio, setTineNativeTokenRatio] = useState(0);
+  const [nativetokenCost, setNativeTokenCost] = useState(0);
+  const [nativetokenValue, setNativeTokenValue] = useState(0);
+
+  const chainId = useChainId();
+  const {
+    contractAddressTine: contractAddressTine,
+    abiTine: abiTine,
+  } = getContractInfo(chainId);
 
   const toast = useToast();
+
+  const assetPath = chainId == 80001 ? "/assets/iconMatic.png" : "/assets/iconEth.png";
+  const assetName = chainId == 80001 ? "Matic" : "Eth";
 
   //Way to manage SSR Problems
   useEffect(() => {
@@ -85,24 +98,24 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
 
   useEffect(() => {
     const fetchRatio = async () => {
-      const ratio = await getTineEthRatio();
+      const ratio = chainId == 80001 ? await getTineMaticRatio() : await getTineEthRatio();
       if (ratio) {
-        setTineEthRatio(ratio);
+        setTineNativeTokenRatio(ratio);
       }
     };
 
     fetchRatio();
-  }, []);
+  }, [chainId]);
 
   useEffect(() => {
-    const costInEth = parseFloat(tineAmountToBuy) * tineEthRatio;
-    setEthCost(costInEth);
-  }, [tineAmountToBuy, tineEthRatio]);
+    const costInNativeToken = parseFloat(tineAmountToBuy) * tineNativeTokenRatio;
+    setNativeTokenCost(costInNativeToken);
+  }, [tineAmountToBuy, tineNativeTokenRatio, chainId]);
 
   useEffect(() => {
-    const valueInEth = parseFloat(tineAmountToSell) * tineEthRatio;
-    setEthValue(valueInEth);
-  }, [tineAmountToSell, tineEthRatio]);
+    const valueInNativeToken = parseFloat(tineAmountToSell) * tineNativeTokenRatio;
+    setNativeTokenValue(valueInNativeToken);
+  }, [tineAmountToSell, tineNativeTokenRatio, chainId]);
 
   useEffect(() => {
     if (modal === 'buy' && clientIsConnected) {
@@ -121,7 +134,7 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
         By locking in your Tine, you unlock higher yield rates,
       </Text>
       <Text className="hero-info-description" fontSize='1.5rem'>
-        thus multiplying the returns on your staked ETH.
+        thus multiplying the returns on your staked {assetName}.
       </Text>
       
       {clientIsConnected ? (
@@ -165,7 +178,7 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
             <>
               <FormControl position="relative">
                 <Box position="absolute" top="15%" left="5px" transform="translateY(-50%)" zIndex="10">
-                  <Image src="/assets/tontine_coin.png" alt="eth" width="34px" height="34px"/>
+                  <Image src="/assets/tontine_coin.png" alt="eth" borderRadius='full' boxSize='30px' marginLeft='1px'/>
                 </Box>
                 <FormLabel htmlFor='amount' pl="45px">Tine</FormLabel>
                 <Input
@@ -187,13 +200,13 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
               </FormControl>
               <FormControl mt={4} position="relative">
                 <Box position="absolute" top="15%" transform="translateY(-50%)" zIndex="10">
-                  <Image src="/assets/Ethereum.png" alt="eth" />
+                  <Image src={assetPath} alt="eth" borderRadius='full' boxSize='30px' marginLeft='5px'/>
                 </Box>
-                <FormLabel htmlFor='readonly-amount' pl="45px">Price in Eth</FormLabel>
+                <FormLabel htmlFor='readonly-amount' pl="45px">Price in {assetName}</FormLabel>
                 <Input
                   id='readonly-amount'
                   type='number'
-                  value={ethCost.toFixed(2)}
+                  value={nativetokenCost.toFixed(2)}
                   isReadOnly
                   style={{
                     borderColor: 'rgba(255, 255, 255, 0.16)',
@@ -209,13 +222,15 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
               onClick={() => {
                 handleBuyTine(
                   tineAmountToBuy,
-                  ethCost.toFixed(2),
+                  nativetokenCost.toFixed(2),
                   onBuyClose,
                   handleActionDone,
                   setTineUserBalance,
                   toast,
                   tineUserBalance, 
-                  setIsLoading
+                  setIsLoading,
+                  contractAddressTine,
+                  abiTine
                 );
                 onBuyClose();
               }}
@@ -243,7 +258,9 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
                 onLockClose,
                 setTineLockedDate,
                 toast,  
-                setIsLoading
+                setIsLoading,
+                contractAddressTine,
+                abiTine
               );
               onLockClose();
             }}>
@@ -266,7 +283,9 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
                 onUnlockClose,
                 setTineLockedDate,
                 toast, 
-                setIsLoading
+                setIsLoading,
+                contractAddressTine,
+                abiTine
               );
               onUnlockClose();
             }}>
@@ -283,7 +302,7 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
             <>
               <FormControl position="relative">
                 <Box position="absolute" top="15%" left="5px" transform="translateY(-50%)" zIndex="10">
-                  <Image src="/assets/tontine_coin.png" alt="eth" width="34px" height="34px"/>
+                  <Image src="/assets/tontine_coin.png" alt="eth" borderRadius='full' boxSize='30px' marginLeft='1px'/>
                 </Box>
                 <FormLabel htmlFor='amount' pl="45px">Tine</FormLabel>
                 <Input id='amount' type='number'
@@ -300,13 +319,13 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
               </FormControl>
               <FormControl mt={4} position="relative">
                 <Box position="absolute" top="15%" transform="translateY(-50%)" zIndex="10">
-                  <Image src="/assets/Ethereum.png" alt="eth" />
+                  <Image src={assetPath} alt="eth" borderRadius='full' boxSize='30px' marginLeft='5px'/>
                 </Box>
-                <FormLabel htmlFor='readonly-amount' pl="45px">Receive Eth</FormLabel>
+                <FormLabel htmlFor='readonly-amount' pl="45px">Receive {assetName}</FormLabel>
                 <Input
                   id='readonly-amount'
                   type='number'
-                  value={ethValue.toFixed(2)}
+                  value={nativetokenValue.toFixed(2)}
                   isReadOnly
                   style={{
                     borderColor: 'rgba(255, 255, 255, 0.16)',
@@ -325,7 +344,9 @@ const TokenTineStack = ({ isConnected, userAddress }) => {
                     setTineUserBalance,
                     toast,
                     tineUserBalance, 
-                    setIsLoading
+                    setIsLoading,
+                    contractAddressTine,
+                    abiTine
                   );
                   onSellClose();
                 }}

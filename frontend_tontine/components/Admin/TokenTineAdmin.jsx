@@ -5,7 +5,11 @@ import {
   Table, Thead, Tbody, Tr, Th, Td, FormControl, FormLabel, Input
 } from "@chakra-ui/react";
 
+import { useChainId } from "wagmi";
+
 import { useTine } from "@/context/TineContext";
+
+import { getContractInfo } from "@/services/contracts/contractInfo";
 
 import CustomModal from "@/components/common/Modal/CustomModal";
 import ActionButtons from "@/components/common/Buttons/ActionButtons";
@@ -23,22 +27,30 @@ const TokenTineAdmin = ({ isConnected, userAddress }) => {
   const handleToggle = () => setShowContent(!showContent);
   const [clientIsConnected, setClientIsConnected] = useState(false);
 
-  const { smartContractTokenBalance,
-        setSmartContractTokenBalance,
-        smartContractEthBalance,
-        setSmartContractEthBalance,
-        smartContractMaxSupply,
-        setSmartContractMaxSupply,
-        smartContractMaxBalance,
-        setSmartContractMaxBalance,
-        smartContractCurrentSupply,
-        setSmartContractCurrentSupply,
-        smartContractMintMonthly,
-        setSmartContractMintMonthly,
-        smartContractMinLockTime,
-        setSmartContractMinLockTime,
-        smartContractMinLockAmount,
-        setSmartContractMinLockAmount, } = useTine();
+  const {
+    smartContractTokenBalance,
+    setSmartContractTokenBalance,
+    smartContractEthBalance,
+    setSmartContractEthBalance,
+    smartContractMaxSupply,
+    setSmartContractMaxSupply,
+    smartContractMaxBalance,
+    setSmartContractMaxBalance,
+    smartContractCurrentSupply,
+    setSmartContractCurrentSupply,
+    smartContractMintMonthly,
+    setSmartContractMintMonthly,
+    smartContractMinLockTime,
+    setSmartContractMinLockTime,
+    smartContractMinLockAmount,
+    setSmartContractMinLockAmount
+  } = useTine();
+  
+  const chainId = useChainId();
+  const {
+    contractAddressTontine: contractAddressTontine,
+    abiTontine: abiTontine,
+  } = getContractInfo(chainId);
 
   const [smartContractWithdrawEth, setSmartContractWithdrawEth] = useState(0);
   const [smartContractNewMinLockTime, setSmartContractNewMinLockTime] = useState(0);

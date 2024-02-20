@@ -32,7 +32,6 @@ const DailyStats = () => {
   const [nativeCoin, setNativeCoin] = useState();
 
   const chainId = useChainId();
-
   const toast = useToast();
 
   useEffect(() => {

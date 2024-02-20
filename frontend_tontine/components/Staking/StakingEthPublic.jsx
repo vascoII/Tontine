@@ -6,6 +6,9 @@ import {
   Heading, Link, Image
 } from "@chakra-ui/react";
 
+import { useChainId } from "wagmi";
+import { getContractInfo } from "@/services/contracts/contractInfo";
+
 import { useUser } from "@/context/UserContext";
 import { useTontine } from "@/context/TontineContext";
 import { useTine } from "@/context/TineContext";
@@ -49,6 +52,13 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
   const [warningMessage, setWarningMessage] = useState();
   const [ethSilverAmount, setEthSilverAmount] = useState(0);
   const [ethGoldAmount, setEthGoldAmount] = useState(0); 
+  
+  const chainId = useChainId();
+  const assetName = chainId == 80001 ? "Matic" : "Eth";
+  const {
+    contractAddressTontine: contractAddressTontine,
+    abiTontine: abiTontine,
+  } = getContractInfo(chainId);
   
   const toast = useToast();
 
@@ -162,7 +172,9 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
                     fetchVaultData,
                     onSilverClose,
                     toast,  
-                    setIsLoading
+                    setIsLoading,
+                    contractAddressTontine,
+                    abiTontine
                   );
                   onSilverClose();
                 }}
@@ -221,7 +233,9 @@ const StakingEthPublic = ({ isConnected, userAddress }) => {
                   fetchVaultData,
                   onGoldClose,
                   toast,  
-                  setIsLoading
+                  setIsLoading,
+                  contractAddressTontine,
+                  abiTontine
                 );
                 onGoldClose();
               }}

@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
 import { useTontineStatistics } from '@/hooks/useTontineStatistics';
+import { getContractInfo } from "@/services/contracts/contractInfo";
+
 import { Box, Table, Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react';
+
+import { useChainId } from "wagmi";
 
 const TontineStats = ({ isConnected, userAddress }) => {
   const [clientIsConnected, setClientIsConnected] = useState(false);
@@ -20,6 +24,12 @@ const TontineStats = ({ isConnected, userAddress }) => {
     averageWithdrawsSilver,
     averageWithdrawsGold
   } = useTontineStatistics();
+
+  const chainId = useChainId();
+  const {
+    contractAddressTontine: contractAddressTontine,
+    abiTontine: abiTontine,
+  } = getContractInfo(chainId);
 
   //Way to manage SSR Problems
   useEffect(() => {

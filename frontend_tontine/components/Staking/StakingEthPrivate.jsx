@@ -8,6 +8,9 @@ import {
   FormLabel, Input, Link
 } from "@chakra-ui/react";
 
+import { useChainId } from "wagmi";
+import { getContractInfo } from "@/services/contracts/contractInfo";
+
 import { formatDate } from "@/services/utils/dateUtils";
 
 import { handleUnstakeOnSilverVault, handleUnstakeOnGoldVault } from "@/services/internal/handle/stakingEthHandleService";
@@ -35,6 +38,12 @@ const StakingEthPrivate = ({ isConnected, userAddress, setShowPublic }) => {
   const [warningMessage, setWarningMessage] = useState();
   const [ethSilverAmount, setEthSilverAmount] = useState(0);
   const [ethGoldAmount, setEthGoldAmount] = useState(0); 
+  
+  const chainId = useChainId();
+  const {
+    contractAddressTontine: contractAddressTontine,
+    abiTontine: abiTontine,
+  } = getContractInfo(chainId);
   
   const toast = useToast();
 
@@ -175,7 +184,9 @@ const StakingEthPrivate = ({ isConnected, userAddress, setShowPublic }) => {
                   userAddress,
                   setSilverBalance,
                   setSilverVaultOperation,
-                  setSilverInterest
+                  setSilverInterest,
+                  contractAddressTontine,
+                  abiTontine
                 );
                 onSilverClose();
               }}
@@ -246,7 +257,9 @@ const StakingEthPrivate = ({ isConnected, userAddress, setShowPublic }) => {
                     userAddress,
                     setGoldBalance,
                     setGoldVaultOperation,
-                    setGoldInterest
+                    setGoldInterest,
+                    contractAddressTontine,
+                    abiTontine
                   );
                   onGoldClose();
                 }}

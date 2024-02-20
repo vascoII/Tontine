@@ -3,9 +3,18 @@ import React, { useState, useEffect } from 'react';
 import { Box, Heading, Text, Collapse, Button } from "@chakra-ui/react";
 import TontineStats from './Stats/TontineStats';
 
+import { useChainId } from "wagmi";
+import { getContractInfo } from "@/services/contracts/contractInfo";
+
 const TontineAdmin = ({ isConnected, userAddress }) => {
   const [showContent, setShowContent] = useState(false);
   const handleToggle = () => setShowContent(!showContent);
+
+  const chainId = useChainId();
+  const {
+    contractAddressTontine: contractAddressTontine,
+    abiTontine: abiTontine,
+  } = getContractInfo(chainId);
 
   return (
     <>
