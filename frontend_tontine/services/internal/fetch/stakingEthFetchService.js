@@ -13,14 +13,24 @@ export const fetchUserSilverVaultData = async (
   userAddress,
   setSilverBalance,
   setSilverVaultOperation,
-  setSilverInterest
+  setSilverInterest,
+  contractAddressTontine,
+  abiTontine
 ) => {
   try {
-    const userSilverDeposits = await getSilverVaultDepositsByUser(userAddress);
+    const userSilverDeposits = await getSilverVaultDepositsByUser(
+      userAddress,
+      contractAddressTontine,
+      abiTontine
+    );
     const userSilverWithdraws = await getSilverVaultWithdrawsByUser(
       userAddress
     );
-    const userSilverInterest = await getSilverVaultInterestByUser(userAddress);
+    const userSilverInterest = await getSilverVaultInterestByUser(
+      userAddress,
+      contractAddressTontine,
+      abiTontine
+    );
     // Fusionner les dépôts et les retraits en ajoutant une indication de la nature de chaque transaction
     const allSilverTransactions = [];
     let balance = 0n;
@@ -65,12 +75,26 @@ export const fetchUserGoldVaultData = async (
   userAddress,
   setGoldBalance,
   setGoldVaultOperation,
-  setGoldInterest
+  setGoldInterest,
+  contractAddressTontine,
+  abiTontine
 ) => {
   try {
-    const userGoldDeposits = await getGoldVaultDepositsByUser(userAddress);
-    const userGoldWithdraws = await getGoldVaultWithdrawsByUser(userAddress);
-    const userGoldInterest = await getGoldVaultInterestByUser(userAddress);
+    const userGoldDeposits = await getGoldVaultDepositsByUser(
+      userAddress,
+      contractAddressTontine,
+      abiTontine
+    );
+    const userGoldWithdraws = await getGoldVaultWithdrawsByUser(
+      userAddress,
+      contractAddressTontine,
+      abiTontine
+    );
+    const userGoldInterest = await getGoldVaultInterestByUser(
+      userAddress,
+      contractAddressTontine,
+      abiTontine
+    );
 
     // Fusionner les dépôts et les retraits en ajoutant une indication de la nature de chaque transaction
     const allGoldTransactions = [];

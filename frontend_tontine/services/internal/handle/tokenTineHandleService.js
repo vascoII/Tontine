@@ -14,11 +14,18 @@ export const handleBuyTine = async (
   setTineUserBalance,
   toast,
   tineUserBalance,
-  setIsLoading
+  setIsLoading,
+  contractAddressTontine,
+  abiTontine
 ) => {
   try {
     setIsLoading(true);
-    const success = await buyTineService(tineAmountToBuy, ethCost);
+    const success = await buyTineService(
+      tineAmountToBuy,
+      ethCost,
+      contractAddressTontine,
+      abiTontine
+    );
     setIsLoading(false);
     if (success) {
       onBuyClose();
@@ -51,6 +58,7 @@ export const handleBuyTine = async (
         isClosable: true,
       });
     } else {
+      console.log(err.message);
       toast({
         title: "Error!",
         description: "An error occured.",
@@ -69,11 +77,17 @@ export const handleSellTine = async (
   setTineUserBalance,
   toast,
   tineUserBalance,
-  setIsLoading
+  setIsLoading,
+  contractAddressTontine,
+  abiTontine
 ) => {
   try {
     setIsLoading(true);
-    const success = await sellTineService(tineAmountToSell);
+    const success = await sellTineService(
+      tineAmountToSell,
+      contractAddressTontine,
+      abiTontine
+    );
     setIsLoading(false);
     if (success) {
       onSellClose();
@@ -142,11 +156,13 @@ export const handleLockTine = async (
   onLockClose,
   setTineLockedDate,
   toast,
-  setIsLoading
+  setIsLoading,
+  contractAddressTontine,
+  abiTontine
 ) => {
   try {
     setIsLoading(true);
-    const success = await lockTineService();
+    const success = await lockTineService(contractAddressTontine, abiTontine);
     setIsLoading(false);
     if (success) {
       onLockClose();
@@ -210,11 +226,13 @@ export const handleUnlockTine = async (
   onUnlockClose,
   setTineLockedDate,
   toast,
-  setIsLoading
+  setIsLoading,
+  contractAddressTontine,
+  abiTontine
 ) => {
   try {
     setIsLoading(true);
-    const success = await unlockTineService();
+    const success = await unlockTineService(contractAddressTontine, abiTontine);
     setIsLoading(false);
     if (success) {
       onUnlockClose();

@@ -11,11 +11,17 @@ export const handleStakeOnSilverVault = async (
   fetchVaultData,
   onSilverClose,
   toast,
-  setIsLoading
+  setIsLoading,
+  contractAddressTontine,
+  abiTontine
 ) => {
   try {
     setIsLoading(true);
-    const success = await stakeOnSilverService(ethSilverAmount);
+    const success = await stakeOnSilverService(
+      ethSilverAmount,
+      contractAddressTontine,
+      abiTontine
+    );
     setIsLoading(false);
     if (success) {
       fetchVaultData();
@@ -65,11 +71,17 @@ export const handleStakeOnGoldVault = async (
   fetchVaultData,
   onGoldClose,
   toast,
-  setIsLoading
+  setIsLoading,
+  contractAddressTontine,
+  abiTontine
 ) => {
   try {
     setIsLoading(true);
-    const success = await stakeOnGoldService(ethGoldAmount);
+    const success = await stakeOnGoldService(
+      ethGoldAmount,
+      contractAddressTontine,
+      abiTontine
+    );
     setIsLoading(false);
     if (success) {
       fetchVaultData();
@@ -123,11 +135,17 @@ export const handleUnstakeOnSilverVault = async (
   userAddress,
   setSilverBalance,
   setSilverVaultOperation,
-  setSilverInterest
+  setSilverInterest,
+  contractAddressTontine,
+  abiTontine
 ) => {
   try {
     setIsLoading(true);
-    const success = await unstakeOnSilverService(ethSilverAmount);
+    const success = await unstakeOnSilverService(
+      ethSilverAmount,
+      contractAddressTontine,
+      abiTontine
+    );
     setIsLoading(false);
     if (success) {
       fetchUserSilverVaultData(
@@ -186,11 +204,17 @@ export const handleUnstakeOnGoldVault = async (
   userAddress,
   setGoldBalance,
   setGoldVaultOperation,
-  setGoldInterest
+  setGoldInterest,
+  contractAddressTontine,
+  abiTontine
 ) => {
   try {
     setIsLoading(true);
-    const success = await unstakeOnGoldService(ethGoldAmount);
+    const success = await unstakeOnGoldService(
+      ethGoldAmount,
+      contractAddressTontine,
+      abiTontine
+    );
     setIsLoading(false);
     if (success) {
       fetchUserGoldVaultData(

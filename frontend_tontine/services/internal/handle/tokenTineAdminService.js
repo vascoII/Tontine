@@ -14,10 +14,12 @@ export const handleSmartContractMintMonthly = async (
   smartContractCurrentSupply,
   setSmartContractTokenBalance,
   smartContractTokenBalance,
-  toast
+  toast,
+  contractAddressTontine,
+  abiTontine
 ) => {
   try {
-    const result = await mintMonthlyService();
+    const result = await mintMonthlyService(contractAddressTontine, abiTontine);
     if (result) {
       setSmartContractMintMonthly(result);
       setSmartContractCurrentSupply(
@@ -63,12 +65,16 @@ export const handleSmartContractWithdrawEth = async (
   smartContractWithdrawEth,
   userAddress,
   setSmartContractWithdrawEth,
-  toast
+  toast,
+  contractAddressTontine,
+  abiTontine
 ) => {
   try {
     const result = await withdrawEthService(
       smartContractWithdrawEth,
-      userAddress
+      userAddress,
+      contractAddressTontine,
+      abiTontine
     );
     if (result) {
       setSmartContractWithdrawEth(smartContractWithdrawEth);
@@ -97,11 +103,15 @@ export const handleSmartContractWithdrawEth = async (
 export const handleSetSmartContractMaxBalance = async (
   smartContractNewMaxBalance,
   setSmartContractMaxBalance,
-  toast
+  toast,
+  contractAddressTontine,
+  abiTontine
 ) => {
   try {
     const result = await setSmartContractMaxBalanceService(
-      smartContractNewMaxBalance
+      smartContractNewMaxBalance,
+      contractAddressTontine,
+      abiTontine
     );
     if (result) {
       setSmartContractMaxBalance(smartContractNewMaxBalance * 10 ** 18);
@@ -131,11 +141,15 @@ export const handleSetSmartContractMaxBalance = async (
 export const handleSetSmartContractMinLockTime = async (
   smartContractNewMinLockTime,
   setSmartContractMinLockTime,
-  toast
+  toast,
+  contractAddressTontine,
+  abiTontine
 ) => {
   try {
     const result = await setSmartContracMinLockTimeService(
-      smartContractNewMinLockTime
+      smartContractNewMinLockTime,
+      contractAddressTontine,
+      abiTontine
     );
     if (result) {
       setSmartContractMinLockTime(smartContractNewMinLockTime);
@@ -166,11 +180,15 @@ export const handleSetSmartContractMinLockTime = async (
 export const handleSetSmartContractMinLockAmount = async (
   smartContractNewMinLockAmount,
   setSmartContractMinLockAmount,
-  toast
+  toast,
+  contractAddressTontine,
+  abiTontine
 ) => {
   try {
     const result = await setSmartContracMinLockAmountService(
-      smartContractNewMinLockAmount
+      smartContractNewMinLockAmount,
+      contractAddressTontine,
+      abiTontine
     );
     if (result) {
       setSmartContractMinLockAmount(smartContractNewMinLockAmount * 10 ** 18);
