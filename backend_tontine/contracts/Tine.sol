@@ -13,18 +13,28 @@ contract Tine is ERC20, Ownable, ReentrancyGuard {
     ChainlinkPricesOracleMock private chainlinkPricesOracleMock;
 
     uint256 public lastMintEvent;
-    uint256 public minLockTime = 60; // Minimum lock time set to 1 minute.
-    uint256 public minLockAmount = 1 * 10 ** decimals(); // Minimum lock amount.
-    uint256 public maxSupply = 21_000 * 10 ** decimals(); // Maximum token supply.
-    uint256 public maxBalance = 100 * 10 ** decimals(); // Maximum balance a single address can hold.
+    uint256 public minLockTime = 86400; // 1 day
+    uint256 public minLockTime = 86400; // 1 day
+    uint256 public minLockAmount = 1 * 10 ** decimals();
+    uint256 public maxSupply = 21_000 * 10 ** decimals();
+    uint256 public maxBalance = 100 * 10 ** decimals();
 
     mapping(address => uint256) public tineLocked; // Tracks locked Tine tokens by address.
-
-    // Events for token purchase, locking, unlocking, and selling.
-    event BuyTineEvent(address indexed userAddress, uint256 tineAmount, uint256 ethAmount);
+    
+    event BuyTineEvent(
+        address indexed userAddress,
+        uint256 tineAmount,
+        uint256 tokenAmount
+        uint256 tokenAmount
+    );
     event LockTineEvent(address indexed userAddress);
     event UnlockTineEvent(address indexed userAddress);
-    event SellTineEvent(address indexed userAddress, uint256 tineAmount, uint256 ethAmount);
+    event SellTineEvent(
+        address indexed userAddress,
+        uint256 tineAmount,
+        uint256 tokenAmount
+        uint256 tokenAmount
+    );
 
     constructor(ChainlinkPricesOracleMock _chainlinkPricesOracleMock) ERC20("Tine", "TINE") Ownable(msg.sender) {
         chainlinkPricesOracleMock = _chainlinkPricesOracleMock;
@@ -50,10 +60,19 @@ contract Tine is ERC20, Ownable, ReentrancyGuard {
 
     /// @notice Allows monthly token minting by the owner, adhering to the max supply limit.
     function mintMonthly() public onlyOwner {
-        require(block.timestamp >= lastMintEvent + 30 days, "Minting not yet allowed");
-        require(totalSupply() + 100 * 10 ** decimals() <= maxSupply, "Max supply exceeded");
+        require(
+            block.timestamp >= lastMintEvent + 1 days,
+            block.timestamp >= lastMintEvent + 1 days,
+            "Minting not yet allowed"
+        );
+        require(
+            totalSupply() + 1000 * 10 ** decimals() <= maxSupply,
+            totalSupply() + 1000 * 10 ** decimals() <= maxSupply,
+            "Max supply exceeded"
+        );
 
-        _mint(address(this), 100 * 10 ** decimals());
+        _mint(address(this), 1000 * 10 ** decimals());
+        _mint(address(this), 1000 * 10 ** decimals());
         lastMintEvent = block.timestamp;
     }
 
@@ -61,16 +80,19 @@ contract Tine is ERC20, Ownable, ReentrancyGuard {
     /// @param _tineAmount Amount of Tine tokens to buy.
     function buyTine(uint256 _tineAmount) public payable nonReentrant {
         require(_tineAmount > 0, "Amount must be greater than 0");
-        uint256 ethRate = chainlinkPricesOracleMock.getLatestTinePriceInEth();
-        uint256 requiredEth = (_tineAmount * ethRate) / 10 ** 18;
-        require(msg.value >= requiredEth, "Incorrect ETH amount");
+        uint256 tokenRate = chainlinkPricesOracleMock.getLatestTinePrice();
+        uint256 requiredToken = (_tineAmount * tokenRate) / 10 ** 18;
+        require(msg.value >= requiredToken, "Incorrect Token amount");
+        uint256 tokenRate = chainlinkPricesOracleMock.getLatestTinePrice();
+        uint256 requiredToken = (_tineAmount * tokenRate) / 10 ** 18;
+        require(msg.value >= requiredToken, "Incorrect Token amount");
 
-        uint256 excessEth = msg.value - requiredEth;
+        uint256 excessToken = msg.value - requiredToken;
+        uint256 excessToken = msg.value - requiredToken;
         _transfer(address(this), msg.sender, _tineAmount);
-        if (excessEth > 0) {
-            payable(msg.sender).transfer(excessEth);
-        }
-
+        if (excessToken > 0) {
+            payable(msg.sender).transfer(excessToken);
+        
         emit BuyTineEvent(msg.sender, _tineAmount, msg.value);
     }
 
@@ -99,16 +121,24 @@ contract Tine is ERC20, Ownable, ReentrancyGuard {
         require(balanceOf(msg.sender) >= _tineAmountInWei, "Insufficient TINE balance");
         require(allowance(msg.sender, address(this)) >= _tineAmountInWei, "Insufficient allowance");
 
-        uint256 ethRate = chainlinkPricesOracleMock.getLatestEthPriceInTine();
-        uint256 ethAmount = _tineAmountInWei / ethRate;
+        uint256 tokenRate = chainlinkPricesOracleMock.getLatestTokenPriceInTine();
+        uint256 tokenRate = chainlinkPricesOracleMock.getLatestTokenPriceInTine();
+        // Ajuster le calcul pour utiliser le ratio inverse
+        uint256 tokenAmount = _tineAmountInWei / tokenRate;
+        uint256 tokenAmount = _tineAmountInWei / tokenRate;
 
-        require(address(this).balance >= ethAmount, "Insufficient ETH balance in contract");
+        require(
+            address(this).balance >= tokenAmount,
+            address(this).balance >= tokenAmount,
+            "Insufficient ETH balance in contract"
+        );
 
         _transfer(msg.sender, address(this), _tineAmountInWei);
-        (bool success, ) = payable(msg.sender).call{value: ethAmount}("");
-        require(success, "Failed to send Ether");
 
-        emit SellTineEvent(msg.sender, _tineAmountInWei, ethAmount);
+        // Envoyer les ETH net à l'utilisateur
+        (bool success, ) = payable(msg.sender).call{value: tokenAmount}("");
+        require(success, "Failed to send Token");
+        emit SellTineEvent(msg.sender, _tineAmountInWei, tokenAmount);
     }
 
     /// @dev Sets minimum lock time, lock amount, max supply, and max balance restrictions.
