@@ -2,12 +2,12 @@
 
 ## Overview
 
-Tontine is a decentralized application (dApp) built on Ethereum, designed to offer an approach to staking and earning interest in the DeFi space. The project consists of two main parts: the smart contracts (backend) and the user interface (frontend). This repository contains both the backend and frontend codebases, organized into separate directories for ease of navigation and development.
+Tontine is a decentralized application (dApp) built on Solidity, designed to offer an approach to staking and earning interest in the DeFi space. The project consists of two main parts: the smart contracts (backend) and the user interface (frontend). This repository contains both the backend and frontend codebases, organized into separate directories for ease of navigation and development.
 
 ## Project Structure
 
-- `/backend_tontine`: Contains the smart contracts, deployment scripts, and tests for the Tontine protocol. The backend is built using Hardhat, providing a robust framework for developing Ethereum smart contracts.
-- `/frontend_tontine`: The frontend application, developed with React and Next.js, offers a user-friendly interface for interacting with the Tontine protocol. It includes features such as token buying, locking, and staking in two different vaults.
+- `/backend_tontine`: Contains the smart contracts, deployment scripts, and tests for the Tontine protocol. The backend is built using Hardhat, providing a robust framework for developing Solidity smart contracts.
+- `/frontend_tontine`: The frontend application, developed with React and Next.js, offers a user-friendly interface for interacting with the Tontine protocol. It includes features such as token buying, locking, and staking blockchains native tokens in two different vaults.
 
 ## Getting Started
 
@@ -16,7 +16,7 @@ To get started with the Tontine dApp, please refer to the README files in the re
 ## Features
 
 - **Smart Contract Backend**: Secure and efficient handling of all blockchain interactions, including token management, staking, and interest calculations.
-- **Intuitive Frontend**: A seamless user experience for staking ETH, managing TINE tokens, and viewing interest accrual in real-time.
+- **Intuitive Frontend**: A seamless user experience for staking native token from different chains, managing TINE tokens, and viewing interest accrual in real-time.
 
 ## Contributing
 
